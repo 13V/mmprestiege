@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import {
   BrowserRouter,
@@ -39,9 +39,11 @@ import {
   Send,
 } from "lucide-react";
 import { vehicles, money, number, business } from "./data";
-import StockManagerDemo from "./StockManagerDemo";
 import "./styles.css";
 import "./dealer.css";
+
+const StockManagerDemo = lazy(() => import("./StockManagerDemo"));
+const CrmDemo = lazy(() => import("./CrmDemo"));
 
 function Logo() {
   return (
@@ -84,44 +86,53 @@ function App() {
         setTheme={setTheme}
         onEnquire={() => setEnquiry({})}
       >
-        <Routes>
-          <Route path="/stock-manager" element={<StockManagerDemo />} />
-          <Route
-            path="/"
-            element={
-              <Home
-                saved={saved}
-                toggleSaved={toggleSaved}
-                onEnquire={setEnquiry}
-              />
-            }
-          />
-          <Route
-            path="/stock"
-            element={<Stock saved={saved} toggleSaved={toggleSaved} />}
-          />
-          <Route
-            path="/stock/:id"
-            element={
-              <Vehicle
-                saved={saved}
-                toggleSaved={toggleSaved}
-                onEnquire={setEnquiry}
-              />
-            }
-          />
-          <Route
-            path="*"
-            element={
-              <div className="not-found">
-                <h1>That road ends here.</h1>
-                <Link className="button primary" to="/stock">
-                  Explore our stock <ArrowRight size={18} />
-                </Link>
-              </div>
-            }
-          />
-        </Routes>
+        <Suspense
+          fallback={
+            <div role="status" style={{ padding: "40px" }}>
+              Loading workspace…
+            </div>
+          }
+        >
+          <Routes>
+            <Route path="/stock-manager" element={<StockManagerDemo />} />
+            <Route path="/crm" element={<CrmDemo />} />
+            <Route
+              path="/"
+              element={
+                <Home
+                  saved={saved}
+                  toggleSaved={toggleSaved}
+                  onEnquire={setEnquiry}
+                />
+              }
+            />
+            <Route
+              path="/stock"
+              element={<Stock saved={saved} toggleSaved={toggleSaved} />}
+            />
+            <Route
+              path="/stock/:id"
+              element={
+                <Vehicle
+                  saved={saved}
+                  toggleSaved={toggleSaved}
+                  onEnquire={setEnquiry}
+                />
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <div className="not-found">
+                  <h1>That road ends here.</h1>
+                  <Link className="button primary" to="/stock">
+                    Explore our stock <ArrowRight size={18} />
+                  </Link>
+                </div>
+              }
+            />
+          </Routes>
+        </Suspense>
       </SiteLayout>
       {enquiry && (
         <Enquiry
@@ -134,7 +145,8 @@ function App() {
 }
 function SiteLayout({ children, theme, setTheme, onEnquire }) {
   const { pathname } = useLocation();
-  if (pathname === "/stock-manager") return children;
+  if (["/stock-manager", "/crm"].includes(pathname.replace(/\/$/, "")))
+    return children;
   return (
     <>
       <Header onEnquire={onEnquire} />
@@ -149,13 +161,15 @@ function ScrollReset() {
   useEffect(() => {
     const vehicle = vehicles.find((car) => pathname === `/stock/${car.id}`);
     document.title =
-      pathname === "/stock-manager"
-        ? "Stock management demo | MM Prestiege Motors"
-        : vehicle
-          ? `${vehicle.year} ${vehicle.make} ${vehicle.model} | MM Prestige Motors`
-          : pathname === "/stock"
-            ? "Our collection | MM Prestige Motors"
-            : "MM Prestige Motors | HSV & Holden Specialists, Adelaide";
+      pathname.replace(/\/$/, "") === "/crm"
+        ? "Sales CRM mockup | MM Prestiege Motors"
+        : pathname.replace(/\/$/, "") === "/stock-manager"
+          ? "Stock management demo | MM Prestiege Motors"
+          : vehicle
+            ? `${vehicle.year} ${vehicle.make} ${vehicle.model} | MM Prestige Motors`
+            : pathname === "/stock"
+              ? "Our collection | MM Prestige Motors"
+              : "MM Prestige Motors | HSV & Holden Specialists, Adelaide";
     if (hash) {
       requestAnimationFrame(() =>
         document

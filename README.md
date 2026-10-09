@@ -39,6 +39,12 @@ Registration lookup and publishing are simulated. Uploaded photos stay in the br
 
 With the development server running, validate the concept with `npm run test:stock-manager`.
 
+## Dealership CRM mockup
+
+Open `/crm` for a one-page customer and sales pipeline mockup. The customer list and pipeline board share editable stages from **New enquiry** through **Test drive**, **Deposit paid** and **Delivered**. Open a customer to see their vehicle interest, trade-in and finance context, add comments, or set their next follow-up. Leads can also be moved by dragging cards between pipeline columns. Search, stage filters, new enquiries and **Reset demo** are interactive.
+
+All customers are samples and edits stay in this page until it is refreshed or reset. Follow-up dates and times use the dealership's Adelaide timezone. No messages are sent or real customer records changed. With the development server running, validate with `npm run test:crm`.
+
 ## Content
 
 Sample vehicle data is in `src/data.js`; photo assets are in `public/images`. Business address, phone and review excerpts come from the user's supplied MM Prestige Motors profile. All inventory, vehicle specifications, prices and generic photographs are illustrative; replace them with verified dealer-owned content before launch. The preview's photographs do not depict the sample HSV/Holden listings.
