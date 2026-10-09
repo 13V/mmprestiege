@@ -164,8 +164,8 @@ try {
     await expect(page.locator('.finance')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Find me something similar' })).toBeVisible();
   });
-  await check('Three colour palettes and persistence', async () => {
-    for (const [theme, name] of [['blue', 'Midnight blue'], ['green', 'Racing green'], ['red', 'Performance red']]) {
+  await check('Four colour palettes and persistence', async () => {
+    for (const [theme, name] of [['commodore', 'Commodore SS'], ['blue', 'Midnight blue'], ['green', 'Racing green'], ['red', 'Performance red']]) {
       if (!(await page.locator('.palette-panel').isVisible())) await page.getByRole('button', { name: 'Compare colour palettes' }).click();
       await page.locator('.palette-panel').getByRole('button', { name: new RegExp(name) }).click();
       await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
@@ -242,6 +242,16 @@ try {
     const third = await cards().nth(2).boundingBox();
     expect(first.width).toBeGreaterThan(500);
     expect(third.y).toBe(first.y);
+  });
+  await check('Vehicle gallery and summary fill a wide screen', async () => {
+    await page.setViewportSize({ width: 2493, height: 1265 });
+    await page.goto(`${baseURL}/stock/holden-ss-v-redline-2017`);
+    const gallery = await page.locator('.gallery-main').boundingBox();
+    const summary = await page.locator('.vehicle-summary').boundingBox();
+    expect(gallery.x).toBeLessThanOrEqual(20);
+    expect(gallery.width).toBeGreaterThan(1500);
+    expect(summary.width).toBeGreaterThan(600);
+    expect(2493 - summary.x - summary.width).toBeLessThanOrEqual(20);
   });
   await check('All local images load', async () => {
     for (const route of ['/', '/stock?status=all', '/stock/hsv-gts-2016']) {

@@ -1373,6 +1373,7 @@ function PaletteSwitcher({ theme, setTheme }) {
   const [open, setOpen] = useState(false);
   const options = [
     ["red", "Performance red", "Black · White · Red"],
+    ["commodore", "Commodore SS", "Black · Silver · Holden red"],
     ["blue", "Midnight blue", "Navy · Silver · Cobalt"],
     ["green", "Racing green", "Forest · Ivory · Bronze"],
   ];

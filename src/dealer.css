@@ -970,3 +970,397 @@ h2 em {
     font-size: 17px;
   }
 }
+
+/* Vehicle detail: the same full-width canvas as the stock listing. */
+.vehicle-page .breadcrumbs {
+  max-width: none;
+  margin: 0;
+  padding: 22px 20px;
+  font-size: 12px;
+}
+.vehicle-layout {
+  max-width: none;
+  width: 100%;
+  padding: 0 20px;
+  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) clamp(360px, 31vw, 680px);
+}
+.vehicle-left {
+  min-width: 0;
+}
+.gallery-main {
+  aspect-ratio: 1.6;
+  max-height: none;
+}
+.gallery-main .car-tag {
+  font-size: 11px;
+}
+.gallery-expand {
+  width: 40px;
+  height: 40px;
+}
+.gallery-nav {
+  width: 44px;
+  height: 50px;
+}
+.gallery-count {
+  font-size: 12px;
+}
+.gallery-thumbs {
+  gap: 12px;
+}
+.gallery-thumbs button {
+  aspect-ratio: 1.65;
+  max-height: 145px;
+}
+.gallery-note {
+  font-size: 11px;
+}
+.vehicle-summary {
+  padding: clamp(25px, 2vw, 44px);
+}
+.vehicle-summary h1 {
+  font-size: clamp(32px, 2.1vw, 50px);
+  line-height: 1.15;
+}
+.vehicle-summary .eyebrow {
+  font-size: 12px;
+}
+.vehicle-variant {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.summary-specs {
+  gap: 26px 22px;
+  padding: 30px 0;
+}
+.summary-specs small {
+  font-size: 12px;
+}
+.summary-specs b {
+  font-size: 15px;
+}
+.summary-specs > span {
+  grid-template-columns: 27px 1fr;
+  column-gap: 10px;
+}
+.vehicle-price {
+  padding: 28px 0;
+}
+.price-label {
+  font-size: 10px;
+}
+.vehicle-price strong {
+  font-size: clamp(40px, 2.5vw, 58px);
+}
+.vehicle-price small {
+  font-size: 12px;
+}
+.finance {
+  padding: 18px;
+}
+.finance-toggle small {
+  font-size: 12px;
+}
+.finance-toggle b {
+  font-size: 27px;
+}
+.finance-toggle b span {
+  font-size: 13px;
+}
+.finance p {
+  font-size: 11px;
+  line-height: 1.8;
+}
+.finance-fields label {
+  font-size: 12px;
+}
+.finance-fields select,
+.finance-fields input[type="number"] {
+  font-size: 13px;
+}
+.vehicle-summary > .button {
+  font-size: 14px;
+  min-height: 54px;
+}
+.vehicle-phone {
+  padding: 25px 0;
+}
+.vehicle-phone small {
+  font-size: 12px;
+}
+.vehicle-phone b {
+  font-size: 25px;
+}
+.map-art {
+  height: 150px;
+}
+.map-address {
+  padding: 16px;
+  font-size: 12px;
+}
+.map-address small {
+  font-size: 11px;
+}
+.summary-stock {
+  font-size: 10px;
+}
+.summary-stock span {
+  font-size: 9px;
+}
+.vehicle-info {
+  padding: 0 30px 30px;
+}
+.detail-tabs button {
+  font-size: 15px;
+}
+.vehicle-info h2 {
+  font-size: 34px;
+}
+.vehicle-info > div[role="tabpanel"] > p {
+  font-size: 15px;
+  max-width: 100%;
+}
+.overview-highlights span {
+  font-size: 14px;
+}
+.spec-table > div {
+  font-size: 14px;
+  padding: 15px 2px;
+}
+.vehicle-page .related {
+  max-width: none;
+  padding: 50px 20px;
+}
+
+/* Commodore SS: black trim, silver panels and Holden-inspired red accents. */
+:root[data-theme="commodore"] {
+  --ink: #141619;
+  --dark: #090a0c;
+  --accent: #ce0025;
+  --accent-hover: #a5001e;
+  --paper: #f7f8fa;
+  --canvas: #e0e3e7;
+  --muted: #565d65;
+  --line: #c1c6cc;
+  --soft: #d1d5db;
+}
+:root[data-theme="commodore"] .header {
+  background: #111215;
+  color: #f7f8fa;
+  border-bottom: 3px solid var(--accent);
+}
+:root[data-theme="commodore"] .nav > a {
+  color: #dfe3e8;
+}
+:root[data-theme="commodore"] .nav > a:hover,
+:root[data-theme="commodore"] .nav > a.active {
+  color: #fff;
+}
+:root[data-theme="commodore"] .menu-button {
+  color: #f7f8fa;
+}
+:root[data-theme="commodore"] .dealer-shortcuts,
+:root[data-theme="commodore"] .stock-page-bar {
+  background: #282b30;
+}
+:root[data-theme="commodore"] .vehicle-summary {
+  border-top: 3px solid var(--accent);
+}
+:root[data-theme="commodore"] .footer {
+  border-top: 3px solid var(--accent);
+}
+.palette-dot.commodore {
+  background: #ce0025;
+  box-shadow: 0 0 0 2px #111215;
+}
+.palette-swatches.commodore i:first-child {
+  background: #111215;
+}
+.palette-swatches.commodore i:nth-child(2) {
+  background: #c1c6cc;
+  border: 0;
+}
+.palette-swatches.commodore i:nth-child(3) {
+  background: #ce0025;
+}
+@media (max-width: 1050px) {
+  .vehicle-layout {
+    grid-template-columns: minmax(0, 1fr) 350px;
+    gap: 20px;
+  }
+  .gallery-main {
+    aspect-ratio: 1.25;
+  }
+  .vehicle-summary {
+    padding: 23px;
+  }
+  .vehicle-summary h1 {
+    font-size: 32px;
+  }
+  .summary-specs {
+    gap: 20px 15px;
+  }
+  .summary-specs small {
+    font-size: 11px;
+  }
+  .summary-specs b {
+    font-size: 12px;
+  }
+  .vehicle-price small {
+    font-size: 10px;
+  }
+  .vehicle-summary > .button {
+    font-size: 12px;
+  }
+  .map-address {
+    font-size: 10px;
+  }
+  .map-address small {
+    font-size: 10px;
+  }
+  .summary-stock {
+    font-size: 8px;
+  }
+  .summary-stock span {
+    font-size: 7px;
+  }
+}
+@media (max-width: 850px) {
+  :root[data-theme="commodore"] .nav {
+    background: #111215;
+  }
+  .vehicle-layout {
+    grid-template-columns: minmax(0, 1fr) 310px;
+    gap: 16px;
+    padding: 0 16px;
+  }
+  .vehicle-summary {
+    padding: 20px;
+  }
+  .vehicle-summary h1 {
+    font-size: 29px;
+  }
+  .vehicle-summary .eyebrow {
+    font-size: 10px;
+  }
+  .vehicle-variant {
+    font-size: 12px;
+  }
+  .gallery-main {
+    aspect-ratio: 1;
+  }
+  .gallery-thumbs {
+    gap: 6px;
+  }
+  .gallery-thumbs button {
+    aspect-ratio: 1.2;
+  }
+  .gallery-note {
+    font-size: 9px;
+  }
+  .finance-toggle small {
+    font-size: 10px;
+  }
+  .finance p {
+    font-size: 10px;
+  }
+  .vehicle-phone b {
+    font-size: 22px;
+  }
+  .vehicle-phone small {
+    font-size: 10px;
+  }
+  .vehicle-info {
+    padding: 0 20px 25px;
+  }
+  .vehicle-info h2 {
+    font-size: 28px;
+  }
+  .vehicle-info > div[role="tabpanel"] > p {
+    font-size: 13px;
+  }
+  .overview-highlights span {
+    font-size: 12px;
+  }
+}
+@media (max-width: 650px) {
+  .vehicle-page .breadcrumbs {
+    padding: 18px 14px;
+    font-size: 12px;
+  }
+  .vehicle-layout {
+    display: flex;
+    flex-direction: column;
+    padding: 0 12px;
+    gap: 20px;
+  }
+  .gallery-main {
+    aspect-ratio: 1.3;
+    max-height: none;
+  }
+  .gallery-thumbs button {
+    aspect-ratio: 1.3;
+  }
+  .gallery-main .car-tag {
+    font-size: 9px;
+  }
+  .gallery-count {
+    font-size: 10px;
+  }
+  .gallery-expand {
+    width: 34px;
+    height: 34px;
+  }
+  .gallery-nav {
+    width: 34px;
+    height: 42px;
+  }
+  .vehicle-summary {
+    padding: 25px;
+  }
+  .vehicle-summary h1 {
+    font-size: 35px;
+  }
+  .vehicle-summary .eyebrow {
+    font-size: 11px;
+  }
+  .vehicle-variant {
+    font-size: 13px;
+  }
+  .summary-specs small {
+    font-size: 12px;
+  }
+  .summary-specs b {
+    font-size: 14px;
+  }
+  .vehicle-price small {
+    font-size: 11px;
+  }
+  .finance-toggle small {
+    font-size: 11px;
+  }
+  .vehicle-summary > .button {
+    font-size: 13px;
+  }
+  .vehicle-phone b {
+    font-size: 24px;
+  }
+  .map-address {
+    font-size: 11px;
+  }
+  .map-address small {
+    font-size: 11px;
+  }
+  .vehicle-info {
+    padding: 0 23px 28px;
+  }
+  .vehicle-info > div[role="tabpanel"] > p {
+    font-size: 14px;
+  }
+  .vehicle-page .related {
+    padding: 36px 12px;
+  }
+}
+/* Keep the gallery and thumbnails stretched to their grid tracks. */
+.gallery-main,.gallery-thumbs button {width:100%;}
