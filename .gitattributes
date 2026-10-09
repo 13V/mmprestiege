@@ -1,0 +1,2 @@
+# Preserve the MIME draft's CRLF line endings and avoid base64 attachment diffs.
+docs/presentation/*.eml binary

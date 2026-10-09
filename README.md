@@ -45,6 +45,12 @@ Open `/crm` for a one-page customer and sales pipeline mockup. The customer list
 
 All customers are samples and edits stay in this page until it is refreshed or reset. Follow-up dates and times use the dealership's Adelaide timezone. No messages are sent or real customer records changed. With the development server running, validate with `npm run test:crm`.
 
+## Client presentation
+
+Open `/presentation/` for a nine-slide walkthrough of the customer website, Telegram stock assistant and dealership CRM. Arrow keys and on-screen controls move between slides; **Read all** provides a responsive reading view, and **Try the demos** links to the working previews. The presentation distinguishes the interactive concepts from the live connections still to be implemented.
+
+The email attachment is [`MM-Prestiege-Motors-Presentation.pdf`](public/presentation/MM-Prestiege-Motors-Presentation.pdf). The prepared text is in [`docs/presentation/email-draft.md`](docs/presentation/email-draft.md); the [email draft file](docs/presentation/MM-Prestiege-Motors-Email-Draft.eml) includes the PDF attachment and leaves the recipient unset. No email has been sent. Rebuild the PDF and email file after editing the presentation, screenshots or email text with `npm run presentation:build`. The exporter uses the same Chromium setup as the browser checks and needs no running web server. Production hosting has not been verified; the PDF and email draft are ready for use independently of hosting.
+
 ## Content
 
 Sample vehicle data is in `src/data.js`; photo assets are in `public/images`. Business address, phone and review excerpts come from the user's supplied MM Prestige Motors profile. All inventory, vehicle specifications, prices and generic photographs are illustrative; replace them with verified dealer-owned content before launch. The preview's photographs do not depict the sample HSV/Holden listings.

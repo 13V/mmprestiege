@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="/presentation/" />
+    <meta name="theme-color" content="#17191d" />
+    <meta name="description" content="A presentation of the MM Prestiege Motors website, Telegram stock assistant concept and dealership CRM mockup." />
+    <title>MM Prestiege Motors — Website, Stock &amp; Leads</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <style>
+      @font-face{font-family:Manrope;src:url('assets/manrope-latin-400-normal.woff2') format('woff2');font-weight:400;font-display:swap}
+      @font-face{font-family:Manrope;src:url('assets/manrope-latin-600-normal.woff2') format('woff2');font-weight:600;font-display:swap}
+      @font-face{font-family:Manrope;src:url('assets/manrope-latin-700-normal.woff2') format('woff2');font-weight:700;font-display:swap}
+      @font-face{font-family:Manrope;src:url('assets/manrope-latin-800-normal.woff2') format('woff2');font-weight:800;font-display:swap}
+      @font-face{font-family:Barlow;src:url('assets/barlow-condensed-latin-700-normal.woff2') format('woff2');font-weight:700;font-display:swap}
+      :root{--ink:#1c2027;--muted:#69717d;--red:#d71b36;--paper:#f5f6f8;--line:#dfe3e9;--blue:#2684db}
+      *{box-sizing:border-box}html,body{margin:0}body{font-family:Manrope,Arial,sans-serif;background:#121417;color:var(--ink)}
+      button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #6cbbff;outline-offset:4px}
+      .toolbar{height:72px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1440px;padding:0 32px;margin:auto}
+      .toolbar-brand{font-size:15px;font-weight:800;letter-spacing:-.5px;white-space:nowrap}.toolbar-subtitle{color:#a2a9b4;font-size:12px;margin-left:12px;font-weight:400;letter-spacing:0}
+      .toolbar-actions{display:flex;align-items:center;gap:8px}.tool{border:1px solid #3d424b;border-radius:7px;padding:10px 15px;text-decoration:none;color:#fff;background:#20242b;font-size:12px;font-weight:600}.tool.primary{background:var(--red);border-color:var(--red)}
+      .stage{position:relative;margin:0 auto;overflow:hidden;touch-action:pan-y}.deck{position:absolute;top:0;left:0;width:1280px;transform-origin:top left}
+      .slide{position:relative;width:1280px;height:720px;overflow:hidden;background:var(--paper);padding:42px 56px 48px;display:none}.slide.active{display:block}
+      .slide-head{display:flex;justify-content:space-between;align-items:center;gap:20px;font-size:10px;line-height:1.5;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;margin-bottom:27px}
+      .slide-head .brand{color:var(--ink);letter-spacing:-.2px;font-size:12px}.slide-head .section{color:var(--muted)}
+      .footer{position:absolute;bottom:23px;left:56px;right:56px;display:flex;align-items:center;justify-content:space-between;gap:20px;color:var(--muted);font-size:10px;line-height:1.5}
+      .footer .page{font-weight:800;color:var(--ink)}.footer .foot-brand{font-weight:700;letter-spacing:.15px}
+      .eyebrow{color:var(--red);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px}
+      h1,h2,h3,p{margin:0}h1{font-family:Barlow,Arial,sans-serif;font-size:82px;line-height:.99;font-weight:700;letter-spacing:-1.4px}h2{font-family:Barlow,Arial,sans-serif;font-size:54px;font-weight:700;line-height:1.02;letter-spacing:-.55px}h3{font-size:18px;line-height:1.35;font-weight:800;letter-spacing:-.35px}
+      .lede{font-size:17px;line-height:1.65;color:var(--muted);max-width:880px;margin-top:13px}.small{font-size:12px;line-height:1.65;color:var(--muted)}
+      .tag{display:inline-flex;padding:7px 10px;border-radius:5px;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;background:#fff0f2;color:#ac1730}.tag.neutral{background:#eef0f4;color:#606978}.tag.blue{background:#e9f3fd;color:#256aae}
+      .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:100px;padding:8px 13px;font-size:11px;font-weight:700;white-space:nowrap;background:white}.pill i{display:block;width:6px;height:6px;background:var(--red);border-radius:50%}
+      .browser{background:#fff;border:1px solid #d9dee6;border-radius:12px;overflow:hidden;box-shadow:0 16px 44px #18203410}.browser-chrome{height:28px;padding:0 12px;background:#e9edf2;display:flex;align-items:center;gap:5px}.browser-chrome i{width:5px;height:5px;border-radius:50%;background:#a7afba}.browser-chrome span{color:#6b7482;font-size:8px;margin-left:14px}.browser img{display:block;width:100%;height:auto}.browser .image-window{overflow:hidden}
+      .dark{background:#191c22;color:#fff}.dark .slide-head .brand,.dark .footer .page{color:#fff}.dark .slide-head .section,.dark .footer,.dark .lede{color:#aeb5c1}.dark .eyebrow{color:#f75a71}
+      .cover{padding-top:48px}.cover-photo{position:absolute;right:0;top:0;width:58%;height:720px;object-fit:cover;object-position:60% center;opacity:.62}.cover-shade{position:absolute;inset:0;background:linear-gradient(90deg,#191c22 0%,#191c22 35%,#191c22cf 51%,#191c2235 100%)}.cover>*:not(.cover-photo):not(.cover-shade){position:relative}.cover .slide-head{margin-bottom:64px}.cover h1{max-width:670px}.cover .lede{max-width:490px;margin-top:26px}.cover .eyebrow{margin-bottom:20px}.cover-products{display:flex;gap:10px;margin-top:32px}.cover-products .pill{background:#ffffff09;border-color:#ffffff30;color:#f6f6f8}.cover .footer{position:absolute}.cover .cover-status{margin-top:23px;font-size:11px;color:#c0c5cf}
+      .flow-grid{display:grid;grid-template-columns:1fr 38px 1fr 38px 1fr;align-items:center;margin-top:34px}.flow-card{position:relative;border:1px solid var(--line);background:white;border-radius:14px;overflow:hidden;height:315px;padding:25px}.flow-card .num{color:var(--red);font-family:Barlow;font-size:38px;line-height:1;margin-bottom:14px}.flow-card p{font-size:13px;line-height:1.7;color:var(--muted);margin-top:12px;max-width:275px}.flow-card .mini{position:absolute;left:25px;right:25px;bottom:25px;border-radius:8px;padding:14px;background:#f4f6f9;font-size:11px;line-height:1.8;color:#4f5865}.flow-card .mini b{display:block;color:var(--ink);font-size:12px}.flow-arrow{text-align:center;color:#a4aab4;font-size:23px}.flow-note{display:flex;align-items:center;gap:14px;margin-top:22px;background:#fff0f2;border-left:3px solid var(--red);padding:14px 18px;font-size:12px;line-height:1.6}
+      .website-layout{display:grid;grid-template-columns:1fr 342px;gap:26px;align-items:start;margin-top:24px}.website-main .image-window{height:330px}.website-main img{object-fit:cover;object-position:top}.website-side{display:grid;gap:14px}.website-side .image-window{height:178px}.feature-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}.feature{padding:0 0 0 13px;border-left:2px solid var(--red)}.feature b{font-size:12px;display:block;margin-bottom:5px}.feature p{font-size:11px;line-height:1.55;color:var(--muted)}
+      .stock-layout{display:grid;grid-template-columns:348px 1fr;gap:46px;margin-top:21px}.phone-frame{background:#222a34;padding:8px;border-radius:25px;box-shadow:0 20px 45px #18203420;width:268px;align-self:start;margin:0 auto}.phone-frame img{width:100%;height:auto;display:block;border-radius:18px}.stock-story{padding-top:5px}.menu-pills{display:flex;gap:8px;margin:0 0 23px}.menu-pills .pill{padding:7px 11px;font-size:10px}.steps{display:grid;gap:13px}.step{display:grid;grid-template-columns:31px 1fr;gap:14px;align-items:start}.step-num{width:30px;height:30px;background:#fff0f2;color:var(--red);font-size:12px;font-weight:800;border-radius:50%;display:grid;place-items:center;margin-top:2px}.step b{font-size:14px}.step p{font-size:12px;line-height:1.6;margin-top:5px;color:var(--muted)}.stock-story .outcome{font-size:14px;line-height:1.65;padding:15px 18px;margin-top:21px;border-radius:9px;background:white;border:1px solid var(--line)}.stock-story .small{margin-top:12px;font-size:10px}
+      .operations{display:grid;grid-template-columns:820px 1fr;gap:28px;margin-top:22px}.operations .image-window{height:355px}.operations img{margin-top:-3px}.operation-cards{display:grid;gap:14px;padding-top:2px}.operation-card{padding:14px 18px;border-radius:10px;border:1px solid var(--line);background:white}.operation-card b{font-size:13px;display:block}.operation-card p{font-size:11px;line-height:1.65;color:var(--muted);margin-top:7px}.operation-card .status{font-size:9px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--red);margin-bottom:7px}.operations-bottom{margin-top:14px;display:flex;justify-content:space-between;align-items:center;gap:15px}.operations-bottom .small{font-size:11px}
+      .crm-layout{display:grid;grid-template-columns:906px 1fr;gap:24px;margin-top:23px}.crm-layout .image-window{height:345px}.crm-layout img{width:100%;margin-top:-177px}.crm-benefits{display:grid;gap:21px;padding-top:15px}.crm-benefits b{font-size:13px;display:block;margin-bottom:7px}.crm-benefits p{font-size:12px;line-height:1.7;color:var(--muted)}.crm-layout .browser-chrome span{font-size:9px}.crm-bottom{display:flex;align-items:center;gap:10px;margin-top:17px}.crm-bottom .pill{font-size:10px}
+      .pipeline-screen{margin-top:22px}.pipeline-screen .image-window{height:320px}.pipeline-screen img{width:100%;margin-top:-316px}.stage-path{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:21px}.stage-chip{font-size:10px;font-weight:700;border-radius:5px;padding:9px 11px;background:#e9f2ff;color:#2166b7}.stage-chip.purple{background:#eee8fa;color:#7045b4}.stage-chip.yellow{background:#fff4d3;color:#9f7415}.stage-chip.orange{background:#ffefe4;color:#b45d24}.stage-chip.teal{background:#e3f4ef;color:#21846e}.stage-chip.green{background:#e8f4e7;color:#348344}.stage-chip.gray{background:#edeff2;color:#69717d}.stage-path .arrow{font-size:15px;color:#9da5af}.pipeline-note{display:flex;justify-content:space-between;align-items:center;margin-top:18px;font-size:12px;color:var(--muted)}
+      .detail-layout{display:grid;grid-template-columns:390px 1fr;gap:70px;margin-top:18px}.detail-shot{height:481px;display:flex;align-items:center;justify-content:center}.detail-shot img{height:481px;max-width:100%;width:auto;object-fit:contain;box-shadow:0 18px 45px #18203412;border-radius:10px}.customer-story{padding-top:17px}.customer-name{display:flex;gap:14px;align-items:center;margin-bottom:25px}.avatar{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#e5f2ed;color:#418571;font-weight:800;font-size:15px}.customer-name b{display:block;font-size:22px;font-weight:800;line-height:1.5;letter-spacing:-.5px}.customer-name small{font-size:11px;color:var(--muted)}.quote{font-size:22px;line-height:1.45;letter-spacing:-.5px;padding-left:21px;border-left:3px solid var(--red);max-width:590px;font-weight:700}.customer-facts{display:grid;grid-template-columns:1fr 1fr;gap:23px 35px;margin-top:28px}.customer-facts .label{font-size:9px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}.customer-facts b{font-size:13px;line-height:1.5;display:block}.customer-facts p{font-size:12px;line-height:1.6;color:var(--muted);margin-top:4px}.customer-story .small{font-size:10px;margin-top:20px}
+      .next-layout{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:31px}.next-card{border:1px solid #373b45;border-radius:14px;background:#22262e;padding:27px 29px;min-height:269px}.next-card h3{font-size:20px}.next-card .tag{margin-bottom:16px}.next-card .tag.neutral{background:#363d48;color:#d5dae3}.next-card ul{list-style:none;margin:17px 0 0;padding:0;display:grid;gap:13px}.next-card li{font-size:13px;color:#c8ced8;line-height:1.6;padding-left:19px;position:relative}.next-card li:before{content:'';width:5px;height:5px;background:#f2546d;border-radius:50%;position:absolute;left:1px;top:8px}.next-cta{display:flex;justify-content:space-between;align-items:center;gap:20px;border-top:1px solid #373b45;margin-top:27px;padding-top:22px}.next-cta p{font-size:17px;font-weight:700;max-width:635px;line-height:1.6}.next-cta .demo-links{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.demo-link{padding:10px 12px;background:#fff;color:#22262e;text-decoration:none;border-radius:6px;font-size:11px;font-weight:800}.demo-link.red{background:var(--red);color:#fff}
+      .controls{display:flex;justify-content:center;align-items:center;gap:20px;min-height:64px;color:#c5cad3;font-size:12px;padding:12px}.controls button{border:1px solid #3e444e;background:#20242b;color:#fff;border-radius:7px;min-height:36px;padding:7px 14px;font-size:12px}.controls button:disabled{opacity:.35;cursor:default}.counter{min-width:55px;text-align:center;font-variant-numeric:tabular-nums}.keyboard-hint{text-align:center;font-size:10px;color:#808894;padding-bottom:16px}.print-only{display:none}
+      dialog{background:#f5f6f8;color:var(--ink);border:0;border-radius:14px;padding:30px;width:min(460px,calc(100vw - 30px));box-shadow:0 20px 100px #0005}dialog::backdrop{background:#0009}dialog h2{font-size:34px;margin:8px 0 14px}dialog p{font-size:13px;line-height:1.7;color:var(--muted)}dialog .demo-links{display:grid;gap:9px;margin-top:21px}dialog .demo-link{border:1px solid var(--line);font-size:12px;padding:13px 14px;display:flex;justify-content:space-between}dialog .close{float:right;background:#e7eaf0;border:0;border-radius:50%;width:30px;height:30px;font-size:19px}dialog .small{font-size:11px;margin-top:16px}
+      .read-all .stage{height:auto!important;overflow:visible;width:100%!important}.read-all .deck{position:relative;transform:none!important;width:100%!important;display:grid;gap:18px;padding:0 16px}.read-all .slide{display:block;width:100%;height:auto;min-height:0;padding:25px;border-radius:12px}.read-all .slide-head{margin-bottom:25px}.read-all h1{font-size:clamp(42px,7vw,76px)}.read-all h2{font-size:clamp(32px,6vw,50px)}.read-all .lede{font-size:15px}.read-all .footer{position:static;margin-top:27px;left:auto;right:auto;bottom:auto;flex-wrap:wrap}.read-all .cover-photo{height:100%;width:80%}.read-all .cover .slide-head{margin-bottom:42px}.read-all .cover h1{max-width:720px}.read-all .cover .lede{max-width:520px}.read-all .cover-products{flex-wrap:wrap}.read-all .flow-grid{grid-template-columns:1fr;gap:12px}.read-all .flow-card{height:auto;min-height:240px}.read-all .flow-card .mini{position:static;margin-top:20px}.read-all .flow-arrow{transform:rotate(90deg)}.read-all .website-layout,.read-all .stock-layout,.read-all .operations,.read-all .crm-layout,.read-all .detail-layout,.read-all .next-layout{grid-template-columns:1fr;gap:20px}.read-all .website-side{grid-template-columns:1fr 1fr}.read-all .website-main .image-window{height:auto;max-height:420px}.read-all .website-side .image-window{height:auto;max-height:230px}.read-all .feature-row{gap:12px}.read-all .stock-layout{margin-top:30px}.read-all .phone-frame{width:min(286px,100%)}.read-all .operation-cards{grid-template-columns:repeat(3,1fr)}.read-all .operations .image-window{height:auto;max-height:510px}.read-all .crm-layout .image-window{height:auto}.read-all .crm-layout img{margin-top:0}.read-all .crm-benefits{grid-template-columns:repeat(3,1fr);gap:15px}.read-all .crm-bottom{flex-wrap:wrap}.read-all .pipeline-screen .image-window{height:auto}.read-all .pipeline-screen img{margin-top:0}.read-all .stage-path{flex-wrap:wrap;justify-content:flex-start;gap:7px}.read-all .pipeline-note{gap:12px;flex-wrap:wrap}.read-all .detail-shot{height:auto}.read-all .detail-shot img{height:auto;max-height:600px;max-width:100%}.read-all .customer-story{padding-top:0}.read-all .quote{font-size:20px}.read-all .next-card{min-height:0}.read-all .next-cta{flex-wrap:wrap}.read-all .controls{display:none}.read-all .keyboard-hint{display:none}
+      @media(max-width:680px){.toolbar{height:auto;min-height:80px;padding:17px 16px;flex-wrap:wrap}.toolbar-subtitle{display:none}.toolbar-brand{font-size:14px}.toolbar-actions{gap:6px}.tool{font-size:10px;padding:8px 10px}.read-all .slide{padding:22px 20px}.read-all .slide-head{font-size:8px;gap:10px}.read-all .slide-head .brand{font-size:10px}.read-all .footer{font-size:9px;gap:10px}.read-all .feature-row,.read-all .operation-cards,.read-all .crm-benefits{grid-template-columns:1fr;gap:17px}.read-all .menu-pills{flex-wrap:wrap}.read-all .website-side{grid-template-columns:1fr}.read-all .website-side .image-window{max-height:245px}.read-all .flow-note{align-items:flex-start;flex-direction:column;gap:9px}.read-all .operations-bottom{align-items:flex-start;flex-direction:column}.read-all .customer-facts{grid-template-columns:1fr;gap:17px}.read-all .next-cta .demo-links{justify-content:flex-start}.read-all .cover-shade{background:linear-gradient(90deg,#191c22f7,#191c22b5)}.read-all .cover-products{gap:7px}.read-all .cover .lede{max-width:90%}.read-all .stock-story .small{font-size:11px}.read-all .small{font-size:11px}}
+      @media print{@page{size:1280px 720px;margin:0}html,body{width:1280px;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact}.toolbar,.controls,.keyboard-hint,dialog,.web-only{display:none!important}.print-only{display:block}.stage,.read-all .stage{width:1280px!important;height:auto!important;overflow:visible!important;margin:0}.deck,.read-all .deck{position:static!important;width:1280px!important;transform:none!important;display:block!important;padding:0!important}.slide,.read-all .slide{display:block!important;width:1280px!important;height:720px!important;min-height:720px!important;border-radius:0!important;break-after:page;page-break-after:always;padding:42px 56px 48px;overflow:hidden}.slide:last-child{break-after:auto;page-break-after:auto}.cover{padding-top:48px!important}.slide-head{margin-bottom:27px!important}.cover .slide-head{margin-bottom:64px!important}.footer,.read-all .footer{position:absolute!important;bottom:23px!important;left:56px!important;right:56px!important;margin:0!important;font-size:10px!important}.read-all .cover-photo{height:720px;width:58%}.read-all .cover h1{max-width:670px}.read-all h1{font-size:82px}.read-all h2{font-size:54px}.read-all .lede{font-size:17px}.read-all .flow-grid{grid-template-columns:1fr 38px 1fr 38px 1fr;gap:0}.read-all .flow-card{height:315px}.read-all .flow-card .mini{position:absolute;margin:0}.read-all .flow-arrow{transform:none}.read-all .website-layout{grid-template-columns:1fr 342px;gap:26px}.read-all .website-side{grid-template-columns:1fr}.read-all .website-main .image-window{height:330px}.read-all .website-side .image-window{height:178px}.read-all .feature-row{grid-template-columns:repeat(3,1fr)}.read-all .stock-layout{grid-template-columns:348px 1fr;gap:46px;margin-top:21px}.read-all .operations{grid-template-columns:820px 1fr;gap:28px}.read-all .operations .image-window{height:355px}.read-all .operation-cards{grid-template-columns:1fr}.read-all .crm-layout{grid-template-columns:906px 1fr;gap:24px}.read-all .crm-layout .image-window{height:345px}.read-all .crm-layout img{margin-top:-177px}.read-all .crm-benefits{grid-template-columns:1fr;gap:21px}.read-all .pipeline-screen .image-window{height:320px}.read-all .pipeline-screen img{margin-top:-316px}.read-all .detail-layout{grid-template-columns:390px 1fr;gap:70px}.read-all .detail-shot{height:481px}.read-all .detail-shot img{height:481px}.read-all .customer-facts{grid-template-columns:1fr 1fr;gap:23px 35px}.read-all .quote{font-size:22px}.read-all .next-layout{grid-template-columns:1fr 1fr;gap:26px}.read-all .next-card{min-height:269px}.read-all .stage-path{flex-wrap:nowrap;justify-content:space-between}.read-all .pipeline-note{flex-wrap:nowrap}.read-all .cover-shade{background:linear-gradient(90deg,#191c22 0%,#191c22 35%,#191c22cf 51%,#191c2235 100%)}}
+    </style>
+  </head>
+  <body>
+    <header class="toolbar">
+      <div class="toolbar-brand">MM PRESTIEGE MOTORS <span class="toolbar-subtitle">Website, stock &amp; leads</span></div>
+      <div class="toolbar-actions">
+        <button class="tool" id="view-toggle" type="button" aria-pressed="false">Read all</button>
+        <button class="tool" id="open-demos" type="button">Try the demos</button>
+        <a class="tool primary" href="MM-Prestiege-Motors-Presentation.pdf" download>Download PDF</a>
+      </div>
+    </header>
+    <main class="stage" aria-label="MM Prestiege Motors presentation">
+      <div class="deck">
+        <section class="slide dark cover active" aria-label="Slide 1 of 9: Cover">
+          <img class="cover-photo" src="../images/hero.jpg" alt="Illustrative performance car photograph" />
+          <div class="cover-shade"></div>
+          <div class="slide-head"><span class="brand">MM PRESTIEGE MOTORS</span><span class="section">A dealership workflow, reimagined</span></div>
+          <p class="eyebrow">Website · Stock management · Customer relationships</p>
+          <h1>Your stock.<br />Your customers.<br />Your next sale.</h1>
+          <p class="lede">A website for your customers. A stock assistant on your phone. A place to keep every lead moving.</p>
+          <div class="cover-products"><span class="pill"><i></i>Customer website</span><span class="pill"><i></i>Telegram stock assistant</span><span class="pill"><i></i>Sales CRM</span></div>
+          <p class="cover-status">A visual walkthrough of the website and interactive concepts.</p>
+          <div class="footer"><span>Prepared for MM Prestiege Motors · October 2026</span><span>Concept preview · Illustrative photography</span><span class="page">01 / 09</span></div>
+        </section>
+
+        <section class="slide" aria-label="Slide 2 of 9: The proposed workflow">
+          <div class="slide-head"><span class="brand">MM PRESTIEGE MOTORS</span><span class="section">The proposed workflow</span></div>
+          <p class="eyebrow">Built around a normal day at the dealership</p>
+          <h2>From a new arrival to the next customer.</h2>
+          <p class="lede">Three simple tools, each with a clear job.</p>
+          <div class="flow-grid">
+            <div class="flow-card"><div class="num">01</div><h3>Add stock from your phone.</h3><p>Send photos, confirm the car details and review the listing in a Telegram conversation.</p><div class="mini"><b>Stock assistant</b>New arrivals · Listing updates · Sold vehicles</div></div>
+            <div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-card"><div class="num">02</div><h3>Let customers explore.</h3><p>A clear website puts the cars, photos and details in front of buyers and gives them a way to enquire.</p><div class="mini"><b>Customer website</b>Browse stock · View a car · Start an enquiry</div></div>
+            <div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-card"><div class="num">03</div><h3>Keep the next action visible.</h3><p>Track the interested customer, the car they want and the next conversation in one sales workspace.</p><div class="mini"><b>Dealership CRM</b>Customer notes · Follow-ups · Sales stages</div></div>
+          </div>
+          <div class="flow-note"><span class="tag">Proposed connection</span><span>The demos show each part of this workflow. Connecting live stock, enquiries and customer records is the next implementation phase.</span></div>
+          <div class="footer"><span class="foot-brand">Website, stock &amp; leads</span><span class="page">02 / 09</span></div>
+        </section>
+
+        <section class="slide" aria-label="Slide 3 of 9: Customer website">
+          <div class="slide-head"><span class="brand">MM PRESTIEGE MOTORS</span><span class="section">01 / The customer website</span></div>
+          <p class="eyebrow">A showroom customers can visit anywhere</p>
+          <h2>Make the car the starting point.</h2>
+          <p class="lede">Put stock, photos and the next step within easy reach.</p>
+          <div class="website-layout">
+            <div class="website-main"><div class="browser"><div class="browser-chrome"><i></i><i></i><i></i><span>MM Prestiege Motors / Home</span></div><div class="image-window"><img src="assets/website-home.jpg" alt="The MM Prestiege Motors home page" /></div></div>
+              <div class="feature-row"><div class="feature"><b>Find the right car</b><p>Search, filters and available or sold stock.</p></div><div class="feature"><b>Explore the details</b><p>Photo galleries, specifications and pricing.</p></div><div class="feature"><b>Start a conversation</b><p>Enquiry, call and showroom contact options.</p></div></div>
+            </div>
+            <div class="website-side"><div class="browser"><div class="browser-chrome"><i></i><i></i><i></i><span>Browse stock</span></div><div class="image-window"><img src="assets/website-stock.jpg" alt="The searchable vehicle stock page" /></div></div><div class="browser"><div class="browser-chrome"><i></i><i></i><i></i><span>Vehicle details</span></div><div class="image-window"><img src="assets/website-vehicle.jpg" alt="A vehicle page with photos, price and enquiry options" /></div></div></div>
+          </div>
+          <div class="footer"><span class="foot-brand">Customer website</span><span>Current preview uses sample stock and illustrative photography.</span><span class="page">03 / 09</span></div>
+        </section>
+
+        <section class="slide" aria-label="Slide 4 of 9: Add a vehicle from Telegram">
+          <div class="slide-head"><span class="brand">MM PRESTIEGE MOTORS</span><span class="section">02 / The stock assistant</span></div>
+          <p class="eyebrow">Add a listing through a guided chat</p>
+          <h2>New stock, from the showroom floor.</h2>
+          <p class="lede">A guided Telegram flow gets a new vehicle ready to publish.</p>
+          <div class="stock-layout">
+            <div class="phone-frame"><img src="assets/telegram-chat.jpg" alt="The simulated Telegram bot confirming that a vehicle has been published in the preview" /></div>
+            <div class="stock-story">
+              <div class="menu-pills"><span class="pill"><i></i>Add new vehicle</span><span class="pill">Update listing</span><span class="pill">Mark vehicle sold</span></div>
+              <div class="steps"><div class="step"><span class="step-num">1</span><div><b>Send the vehicle photos.</b><p>Tap Add new vehicle, then send an album from your phone.</p></div></div><div class="step"><span class="step-num">2</span><div><b>Confirm registration and state.</b><p>The concept demonstrates a vehicle lookup, with manual details as a fallback.</p></div></div><div class="step"><span class="step-num">3</span><div><b>Add kilometres and price.</b><p>Answer the remaining questions and review the listing before publishing.</p></div></div><div class="step"><span class="step-num">4</span><div><b>Confirm the listing.</b><p>The new car appears in the website preview in the demo.</p></div></div></div>
+              <div class="outcome"><b>The intended benefit:</b> prepare a listing where you already have the car and its photos, with a final check before it goes online.</div>
+              <p class="small">Interactive concept. The real Telegram bot, lookup provider and publishing connection still need to be implemented.</p>
+            </div>
+          </div>
+          <div class="footer"><span class="foot-brand">Telegram stock assistant</span><span>Simulated conversation and publishing · No live inventory changes</span><span class="page">04 / 09</span></div>
+        </section>
+
+        <section class="slide" aria-label="Slide 5 of 9: Manage everyday stock changes">
+          <div class="slide-head"><span class="brand">MM PRESTIEGE MOTORS</span><span class="section">02 / Keeping stock current</span></div>
+          <p class="eyebrow">The same menu handles the everyday changes</p>
+          <h2>Add it. Update it. Mark it sold.</h2>
+          <p class="lede">The demo shows the conversation beside the stock preview, so the result is visible.</p>
+          <div class="operations">
+            <div class="browser"><div class="browser-chrome"><i></i><i></i><i></i><span>Stock assistant / A new vehicle published in the preview</span></div><div class="image-window"><img src="assets/telegram-published.jpg" alt="Telegram conversation alongside a stock preview with a newly added vehicle" /></div></div>
+            <div class="operation-cards"><div class="operation-card"><div class="status">New arrival</div><b>Add new vehicle</b><p>Photos and car details become a listing after your confirmation.</p></div><div class="operation-card"><div class="status">Listing change</div><b>Update listing</b><p>Change price, details or photos, review the result, then save.</p></div><div class="operation-card"><div class="status">Deal completed</div><b>Mark vehicle sold</b><p>Confirm the sale and move the car from available to sold stock.</p></div></div>
+          </div>
+          <div class="operations-bottom"><span class="tag blue">Interactive demonstration</span><p class="small">The preview changes as you use it. The public stock website stays unchanged.</p></div>
+          <div class="footer"><span class="foot-brand">Telegram stock assistant</span><span>Sample vehicles and illustrative photos</span><span class="page">05 / 09</span></div>
+        </section>
+
+        <section class="slide" aria-label="Slide 6 of 9: CRM customer list">
+          <div class="slide-head"><span class="brand">MM PRESTIEGE MOTORS</span><span class="section">03 / Your dealership CRM</span></div>
+          <p class="eyebrow">A workspace built around car enquiries</p>
+          <h2>Know who’s interested and what’s next.</h2>
+          <p class="lede">A customer list with the context you need before the next call.</p>
+          <div class="crm-layout">
+            <div class="browser"><div class="browser-chrome"><i></i><i></i><i></i><span>Sales CRM / Customer list and selected customer</span></div><div class="image-window"><img src="assets/crm-customers.jpg" alt="CRM customer list showing vehicle interest, sales stage, follow-up, source and customer notes" /></div></div>
+            <div class="crm-benefits"><div><b>The customer and the car</b><p>Keep vehicle interest and enquiry source alongside the customer.</p></div><div><b>A visible next action</b><p>Set a follow-up date and time, and see which conversations are due.</p></div><div><b>A shared picture of progress</b><p>Move stages from the list or pipeline. Add comments to the right customer.</p></div></div>
+          </div>
+          <div class="crm-bottom"><span class="pill"><i></i>Search customers, cars &amp; notes</span><span class="pill">Filter by sales stage</span><span class="pill">Add a new enquiry</span></div>
+          <div class="footer"><span class="foot-brand">Dealership CRM</span><span>Interactive mockup · Sample customers · Page-only changes</span><span class="page">06 / 09</span></div>
+        </section>
+
+        <section class="slide" aria-label="Slide 7 of 9: Sales pipeline">
+          <div class="slide-head"><span class="brand">MM PRESTIEGE MOTORS</span><span class="section">03 / The sales pipeline</span></div>
+          <p class="eyebrow">See every enquiry through the sales journey</p>
+          <h2>Move every lead towards delivery.</h2>
+          <p class="lede">Switch to the pipeline to see where each enquiry stands.</p>
+          <div class="browser pipeline-screen"><div class="browser-chrome"><i></i><i></i><i></i><span>Sales CRM / Pipeline view</span></div><div class="image-window"><img src="assets/crm-pipeline.jpg" alt="Customer cards grouped into automotive sales stages on a draggable pipeline board" /></div></div>
+          <div class="stage-path"><span class="stage-chip">New enquiry</span><span class="arrow">→</span><span class="stage-chip purple">Contacted</span><span class="arrow">→</span><span class="stage-chip yellow">Test drive</span><span class="arrow">→</span><span class="stage-chip orange">Negotiating</span><span class="arrow">→</span><span class="stage-chip teal">Deposit paid</span><span class="arrow">→</span><span class="stage-chip green">Delivered</span><span class="stage-chip gray">Lost</span></div>
+          <div class="pipeline-note"><span>Drag a card between stages or choose its stage from the dropdown.</span><span>The customer list updates with it.</span></div>
+          <div class="footer"><span class="foot-brand">Dealership CRM</span><span>Sample pipeline · No real customer records changed</span><span class="page">07 / 09</span></div>
+        </section>
+
+        <section class="slide" aria-label="Slide 8 of 9: Customer comments and follow-ups">
+          <div class="slide-head"><span class="brand">MM PRESTIEGE MOTORS</span><span class="section">03 / The customer conversation</span></div>
+          <p class="eyebrow">Keep the detail with the person</p>
+          <h2>Pick up where the last conversation left off.</h2>
+          <div class="detail-layout">
+            <div class="detail-shot"><img src="assets/crm-customer-detail.jpg" alt="Selected customer panel with trade-in, finance, sales stage, follow-up date and comments" /></div>
+            <div class="customer-story"><div class="customer-name"><span class="avatar">SM</span><div><b>Sarah Mitchell</b><small>A sample lead in the mockup</small></div></div><p class="quote">“Looking for a manual V8. Budget around $60k. Wants to trade in her SV6.”</p><div class="customer-facts"><div><div class="label">Vehicle interest</div><b>2015 HSV Clubsport R8</b><p>The car and asking price stay with the enquiry.</p></div><div><div class="label">Trade-in &amp; finance</div><b>2013 Commodore SV6 · Pre-approved</b><p>Useful context before discussing the deal.</p></div><div><div class="label">The next step</div><b>Test drive · Today, 2:30 pm</b><p>A follow-up date and time keep the action clear.</p></div><div><div class="label">Conversation history</div><b>Comments and stage changes</b><p>Add what was discussed and what needs to happen next.</p></div></div><p class="small">This is an illustrative customer scenario. The demo’s edits stay in the current page and reset on refresh.</p></div>
+          </div>
+          <div class="footer"><span class="foot-brand">Dealership CRM</span><span>Follow-up dates and times shown in Adelaide time</span><span class="page">08 / 09</span></div>
+        </section>
+
+        <section class="slide dark" aria-label="Slide 9 of 9: The next step">
+          <div class="slide-head"><span class="brand">MM PRESTIEGE MOTORS</span><span class="section">A practical next step</span></div>
+          <p class="eyebrow">Start with the part that helps most</p>
+          <h2>A clear direction.<br />Then the real connections.</h2>
+          <p class="lede">The previews make the experience tangible before we build the working system.</p>
+          <div class="next-layout"><div class="next-card"><span class="tag">Ready to explore</span><h3>The website and interactive demos</h3><ul><li>Customer website with sample stock and enquiry options.</li><li>Stock assistant with add, update and sold workflows.</li><li>CRM with customers, stages, comments and follow-ups.</li></ul></div><div class="next-card"><span class="tag neutral">Next implementation phase</span><h3>Turn the concepts into daily tools</h3><ul><li>Use verified vehicle content and dealership-owned photos.</li><li>Connect a real Telegram bot, vehicle lookup and stock publishing.</li><li>Add a shared customer database, staff access and agreed enquiry handling.</li></ul></div></div>
+          <div class="next-cta"><p>Let’s walk through it and choose the first priority: stock management, lead follow-up, or both.</p><div class="demo-links web-only"><a class="demo-link" href="/">Website ↗</a><a class="demo-link" href="/stock-manager">Stock assistant ↗</a><a class="demo-link red" href="/crm">Sales CRM ↗</a></div><span class="print-only small" style="color:#bfc6d0;max-width:275px">The online presentation includes links to the website and interactive demos.</span></div>
+          <div class="footer"><span class="foot-brand">MM PRESTIEGE MOTORS</span><span>Concept presentation · Website, stock &amp; leads</span><span class="page">09 / 09</span></div>
+        </section>
+      </div>
+    </main>
+    <nav class="controls" aria-label="Presentation controls"><button id="previous" type="button" aria-label="Previous slide">← Previous</button><span class="counter" id="counter" role="status" aria-live="polite">01 / 09</span><button id="next" type="button" aria-label="Next slide">Next →</button></nav>
+    <p class="keyboard-hint">Use the arrow keys to move through the presentation. “Read all” shows every page.</p>
+    <dialog id="demos-dialog" aria-labelledby="demos-heading"><button type="button" class="close" id="close-demos" aria-label="Close demo links">×</button><p class="eyebrow">Explore the previews</p><h2 id="demos-heading">Try it for yourself.</h2><p>Open the website or step through the stock and customer workflows.</p><div class="demo-links"><a class="demo-link" href="/">Customer website <span>↗</span></a><a class="demo-link" href="/stock-manager">Telegram stock assistant <span>↗</span></a><a class="demo-link red" href="/crm">Dealership CRM <span>↗</span></a></div><p class="small">The stock assistant and CRM use sample data. Changes affect only their demos and reset on refresh.</p></dialog>
+    <script>
+      (() => {
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const stage = document.querySelector('.stage');
+        const deck = document.querySelector('.deck');
+        const previous = document.getElementById('previous');
+        const next = document.getElementById('next');
+        const counter = document.getElementById('counter');
+        const toggle = document.getElementById('view-toggle');
+        const dialog = document.getElementById('demos-dialog');
+        let index = 0;
+        let readAll = window.matchMedia('(max-width: 760px)').matches;
+        function fit() {
+          if (readAll) return;
+          const width = Math.min(window.innerWidth, 1440);
+          const availableHeight = Math.max(200, window.innerHeight - 160);
+          const scale = Math.min(width / 1280, availableHeight / 720);
+          stage.style.width = `${1280 * scale}px`;
+          stage.style.height = `${720 * scale}px`;
+          deck.style.transform = `scale(${scale})`;
+        }
+        function render() {
+          slides.forEach((slide, n) => {
+            slide.classList.toggle('active', n === index);
+            slide.setAttribute('aria-hidden', String(!readAll && n !== index));
+            slide.inert = !readAll && n !== index;
+          });
+          previous.disabled = index === 0;
+          next.disabled = index === slides.length - 1;
+          counter.textContent = `${String(index + 1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}`;
+          document.body.classList.toggle('read-all', readAll);
+          toggle.textContent = readAll ? 'Slide view' : 'Read all';
+          toggle.setAttribute('aria-pressed', String(readAll));
+          fit();
+        }
+        function fromHash() {
+          const match = location.hash.match(/^#slide-(\d+)$/);
+          index = match ? Math.max(0,Math.min(slides.length-1,Number(match[1])-1)) : 0;
+          render();
+        }
+        function move(delta) {
+          if (readAll || dialog.open) return;
+          const value = Math.max(0,Math.min(slides.length-1,index+delta));
+          if (value !== index) location.hash = `slide-${value+1}`;
+        }
+        previous.addEventListener('click',() => move(-1));
+        next.addEventListener('click',() => move(1));
+        toggle.addEventListener('click',() => { readAll = !readAll; render(); window.scrollTo({top:0}); });
+        document.addEventListener('keydown',(event) => {
+          if (readAll || dialog.open || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || ['INPUT','TEXTAREA','SELECT'].includes(event.target.tagName)) return;
+          if (event.key === 'ArrowRight') { event.preventDefault(); move(1); }
+          if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
+        });
+        document.getElementById('open-demos').addEventListener('click',() => dialog.showModal());
+        document.getElementById('close-demos').addEventListener('click',() => dialog.close());
+        dialog.addEventListener('click',(event) => { if (event.target === dialog) { const bounds = dialog.getBoundingClientRect(); if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close(); } });
+        window.addEventListener('resize',fit);
+        window.addEventListener('hashchange',fromHash);
+        window.addEventListener('beforeprint',() => slides.forEach(slide => { slide.inert = false; slide.removeAttribute('aria-hidden'); }));
+        window.addEventListener('afterprint',render);
+        fromHash();
+      })();
+    </script>
+  </body>
+</html>
