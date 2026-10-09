@@ -44,13 +44,9 @@ import "./dealer.css";
 
 function Logo() {
   return (
-    <Link to="/" className="brand" aria-label="MM Prestige Motors home">
-      <span className="brand-symbol">
-        <i />
-        <i />
-      </span>
+    <Link to="/" className="brand" aria-label="MM Prestiege Motors home">
       <span>
-        <b>MM PRESTIGE</b>
+        <b>MM PRESTIEGE</b>
         <small>M O T O R S</small>
       </span>
     </Link>
