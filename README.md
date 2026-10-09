@@ -1,0 +1,48 @@
+# MM Prestige Motors website concept
+
+A responsive boutique performance dealership website with a home page, searchable available/sold stock and individual vehicle pages. Built with React, Vite and React Router. Fonts and images are local, so the preview does not depend on external image or font services.
+
+## Run
+
+Node.js 20.19+ or 22.12+ is required (validated with Node 24).
+
+```sh
+npm ci
+npm run dev
+```
+
+To make and serve a production build:
+
+```sh
+npm run build
+npm run preview
+```
+
+When deploying to static hosting, configure all non-file requests to fall back to `index.html` so direct `/stock` and `/stock/:id` links work.
+
+## Vercel deployment
+
+Import this directory as a Vite project, or deploy with the Vercel CLI from the repository root. `vercel.json` builds the app with `npm run build`, publishes only `dist`, and routes direct page links through `index.html`. Vercel project metadata is ignored by Git. Supply deployment credentials through the CLI or environment settings; never save them in repository files.
+
+## Pages and interactions
+
+- `/`: photo-led home page, featured stock, dealer story, supplied customer reviews, call CTA.
+- `/stock`: available/sold/all collections; model search; make, body, transmission and price filters; sorting; saved cars.
+- `/stock/:id`: carousel with thumbnails and fullscreen viewing; overview/specification tabs; price, illustrative repayment calculator, enquiry, phone and location.
+- The floating **Colour palettes** control switches between Performance red (black/white/red), Midnight blue (navy/silver/cobalt) and Racing green (forest/ivory/bronze). The choice and saved cars persist in the browser.
+
+## Content
+
+Sample vehicle data is in `src/data.js`; photo assets are in `public/images`. Business address, phone and review excerpts come from the user's supplied MM Prestige Motors profile. All inventory, vehicle specifications, prices and generic photographs are illustrative; replace them with verified dealer-owned content before launch. The preview's photographs do not depict the sample HSV/Holden listings.
+
+The enquiry form prepares a message and opens an SMS link to the supplied dealer number. It does not silently submit to a backend or claim delivery. Call and Google Maps links use the supplied business details. The map graphic is schematic, not live mapping.
+
+The repayment calculator is illustrative, excludes fees/balloons and does not represent a finance offer. Confirm actual finance facilities and required disclosures before using it commercially.
+
+## Design references
+
+The stock sidebar/grid and vehicle gallery/right-hand summary follow the user's references. See [design notes](docs/design-research.md) and [photo sources](docs/photo-sources.md). Live boutique-site research was blocked by the environment's network policy; the two alternative palettes are design recommendations, not claims about inspected websites.
+
+## Browser validation
+
+With `npm run dev` running in another terminal, run `npm test`. The suite covers 27 stock, gallery, enquiry, palette, mobile and layout checks. It uses system Chromium when present; otherwise install Chromium with `npx playwright install chromium`. Override the server URL with `MM_BASE_URL` and the browser executable with `MM_CHROMIUM_PATH` if needed. Screenshots and a results JSON are written to the ignored `.screenshots/` directory.
