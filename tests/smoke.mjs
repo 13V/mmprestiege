@@ -31,7 +31,7 @@ const screenshot = name => page.screenshot({ path: resolve(screenshotDir, name),
 try {
   await page.goto(baseURL);
   await check('Home page and stock links', async () => {
-    await expect(page.getByRole('heading', { level: 1 })).toContainText('PERFORMANCE.');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('HSV & Holden');
     await expect(page.locator('.featured .car-card')).toHaveCount(3);
     await page.getByRole('link', { name: 'Explore our stock', exact: true }).click();
     await expect(page).toHaveURL(/\/stock$/);
@@ -230,6 +230,19 @@ try {
       });
     }
   }
+  await check('Stock fills a wide screen with three large columns', async () => {
+    await page.setViewportSize({ width: 2493, height: 1265 });
+    await goStock();
+    const layout = await page.locator('.stock-layout').boundingBox();
+    const sidebar = await page.locator('.filters').boundingBox();
+    expect(layout.x).toBeLessThanOrEqual(1);
+    expect(layout.width).toBe(2493);
+    expect(sidebar.x).toBeLessThanOrEqual(1);
+    const first = await cards().nth(0).boundingBox();
+    const third = await cards().nth(2).boundingBox();
+    expect(first.width).toBeGreaterThan(500);
+    expect(third.y).toBe(first.y);
+  });
   await check('All local images load', async () => {
     for (const route of ['/', '/stock?status=all', '/stock/hsv-gts-2016']) {
       await page.goto(`${baseURL}${route}`);

@@ -40,6 +40,7 @@ import {
 } from "lucide-react";
 import { vehicles, money, number, business } from "./data";
 import "./styles.css";
+import "./dealer.css";
 
 function Logo() {
   return (
@@ -138,7 +139,7 @@ function ScrollReset() {
       ? `${vehicle.year} ${vehicle.make} ${vehicle.model} | MM Prestige Motors`
       : pathname === "/stock"
         ? "Our collection | MM Prestige Motors"
-        : "MM Prestige Motors | Performance, with presence.";
+        : "MM Prestige Motors | HSV & Holden Specialists, Adelaide";
     if (hash) {
       requestAnimationFrame(() =>
         document
@@ -203,7 +204,7 @@ function Header({ onEnquire }) {
                 onEnquire();
               }}
             >
-              Let's talk <ArrowUpRight size={16} />
+              Contact us <Phone size={16} />
             </button>
           </nav>
           <button
@@ -222,6 +223,12 @@ function Header({ onEnquire }) {
 function CarCard({ car, saved, toggleSaved }) {
   return (
     <article className={`car-card ${car.status === "sold" ? "sold-card" : ""}`}>
+      <div className="card-heading">
+        <Link className="card-title" to={`/stock/${car.id}`}>
+          {car.year} {car.make} {car.model}
+        </Link>
+        <p className="card-variant">{car.variant}</p>
+      </div>
       <Link
         className="card-photo"
         to={`/stock/${car.id}`}
@@ -232,52 +239,15 @@ function CarCard({ car, saved, toggleSaved }) {
           alt={`Illustrative performance car photograph for ${car.make} ${car.model}`}
           loading="lazy"
         />
-        {car.status === "sold" ? (
+        {car.status === "sold" && (
           <span className="car-tag sold-tag">SOLD</span>
-        ) : (
-          car.tag && <span className="car-tag">{car.tag}</span>
         )}
-        <span className="photo-link">
-          <ArrowUpRight size={22} />
-        </span>
       </Link>
-      <button
-        className={`save-car ${saved.includes(car.id) ? "is-saved" : ""}`}
-        aria-label={`${saved.includes(car.id) ? "Unsave" : "Save"} ${car.make} ${car.model}`}
-        aria-pressed={saved.includes(car.id)}
-        onClick={() => toggleSaved(car.id)}
-      >
-        <Heart
-          size={18}
-          fill={saved.includes(car.id) ? "currentColor" : "none"}
-        />
-      </button>
       <div className="card-body">
-        <span className="card-year">
-          {car.year} · {car.make}
-        </span>
-        <Link className="card-title" to={`/stock/${car.id}`}>
-          {car.model}
-        </Link>
-        <p className="card-variant">{car.variant}</p>
-        <div className="card-specs">
-          <span>
-            <Gauge size={14} />
-            {number(car.kms)} km
-          </span>
-          <span>
-            <Cog size={14} />
-            {car.transmission}
-          </span>
-          <span>
-            <Fuel size={14} />
-            V8
-          </span>
-        </div>
         <div className="card-bottom">
           <div>
             {car.status === "sold" ? (
-              <b className="sold-price">Now with its new owner</b>
+              <b className="sold-price">Sold</b>
             ) : (
               <>
                 <strong>{money(car.price)}</strong>
@@ -285,86 +255,100 @@ function CarCard({ car, saved, toggleSaved }) {
               </>
             )}
           </div>
-          <Link
-            to={`/stock/${car.id}`}
-            aria-label={`Details of ${car.make} ${car.model}`}
+          <button
+            className={`save-car ${saved.includes(car.id) ? "is-saved" : ""}`}
+            aria-label={`${saved.includes(car.id) ? "Unsave" : "Save"} ${car.make} ${car.model}`}
+            aria-pressed={saved.includes(car.id)}
+            onClick={() => toggleSaved(car.id)}
           >
-            <ArrowRight size={22} />
-          </Link>
+            <Heart
+              size={22}
+              fill={saved.includes(car.id) ? "currentColor" : "none"}
+            />
+          </button>
         </div>
+        <div className="card-specs">
+          <span>
+            <Gauge size={16} />
+            {number(car.kms)} km
+          </span>
+          <span>
+            <Cog size={16} />
+            {car.transmission}
+          </span>
+          <span>
+            <Fuel size={16} />
+            V8
+          </span>
+        </div>
+        <p className="card-location">
+          <MapPin size={14} />
+          Wingfield, South Australia
+        </p>
+        <Link className="card-detail-button" to={`/stock/${car.id}`}>
+          View vehicle <ChevronRight size={17} />
+        </Link>
+        <a className="card-call-button" href={`tel:${business.tel}`}>
+          Call {business.phone}
+        </a>
       </div>
     </article>
   );
 }
 function Home({ saved, toggleSaved, onEnquire }) {
   return (
-    <main>
-      <section className="hero">
-        <img
-          className="hero-photo"
-          src="/images/hero.jpg"
-          alt="Performance car with a dramatic road presence"
-        />
-        <div className="hero-shade" />
-        <div className="hero-content">
-          <div className="eyebrow light">
-            <span />
-            ADELAIDE'S PERFORMANCE CAR SPECIALISTS
-          </div>
+    <main className="dealer-home">
+      <section className="dealer-banner">
+        <div className="dealer-intro">
+          <p className="dealer-location">MM Prestige Motors · Wingfield, SA</p>
           <h1>
-            PERFORMANCE.
+            HSV &amp; Holden
             <br />
-            WITH <em>PRESENCE.</em>
+            specialists in Adelaide.
           </h1>
           <p>
-            More than a car. A feeling.
-            <br />
-            Discover exceptional HSVs, Holdens and Australian muscle.
+            Buy, sell or trade your next performance car. Visit our Wingfield
+            showroom and speak with Madi.
           </p>
-          <div className="hero-buttons">
-            <Link className="button primary" to="/stock">
-              Explore our stock <ArrowUpRight size={19} />
-            </Link>
-            <Link className="text-link light" to="/stock?status=sold">
-              See our sold collection <ArrowRight size={17} />
-            </Link>
-          </div>
+          <Link className="button primary" to="/stock">
+            Explore our stock <ArrowRight size={20} />
+          </Link>
+          <a className="dealer-phone" href={`tel:${business.tel}`}>
+            <Phone size={17} />
+            {business.phone}
+          </a>
         </div>
-        <div className="hero-bottom">
-          <span>HANDPICKED. PERSONALLY PRESENTED.</span>
-          <span>
-            HSV · HOLDEN · PERFORMANCE <span className="hero-line" />
-          </span>
-        </div>
-        <div className="hero-number">
-          01 <span>/ THE COLLECTION</span>
+        <div className="dealer-banner-image">
+          <img src="/images/car-1.jpg" alt="Generic performance car preview" />
+          <span>Performance &amp; prestige vehicles</span>
         </div>
       </section>
-      <div className="trust-strip">
-        <span>
+      <nav className="dealer-shortcuts" aria-label="Showroom links">
+        <Link to="/stock">
           <CarFront size={22} />
-          Australian muscle. Boutique service.
-        </span>
-        <span>
-          <ShieldCheck size={22} />
-          Passion for every car.
-        </span>
-        <a href="#reviews">
-          <Star size={20} fill="currentColor" />
-          5.0 Google rating{" "}
-          <span className="trust-sub">from the supplied business profile</span>
+          Available cars <ArrowRight size={18} />
+        </Link>
+        <Link to="/stock?status=sold">
+          <Check size={22} />
+          Recently sold <ArrowRight size={18} />
+        </Link>
+        <button onClick={() => onEnquire({})}>
+          <MessageSquare size={22} />
+          Sell or trade your car <ArrowRight size={18} />
+        </button>
+        <a href={business.maps} target="_blank" rel="noreferrer">
+          <MapPin size={22} />
+          Find our showroom <ArrowUpRight size={18} />
         </a>
-      </div>
+      </nav>
       <section className="section collection">
         <div className="section-title">
           <div>
-            <div className="eyebrow">THE COLLECTION</div>
-            <h2>
-              Find your next <em>obsession.</em>
-            </h2>
+            <h2>Available cars</h2>
+            <p>Browse our current selection of performance vehicles.</p>
           </div>
           <Link className="text-link" to="/stock">
-            View all stock <ArrowUpRight size={19} />
+            View all stock <ArrowRight size={19} />
           </Link>
         </div>
         <div className="card-grid featured">
@@ -373,60 +357,55 @@ function Home({ saved, toggleSaved, onEnquire }) {
           ))}
         </div>
         <p className="sample-note">
-          Preview collection · Vehicle photos, availability, prices and
-          specifications are illustrative.
+          Sample stock and generic photos shown while the website is being
+          prepared.
         </p>
       </section>
-      <section className="story" id="about">
-        <div className="story-photo">
-          <img
-            src="/images/about.jpg"
-            alt="Details of a performance car"
-            loading="lazy"
-          />
-          <span className="story-photo-label">BUILT FOR THE DRIVE.</span>
-        </div>
-        <div className="story-copy">
-          <div className="eyebrow">MORE THAN A SHOWROOM</div>
-          <h2>
-            For the love
-            <br />
-            of the <em>drive.</em>
-          </h2>
+      <section className="dealer-about" id="about">
+        <div>
+          <h2>MM Prestige Motors</h2>
           <p>
-            Some cars get you from A to B.
-            <br />
-            Others make you take the long way home.
+            We buy, sell and trade prestige and performance vehicles, with a
+            focus on HSV, Holden Commodore and Australian muscle cars.
           </p>
           <p>
-            At MM Prestige Motors, we specialise in buying, selling and trading
-            prestige and performance vehicles. From HSVs and Holden Commodores
-            to iconic Australian muscle, we share your appreciation for cars
-            with character.
+            Speak directly with Madi about a car, arrange a viewing or discuss a
+            trade-in.
           </p>
-          <p>
-            Based in Wingfield, Adelaide, Madi brings a personal approach to
-            finding your next car. No rush. Just a conversation between people
-            who love the drive.
-          </p>
-          <button className="text-link" onClick={() => onEnquire({})}>
-            Meet your next car <ArrowUpRight size={20} />
+          <button className="button primary" onClick={() => onEnquire({})}>
+            Contact Madi <ArrowRight size={18} />
           </button>
+        </div>
+        <div className="dealer-visit">
+          <h3>Visit our showroom</h3>
+          <p>
+            {business.address}
+            <br />
+            {business.suburb}
+          </p>
+          <a href={`tel:${business.tel}`}>
+            <Phone size={18} />
+            {business.phone}
+          </a>
+          <p>Call to arrange a viewing.</p>
+          <a
+            className="text-link"
+            href={business.maps}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Directions on Google Maps <ArrowUpRight size={18} />
+          </a>
         </div>
       </section>
       <section className="section reviews" id="reviews">
         <div className="section-title">
-          <div>
-            <div className="eyebrow">GOOD CARS. GREAT PEOPLE.</div>
-            <h2>
-              The word on <em>the street.</em>
-            </h2>
-          </div>
+          <h2>Customer reviews</h2>
           <div className="rating">
             <b>5.0</b>
             <span>
               <span className="stars">★★★★★</span>
-              <small>Google · 9 reviews in supplied profile</small>
+              <small>Google reviews</small>
             </span>
           </div>
         </div>
@@ -447,19 +426,6 @@ function Home({ saved, toggleSaved, onEnquire }) {
             detail="2017 SS VF Redline Ute owner"
           />
         </div>
-      </section>
-      <section className="contact-banner">
-        <div>
-          <div className="eyebrow light">YOUR NEXT CHAPTER STARTS HERE</div>
-          <h2>
-            Let's talk <em>horsepower.</em>
-          </h2>
-        </div>
-        <a className="button white" href={`tel:${business.tel}`}>
-          <Phone size={19} />
-          {business.phone}
-          <ArrowUpRight size={19} />
-        </a>
       </section>
     </main>
   );
@@ -531,13 +497,13 @@ function Stock({ saved, toggleSaved }) {
     setParams(value === "available" ? {} : { status: value });
   }
   return (
-    <main>
-      <section className="page-intro">
-        <div className="eyebrow">HANDPICKED PERFORMANCE</div>
-        <h1>
-          Our <em>collection.</em>
-        </h1>
-        <p>Cars with character. Find the one that speaks to you.</p>
+    <main className="stock-page">
+      <section className="stock-page-bar">
+        <h1>Used performance cars</h1>
+        <span>
+          <MapPin size={16} />
+          Wingfield, South Australia
+        </span>
       </section>
       <div className="stock-layout">
         <aside className={`filters ${filtersOpen ? "filters-open" : ""}`}>
@@ -564,7 +530,7 @@ function Stock({ saved, toggleSaved }) {
             <b>
               {filterCount
                 ? `${filterCount} active filter${filterCount === 1 ? "" : "s"}`
-                : "Find your perfect match"}
+                : "No filters applied"}
             </b>
             <button onClick={clear}>Reset</button>
           </div>
@@ -697,9 +663,7 @@ function Stock({ saved, toggleSaved }) {
           <div className="results-heading">
             <span>
               <b>{filtered.length}</b> {filtered.length === 1 ? "car" : "cars"}{" "}
-              {status === "sold"
-                ? "in our sold collection"
-                : "in the collection"}
+              {status === "sold" ? "sold vehicles" : "available to view"}
             </span>
             <div>
               <button
@@ -1374,17 +1338,15 @@ function Footer() {
         <div>
           <Logo />
           <p>
-            For the cars you want.
+            HSV, Holden and performance vehicles.
             <br />
-            And the drive you love.
+            Wingfield, South Australia.
           </p>
         </div>
         <div>
           <span className="footer-label">THE COLLECTION</span>
           <Link to="/stock">Available stock</Link>
-          <Link to="/stock?status=sold">
-            Sold cars
-          </Link>
+          <Link to="/stock?status=sold">Sold cars</Link>
           <Link to="/#about">Our story</Link>
         </div>
         <div>
@@ -1397,11 +1359,6 @@ function Footer() {
           </a>
           <a href={`tel:${business.tel}`}>{business.phone}</a>
           <span className="footer-appointment">Call to arrange a viewing.</span>
-        </div>
-        <div className="footer-words">
-          A LITTLE
-          <br />
-          MORE <em>DRIVE.</em>
         </div>
       </div>
       <div className="footer-bottom">

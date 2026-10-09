@@ -45,4 +45,6 @@ The stock sidebar/grid and vehicle gallery/right-hand summary follow the user's 
 
 ## Browser validation
 
-With `npm run dev` running in another terminal, run `npm test`. The suite covers 27 stock, gallery, enquiry, palette, mobile and layout checks. It uses system Chromium when present; otherwise install Chromium with `npx playwright install chromium`. Override the server URL with `MM_BASE_URL` and the browser executable with `MM_CHROMIUM_PATH` if needed. Screenshots and a results JSON are written to the ignored `.screenshots/` directory.
+With `npm run dev` running in another terminal, run `npm test`. The suite covers 28 stock, gallery, enquiry, palette, mobile and layout checks. It uses system Chromium when present; otherwise install Chromium with `npx playwright install chromium`. Override the server URL with `MM_BASE_URL` and the browser executable with `MM_CHROMIUM_PATH` if needed. Screenshots and a results JSON are written to the ignored `.screenshots/` directory.
+
+The stock page uses the full viewport width, with filters against the left edge and three large vehicle columns on wide screens. Card titles sit above photos, following the supplied dealer reference. The home page prioritises stock, showroom contact details and customer reviews.
