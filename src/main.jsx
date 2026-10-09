@@ -39,6 +39,7 @@ import {
   Send,
 } from "lucide-react";
 import { vehicles, money, number, business } from "./data";
+import StockManagerDemo from "./StockManagerDemo";
 import "./styles.css";
 import "./dealer.css";
 
@@ -78,46 +79,50 @@ function App() {
   return (
     <BrowserRouter>
       <ScrollReset />
-      <Header onEnquire={() => setEnquiry({})} />
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <Home
-              saved={saved}
-              toggleSaved={toggleSaved}
-              onEnquire={setEnquiry}
-            />
-          }
-        />
-        <Route
-          path="/stock"
-          element={<Stock saved={saved} toggleSaved={toggleSaved} />}
-        />
-        <Route
-          path="/stock/:id"
-          element={
-            <Vehicle
-              saved={saved}
-              toggleSaved={toggleSaved}
-              onEnquire={setEnquiry}
-            />
-          }
-        />
-        <Route
-          path="*"
-          element={
-            <div className="not-found">
-              <h1>That road ends here.</h1>
-              <Link className="button primary" to="/stock">
-                Explore our stock <ArrowRight size={18} />
-              </Link>
-            </div>
-          }
-        />
-      </Routes>
-      <Footer />
-      <PaletteSwitcher theme={theme} setTheme={setTheme} />
+      <SiteLayout
+        theme={theme}
+        setTheme={setTheme}
+        onEnquire={() => setEnquiry({})}
+      >
+        <Routes>
+          <Route path="/stock-manager" element={<StockManagerDemo />} />
+          <Route
+            path="/"
+            element={
+              <Home
+                saved={saved}
+                toggleSaved={toggleSaved}
+                onEnquire={setEnquiry}
+              />
+            }
+          />
+          <Route
+            path="/stock"
+            element={<Stock saved={saved} toggleSaved={toggleSaved} />}
+          />
+          <Route
+            path="/stock/:id"
+            element={
+              <Vehicle
+                saved={saved}
+                toggleSaved={toggleSaved}
+                onEnquire={setEnquiry}
+              />
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <div className="not-found">
+                <h1>That road ends here.</h1>
+                <Link className="button primary" to="/stock">
+                  Explore our stock <ArrowRight size={18} />
+                </Link>
+              </div>
+            }
+          />
+        </Routes>
+      </SiteLayout>
       {enquiry && (
         <Enquiry
           vehicle={enquiry.id ? enquiry : null}
@@ -127,15 +132,30 @@ function App() {
     </BrowserRouter>
   );
 }
+function SiteLayout({ children, theme, setTheme, onEnquire }) {
+  const { pathname } = useLocation();
+  if (pathname === "/stock-manager") return children;
+  return (
+    <>
+      <Header onEnquire={onEnquire} />
+      {children}
+      <Footer />
+      <PaletteSwitcher theme={theme} setTheme={setTheme} />
+    </>
+  );
+}
 function ScrollReset() {
   const { pathname, hash } = useLocation();
   useEffect(() => {
     const vehicle = vehicles.find((car) => pathname === `/stock/${car.id}`);
-    document.title = vehicle
-      ? `${vehicle.year} ${vehicle.make} ${vehicle.model} | MM Prestige Motors`
-      : pathname === "/stock"
-        ? "Our collection | MM Prestige Motors"
-        : "MM Prestige Motors | HSV & Holden Specialists, Adelaide";
+    document.title =
+      pathname === "/stock-manager"
+        ? "Stock management demo | MM Prestiege Motors"
+        : vehicle
+          ? `${vehicle.year} ${vehicle.make} ${vehicle.model} | MM Prestige Motors`
+          : pathname === "/stock"
+            ? "Our collection | MM Prestige Motors"
+            : "MM Prestige Motors | HSV & Holden Specialists, Adelaide";
     if (hash) {
       requestAnimationFrame(() =>
         document

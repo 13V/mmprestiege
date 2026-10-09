@@ -31,6 +31,14 @@ Import this directory as a Vite project, or deploy with the Vercel CLI from the 
 - `/stock/:id`: carousel with thumbnails and fullscreen viewing; overview/specification tabs; price, illustrative repayment calculator, enquiry, phone and location.
 - The floating **Colour palettes** control switches between Performance red (black/white/red), Midnight blue (navy/silver/cobalt) Racing green (forest/ivory/bronze), and Commodore SS (black/silver/Holden-inspired red). The choice and saved cars persist in the browser.
 
+## Stock management concept
+
+Open `/stock-manager` for an interactive presentation of a Telegram stock assistant beside a dealership website preview. Try **Add new vehicle**, **Update listing**, or **Mark vehicle sold**. The add flow accepts a photo album, demonstrates a registration/state lookup, supports manual vehicle details, and asks for kilometres and price before a final publish confirmation. Use **Reset demo** to restore the original sample inventory.
+
+Registration lookup and publishing are simulated. Uploaded photos stay in the browser, and changes affect only the concept preview; the public stock pages are unchanged. A real Telegram bot, vehicle-data provider, stock database and publishing service would be separate implementation work.
+
+With the development server running, validate the concept with `npm run test:stock-manager`.
+
 ## Content
 
 Sample vehicle data is in `src/data.js`; photo assets are in `public/images`. Business address, phone and review excerpts come from the user's supplied MM Prestige Motors profile. All inventory, vehicle specifications, prices and generic photographs are illustrative; replace them with verified dealer-owned content before launch. The preview's photographs do not depict the sample HSV/Holden listings.
