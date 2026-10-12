@@ -31,7 +31,7 @@ const screenshot = name => page.screenshot({ path: resolve(screenshotDir, name),
 try {
   await page.goto(baseURL);
   await check('Home page and stock links', async () => {
-    await expect(page.getByRole('heading', { level: 1 })).toContainText('AUSTRALIAN');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('HSV & Holden');
     await expect(page.locator('.featured .car-card')).toHaveCount(3);
     await page.getByRole('link', { name: 'Explore our stock', exact: true }).click();
     await expect(page).toHaveURL(/\/stock$/);
@@ -52,7 +52,7 @@ try {
     await expect(cards().first()).toContainText('Clubsport R8');
     await page.getByRole('textbox', { name: 'Search stock' }).fill('no-such-car');
     await expect(cards()).toHaveCount(0);
-    await expect(page.getByText('No matching vehicles.')).toBeVisible();
+    await expect(page.getByText('No cars in this lane.')).toBeVisible();
     await reset();
     await expect(cards()).toHaveCount(6);
   });
@@ -172,7 +172,7 @@ try {
       const style = getComputedStyle(document.documentElement);
       return { background: style.getPropertyValue('--canvas').trim(), accent: style.getPropertyValue('--accent').trim() };
     });
-    expect(theme).toEqual({ background: '#0c0d0e', accent: '#f03b4c' });
+    expect(theme).toEqual({ background: '#111111', accent: '#ed3545' });
     await expect(page.locator('.palette-control')).toHaveCount(0);
   });
   await check('Desktop menu and sell-your-car enquiry', async () => {

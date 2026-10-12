@@ -178,14 +178,10 @@ function ScrollReset() {
 function Header({ onEnquire }) {
   const [open, setOpen] = useState(false);
   const { pathname, search, hash } = useLocation();
-  const soldView =
-    pathname === "/stock" &&
-    new URLSearchParams(search).get("status") === "sold";
+  const soldView = pathname === "/stock" && new URLSearchParams(search).get("status") === "sold";
   useEffect(() => setOpen(false), [pathname, search, hash]);
   useEffect(() => {
-    const close = (event) => {
-      if (event.key === "Escape") setOpen(false);
-    };
+    const close = (event) => { if (event.key === "Escape") setOpen(false); };
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
   }, []);
@@ -193,62 +189,21 @@ function Header({ onEnquire }) {
     <header className="header">
       <div className="header-inner">
         <Logo />
-        <nav
-          id="main-navigation"
-          className={open ? "nav open" : "nav"}
-          aria-label="Main navigation"
-        >
-          <Link className={pathname === "/" && !hash ? "active" : ""} to="/">
-            Home
-          </Link>
-          <Link className={hash === "#about" ? "active" : ""} to="/#about">
-            About us
-          </Link>
-          <Link
-            className={
-              pathname.startsWith("/stock") && !soldView ? "active" : ""
-            }
-            to="/stock"
-          >
-            Inventory
-          </Link>
-          <Link
-            className={hash === "#services" ? "active" : ""}
-            to="/#services"
-          >
-            Services
-          </Link>
+        <nav id="main-navigation" className={open ? "nav open" : "nav"} aria-label="Main navigation">
+          <Link className={pathname === "/" && !hash ? "active" : ""} to="/">Home</Link>
+          <Link className={hash === "#about" ? "active" : ""} to="/#about">About us</Link>
+          <Link className={pathname.startsWith("/stock") && !soldView ? "active" : ""} to="/stock">Inventory</Link>
+          <Link className={hash === "#services" ? "active" : ""} to="/#services">Services</Link>
           <div className="nav-extra">
             <Link to="/stock?status=sold">Sold cars</Link>
             <Link to="/#reviews">Customer reviews</Link>
-            <button
-              onClick={() => {
-                setOpen(false);
-                onEnquire();
-              }}
-            >
-              Contact us <ArrowUpRight size={16} />
-            </button>
+            <button onClick={() => { setOpen(false); onEnquire(); }}>Contact us <ArrowUpRight size={16} /></button>
             <a href={`tel:${business.tel}`}>{business.phone}</a>
           </div>
         </nav>
         <div className="header-actions">
-          <button
-            className="sell-car-button"
-            onClick={() => {
-              setOpen(false);
-              onEnquire({ purpose: "sell" });
-            }}
-          >
-            Sell your car
-          </button>
-          <button
-            className="menu-button"
-            aria-controls="main-navigation"
-            aria-label={open ? "Close navigation" : "Open navigation"}
-            aria-expanded={open}
-            onClick={() => setOpen(!open)}
-          >
+          <button className="sell-car-button" onClick={() => { setOpen(false); onEnquire({ purpose: "sell" }); }}>Sell your car</button>
+          <button className="menu-button" aria-controls="main-navigation" aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open} onClick={() => setOpen(!open)}>
             {open ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
@@ -261,70 +216,29 @@ function CarCard({ car, saved, toggleSaved }) {
   return (
     <article className={`car-card ${car.status === "sold" ? "sold-card" : ""}`}>
       <div className="card-media">
-        <Link
-          className="card-photo"
-          to={`/stock/${car.id}`}
-          aria-label={`View ${car.year} ${car.make} ${car.model}`}
-        >
-          <img
-            src={car.image}
-            alt={`Illustrative performance car photograph for ${car.make} ${car.model}`}
-            loading="lazy"
-          />
-          {car.status === "sold" && (
-            <span className="car-tag sold-tag">SOLD</span>
-          )}
+        <Link className="card-photo" to={`/stock/${car.id}`} aria-label={`View ${car.year} ${car.make} ${car.model}`}>
+          <img src={car.image} alt={`Illustrative performance car photograph for ${car.make} ${car.model}`} loading="lazy" />
+          {car.status === "sold" && <span className="car-tag sold-tag">SOLD</span>}
         </Link>
-        <button
-          className={`save-car ${isSaved ? "is-saved" : ""}`}
-          aria-label={`${isSaved ? "Unsave" : "Save"} ${car.make} ${car.model}`}
-          aria-pressed={isSaved}
-          onClick={() => toggleSaved(car.id)}
-        >
+        <button className={`save-car ${isSaved ? "is-saved" : ""}`} aria-label={`${isSaved ? "Unsave" : "Save"} ${car.make} ${car.model}`} aria-pressed={isSaved} onClick={() => toggleSaved(car.id)}>
           <Bookmark size={18} fill={isSaved ? "currentColor" : "none"} />
         </button>
       </div>
       <div className="card-body">
         <div className="card-heading">
-          <div className="card-meta">
-            <span>
-              {car.year} / {car.make}
-            </span>
-            <span>{car.stock}</span>
-          </div>
-          <Link className="card-title" to={`/stock/${car.id}`}>
-            {car.model}
-          </Link>
-          <p className="card-location">{car.variant}</p>
+          <Link className="card-title" to={`/stock/${car.id}`}>{car.make} {car.model}</Link>
+          <p className="card-location">Wingfield, SA · {car.year}</p>
         </div>
         <div className="card-specs">
-          <span>
-            <small>Odometer</small>
-            <b>{number(car.kms)} km</b>
-          </span>
-          <span>
-            <small>Gearbox</small>
-            <b>{car.transmission}</b>
-          </span>
-          <span>
-            <small>Fuel</small>
-            <b>{car.fuel}</b>
-          </span>
+          <span><Gauge size={17} />{number(car.kms)} km</span>
+          <span><Cog size={17} />{car.transmission}</span>
+          <span><Fuel size={17} />{car.fuel}</span>
         </div>
         <div className="card-bottom">
           <div>
-            {car.status === "sold" ? (
-              <b className="sold-price">Sold</b>
-            ) : (
-              <>
-                <strong>{money(car.price)}</strong>
-                <small>Excl. government charges</small>
-              </>
-            )}
+            {car.status === "sold" ? <b className="sold-price">Sold</b> : <><strong>{money(car.price)}</strong><small>Excl. government charges</small></>}
           </div>
-          <Link className="card-detail-button" to={`/stock/${car.id}`}>
-            View vehicle <ArrowUpRight size={17} />
-          </Link>
+          <Link className="card-detail-button" to={`/stock/${car.id}`}>View vehicle</Link>
         </div>
       </div>
     </article>
@@ -333,110 +247,58 @@ function CarCard({ car, saved, toggleSaved }) {
 function Home({ saved, toggleSaved, onEnquire }) {
   return (
     <main className="dealer-home">
-      <section className="showroom-hero">
-        <div className="showroom-hero-copy">
-          <div className="section-label">
-            <span className="red-dash" /> WINGFIELD, SOUTH AUSTRALIA
-          </div>
+      <section className="dealer-banner">
+        <div className="dealer-intro">
+          <p className="dealer-location">MM Prestige Motors · Wingfield, SA</p>
           <h1>
-            AUSTRALIAN
+            HSV &amp; Holden
             <br />
-            <span>MUSCLE.</span>
+            specialists in Adelaide.
           </h1>
-          <p className="showroom-specialism">HSV &amp; Holden specialists.</p>
-          <p className="showroom-introduction">
-            Buy, sell and trade with Madi in Wingfield. Arrange a viewing,
-            discuss a trade-in, or ask about a car in our stock.
+          <p>
+            Buy, sell or trade your next performance car. Visit our Wingfield
+            showroom and speak with Madi.
           </p>
-          <div className="showroom-hero-actions">
-            <Link className="button primary" to="/stock">
-              Explore our stock <ArrowUpRight size={21} />
-            </Link>
-            <button
-              className="showroom-secondary"
-              onClick={() => onEnquire({})}
-            >
-              Talk to Madi <ArrowUpRight size={17} />
-            </button>
-          </div>
-          <div className="showroom-hero-footnote">
-            <span>HSV</span>
-            <span>HOLDEN</span>
-            <span>PERFORMANCE</span>
-          </div>
+          <Link className="button primary" to="/stock">
+            Explore our stock <ArrowRight size={20} />
+          </Link>
+          <a className="dealer-phone" href={`tel:${business.tel}`}>
+            <Phone size={17} />
+            {business.phone}
+          </a>
         </div>
-        <figure className="showroom-hero-photo">
-          <div className="hero-photo-label">
-            <span>MM / PERFORMANCE MOTORS</span>
-            <span>WINGFIELD · SA</span>
-          </div>
-          <img
-            src="/images/detail-2.jpg"
-            alt="Close-up of a performance wheel and red brake caliper"
-            fetchPriority="high"
-          />
-          <figcaption>
-            <span>Built for people who love cars.</span>
-            <small>Preview photography</small>
-          </figcaption>
-        </figure>
+        <div className="dealer-banner-image">
+          <img src="/images/car-1.jpg" alt="Generic performance car preview" />
+          <span>Performance &amp; prestige vehicles</span>
+        </div>
       </section>
-      <nav
-        className="showroom-service-rail"
-        id="services"
-        aria-label="Showroom links"
-      >
+      <nav className="dealer-shortcuts" id="services" aria-label="Showroom links">
         <Link to="/stock">
-          <span className="rail-number">01</span>
-          <span>
-            Find your next car<small>Available stock</small>
-          </span>
-          <ArrowUpRight size={20} />
+          <CarFront size={22} />
+          Available cars <ArrowRight size={18} />
         </Link>
         <Link to="/stock?status=sold">
-          <span className="rail-number">02</span>
-          <span>
-            Recently sold<small>The cars that found a home</small>
-          </span>
-          <ArrowUpRight size={20} />
+          <Check size={22} />
+          Recently sold <ArrowRight size={18} />
         </Link>
-        <button onClick={() => onEnquire({ purpose: "sell" })}>
-          <span className="rail-number">03</span>
-          <span>
-            Sell or trade<small>Talk through your options</small>
-          </span>
-          <ArrowUpRight size={20} />
+        <button onClick={() => onEnquire({})}>
+          <MessageSquare size={22} />
+          Sell or trade your car <ArrowRight size={18} />
         </button>
         <a href={business.maps} target="_blank" rel="noreferrer">
-          <span className="rail-number">04</span>
-          <span>
-            Visit Wingfield<small>Call to arrange a viewing</small>
-          </span>
-          <ArrowUpRight size={20} />
+          <MapPin size={22} />
+          Find our showroom <ArrowUpRight size={18} />
         </a>
       </nav>
-      <section className="section collection home-collection">
+      <section className="section collection">
         <div className="section-title">
           <div>
-            <div className="section-label">
-              <span>01 /</span> THE STOCK
-            </div>
-            <h2>
-              A FEW FROM
-              <br />
-              THE FLOOR.
-            </h2>
+            <h2>Available cars</h2>
+            <p>Browse our current selection of performance vehicles.</p>
           </div>
-          <div className="section-title-aside">
-            <p>
-              HSV, Holden and performance cars.
-              <br />
-              Take a closer look at what’s available.
-            </p>
-            <Link className="text-link" to="/stock">
-              View all stock <ArrowUpRight size={19} />
-            </Link>
-          </div>
+          <Link className="text-link" to="/stock">
+            View all stock <ArrowRight size={19} />
+          </Link>
         </div>
         <div className="card-grid featured">
           {vehicles.slice(0, 3).map((car) => (
@@ -444,130 +306,91 @@ function Home({ saved, toggleSaved, onEnquire }) {
           ))}
         </div>
         <p className="sample-note">
-          Website preview · Stock, prices and photography are illustrative.
+          Sample stock and generic photos shown while the website is being
+          prepared.
         </p>
       </section>
       <section className="dealer-about" id="about">
-        <div className="about-copy">
-          <div className="section-label">
-            <span>02 /</span> THE PEOPLE
-          </div>
-          <h2>
-            ASK FOR
-            <br />
-            <span>MADI.</span>
-          </h2>
-          <p className="about-lead">
-            A personal conversation.
-            <br />A car you’re excited to drive.
+        <div>
+          <h2>MM Prestige Motors</h2>
+          <p>
+            We buy, sell and trade prestige and performance vehicles, with a
+            focus on HSV, Holden Commodore and Australian muscle cars.
           </p>
           <p>
-            At MM Prestige Motors, you deal with Madi. We buy, sell and trade
-            performance and prestige vehicles, with a focus on HSV, Holden
-            Commodore and Australian muscle.
+            Speak directly with Madi about a car, arrange a viewing or discuss a
+            trade-in.
           </p>
-          <p>
-            Ask about the car, arrange a viewing, or tell us what you’re looking
-            for. You’ll find us on Grand Junction Road in Wingfield.
-          </p>
-          <button className="button about-button" onClick={() => onEnquire({})}>
-            Contact Madi <ArrowUpRight size={19} />
+          <button className="button primary" onClick={() => onEnquire({})}>
+            Contact Madi <ArrowRight size={18} />
           </button>
         </div>
-        <div className="showroom-address">
-          <div className="section-label">THE WINGFIELD SHOWROOM</div>
-          <span className="address-postcode">
-            5013<span>SA</span>
-          </span>
-          <h3>
+        <div className="dealer-visit">
+          <h3>Visit our showroom</h3>
+          <p>
             {business.address}
             <br />
             {business.suburb}
-          </h3>
-          <p>
-            Call ahead and we’ll arrange a time
-            <br />
-            to show you the car.
           </p>
-          <a className="showroom-address-phone" href={`tel:${business.tel}`}>
-            {business.phone} <ArrowUpRight size={21} />
+          <a href={`tel:${business.tel}`}>
+            <Phone size={18} />
+            {business.phone}
           </a>
+          <p>Call to arrange a viewing.</p>
           <a
             className="text-link"
             href={business.maps}
             target="_blank"
             rel="noreferrer"
           >
-            Get directions <ArrowUpRight size={17} />
+            Directions on Google Maps <ArrowUpRight size={18} />
           </a>
         </div>
       </section>
       <section className="section reviews" id="reviews">
         <div className="section-title">
-          <div>
-            <div className="section-label">
-              <span>03 /</span> THE OWNERS
-            </div>
-            <h2>
-              IN THEIR
-              <br />
-              OWN WORDS.
-            </h2>
-          </div>
+          <h2>Customer reviews</h2>
           <div className="rating">
             <b>5.0</b>
             <span>
               <span className="stars">★★★★★</span>
-              <small>Google rating</small>
+              <small>Google reviews</small>
             </span>
           </div>
         </div>
-        <div className="owner-reviews">
-          <article className="owner-quote owner-quote-featured">
-            <span className="quote-mark" aria-hidden="true">
-              “
-            </span>
-            <blockquote>
-              The whole process was smooth, easy, and completely stress-free.
-            </blockquote>
-            <div className="owner-credit">
-              <b>Jackson</b>
-              <span>2016 HSV owner · Google review</span>
-            </div>
-          </article>
-          <div className="owner-quote-supporting">
-            <Review
-              quote="Beautiful and unique cars as well as amazing customer service"
-              name="Ahmad Shekib"
-              detail="Google review"
-            />
-            <Review
-              quote="Very happy with the service. Well done Madi! I bought 2017 SS VF Redline Ute very happy. Highly recommend mm prestige motors"
-              name="David"
-              detail="2017 SS VF Redline Ute owner"
-            />
-          </div>
+        <div className="review-grid">
+          <Review
+            quote="I honestly couldn’t be happier with the experience. From the first enquiry through to driving away, the whole process was smooth, easy, and completely stress-free."
+            name="Jackson"
+            detail="2016 HSV owner"
+          />
+          <Review
+            quote="Beautiful and unique cars as well as amazing customer service"
+            name="Ahmad Shekib"
+            detail="Google review"
+          />
+          <Review
+            quote="Very happy with the service. Well done Madi! I bought 2017 SS VF Redline Ute very happy. Highly recommend mm prestige motors"
+            name="David"
+            detail="2017 SS VF Redline Ute owner"
+          />
         </div>
-      </section>
-      <section className="showroom-contact">
-        <div>
-          <div className="section-label">BUY / SELL / TRADE</div>
-          <h2>LET’S TALK CARS.</h2>
-        </div>
-        <a href={`tel:${business.tel}`}>
-          {business.phone} <ArrowUpRight size={28} />
-        </a>
       </section>
     </main>
   );
 }
 function Review({ quote, name, detail }) {
   return (
-    <article className="owner-quote">
+    <article className="review">
+      <span className="stars">★★★★★</span>
       <blockquote>“{quote}”</blockquote>
-      <div className="owner-credit">
-        <b>{name}</b>
-        <span>{detail}</span>
+      <div className="review-person">
+        <span className="avatar">{name[0]}</span>
+        <span>
+          <b>{name}</b>
+          <small>{detail}</small>
+        </span>
+        <span className="google-g">G</span>
       </div>
     </article>
   );
@@ -626,12 +449,9 @@ function Stock({ saved, toggleSaved }) {
     <main className="stock-page">
       <section className="stock-page-bar">
         <div className="stock-intro">
-          <div className="eyebrow">MM / THE STOCK</div>
-          <h1>{status === "sold" ? "SOLD CARS." : "CURRENT STOCK."}</h1>
-          <p>
-            HSV, Holden and performance vehicles. View the car, check the
-            details, talk to Madi.
-          </p>
+          <div className="eyebrow">THE MM PRESTIGE COLLECTION</div>
+          <h1>Cars with character.</h1>
+          <p>Find the one that feels like you. Explore our performance collection.</p>
         </div>
         <span>
           <MapPin size={16} />
@@ -738,13 +558,12 @@ function Stock({ saved, toggleSaved }) {
           <div className="filter-contact">
             <MessageSquare size={24} />
             <h3>
-              LOOKING FOR
+              Something specific
               <br />
-              SOMETHING ELSE?
+              in mind?
             </h3>
             <p>
-              Tell Madi the model you’re looking for. We can talk through what’s
-              available.
+              Talk cars with Madi. We're here to help you find your next drive.
             </p>
             <a className="text-link" href={`tel:${business.tel}`}>
               Let's talk <ArrowUpRight size={17} />
@@ -797,9 +616,7 @@ function Stock({ saved, toggleSaved }) {
           <div className="results-heading">
             <span>
               <b>{filtered.length}</b> {filtered.length === 1 ? "car" : "cars"}{" "}
-              {status === "sold"
-                ? "in our sold collection"
-                : "in the collection"}
+              {status === "sold" ? "in our sold collection" : "in the collection"}
             </span>
             <div>
               <button
@@ -833,7 +650,7 @@ function Stock({ saved, toggleSaved }) {
           ) : (
             <div className="empty-state">
               <Search size={40} />
-              <h2>No matching vehicles.</h2>
+              <h2>No cars in this lane.</h2>
               <p>Try adjusting your filters or explore the full collection.</p>
               <button
                 className="button primary"
@@ -1010,8 +827,16 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
                 role="tabpanel"
                 aria-labelledby="overview-tab"
               >
-                <div className="eyebrow">MM / VEHICLE DETAILS</div>
-                <h2>VEHICLE OVERVIEW.</h2>
+                <div className="eyebrow">A CAR WITH CHARACTER</div>
+                <h2>
+                  {car.make === "HSV"
+                    ? "Australian muscle."
+                    : car.make === "Holden"
+                      ? "An Australian icon."
+                      : "Built for the enthusiast."}
+                  <br />
+                  <em>Unmistakable attitude.</em>
+                </h2>
                 <p>{car.description}</p>
                 <div className="overview-highlights">
                   <span>
@@ -1101,7 +926,7 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
               </>
             ) : (
               <>
-                <span className="price-label">ASKING PRICE</span>
+                <span className="price-label">YOUR NEXT DRIVE</span>
                 <strong>{money(car.price)}</strong>
                 <small>Excludes government charges · Sample price</small>
               </>
@@ -1131,9 +956,16 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
             target="_blank"
             rel="noreferrer"
           >
-            <div className="viewing-label">
-              <span>VIEW IN WINGFIELD</span>
-              <span>SA / 5013</span>
+            <div className="map-art" aria-hidden="true">
+              <span className="map-road road-one">GRAND JUNCTION RD</span>
+              <span className="map-road road-two" />
+              <span className="map-block b1" />
+              <span className="map-block b2" />
+              <span className="map-block b3" />
+              <span className="map-pin">
+                <MapPin size={26} fill="currentColor" />
+              </span>
+              <b>WINGFIELD</b>
             </div>
             <div className="map-address">
               <MapPin size={17} />
@@ -1153,7 +985,9 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
         <div className="section-title">
           <div>
             <div className="eyebrow">KEEP EXPLORING</div>
-            <h2>MORE AVAILABLE CARS.</h2>
+            <h2>
+              More cars. <em>More character.</em>
+            </h2>
           </div>
           <Link className="text-link" to="/stock">
             View all stock <ArrowUpRight size={18} />
