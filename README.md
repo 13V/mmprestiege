@@ -29,7 +29,7 @@ Import this directory as a Vite project, or deploy with the Vercel CLI from the 
 - `/`: photo-led home page, featured stock, dealer story, supplied customer reviews, call CTA.
 - `/stock`: available/sold/all collections; model search; make, body, transmission and price filters; sorting; saved cars.
 - `/stock/:id`: carousel with thumbnails and fullscreen viewing; overview/specification tabs; price, illustrative repayment calculator, enquiry, phone and location.
-- The website uses the selected black and red theme, with charcoal panels and locally hosted Michroma display lettering. Saved cars persist in the browser.
+- The website uses the selected black and red theme, with warm white type, condensed Barlow headings, specification-led cards and red action controls. See [the design language](docs/design-language.md). Saved cars persist in the browser.
 
 ## Stock management concept
 
