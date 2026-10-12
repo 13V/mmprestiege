@@ -29,7 +29,7 @@ Import this directory as a Vite project, or deploy with the Vercel CLI from the 
 - `/`: photo-led home page, featured stock, dealer story, supplied customer reviews, call CTA.
 - `/stock`: available/sold/all collections; model search; make, body, transmission and price filters; sorting; saved cars.
 - `/stock/:id`: carousel with thumbnails and fullscreen viewing; overview/specification tabs; price, illustrative repayment calculator, enquiry, phone and location.
-- The floating **Colour palettes** control switches between Performance red (black/white/red), Midnight blue (navy/silver/cobalt) Racing green (forest/ivory/bronze), and Commodore SS (black/silver/Holden-inspired red). The choice and saved cars persist in the browser.
+- The website uses the selected black and red theme, with charcoal panels and locally hosted Michroma display lettering. Saved cars persist in the browser.
 
 ## Stock management concept
 
@@ -65,8 +65,8 @@ The stock sidebar/grid and vehicle gallery/right-hand summary follow the user's 
 
 ## Browser validation
 
-With `npm run dev` running in another terminal, run `npm test`. The suite covers 29 stock, gallery, enquiry, palette, mobile and layout checks. It uses system Chromium when present; otherwise install Chromium with `npx playwright install chromium`. Override the server URL with `MM_BASE_URL` and the browser executable with `MM_CHROMIUM_PATH` if needed. Screenshots and a results JSON are written to the ignored `.screenshots/` directory.
+With `npm run dev` running in another terminal, run `npm test`. The suite covers 30 stock, gallery, enquiry, theme, navigation, mobile and layout checks. It uses system Chromium when present; otherwise install Chromium with `npx playwright install chromium`. Override the server URL with `MM_BASE_URL` and the browser executable with `MM_CHROMIUM_PATH` if needed. Screenshots and a results JSON are written to the ignored `.screenshots/` directory.
 
-The stock page uses the full viewport width, with filters against the left edge and three large vehicle columns on wide screens. Card titles sit above photos, following the supplied dealer reference. The home page prioritises stock, showroom contact details and customer reviews.
+The stock page follows the supplied dark inventory reference: a full-width black canvas, inset search and inventory rails, red dividers, three photo-first charcoal cards on wide screens, bookmark controls and compact specifications. The home page uses the same typography and prioritises stock, showroom contact details and customer reviews.
 
-Vehicle detail pages also use the full viewport width. The Commodore SS palette adds black navigation, silver surfaces and red trim; it is an independent visual theme inspired by the car, rather than an official Holden paint specification.
+Vehicle detail pages retain the full-width gallery and right-hand summary, using the same black canvas, charcoal panels and red controls. Standalone CRM, stock-management and presentation concepts retain their existing routes and content.

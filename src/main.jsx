@@ -34,7 +34,7 @@ import {
   MessageSquare,
   Plus,
   Minus,
-  Palette,
+  Bookmark,
   Copy,
   Send,
 } from "lucide-react";
@@ -56,9 +56,6 @@ function Logo() {
   );
 }
 function App() {
-  const [theme, setTheme] = useState(
-    () => localStorage.getItem("mm-theme") || "red",
-  );
   const [saved, setSaved] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("mm-saved") || "[]");
@@ -68,9 +65,9 @@ function App() {
   });
   const [enquiry, setEnquiry] = useState(null);
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem("mm-theme", theme);
-  }, [theme]);
+    document.documentElement.dataset.theme = "red";
+    localStorage.setItem("mm-theme", "red");
+  }, []);
   useEffect(
     () => localStorage.setItem("mm-saved", JSON.stringify(saved)),
     [saved],
@@ -81,11 +78,7 @@ function App() {
   return (
     <BrowserRouter>
       <ScrollReset />
-      <SiteLayout
-        theme={theme}
-        setTheme={setTheme}
-        onEnquire={() => setEnquiry({})}
-      >
+      <SiteLayout onEnquire={(details = {}) => setEnquiry(details)}>
         <Suspense
           fallback={
             <div role="status" style={{ padding: "40px" }}>
@@ -137,23 +130,23 @@ function App() {
       {enquiry && (
         <Enquiry
           vehicle={enquiry.id ? enquiry : null}
+          purpose={enquiry.purpose}
           onClose={() => setEnquiry(null)}
         />
       )}
     </BrowserRouter>
   );
 }
-function SiteLayout({ children, theme, setTheme, onEnquire }) {
+function SiteLayout({ children, onEnquire }) {
   const { pathname } = useLocation();
   if (["/stock-manager", "/crm"].includes(pathname.replace(/\/$/, "")))
     return children;
   return (
-    <>
+    <div className="dealership-site">
       <Header onEnquire={onEnquire} />
       {children}
       <Footer />
-      <PaletteSwitcher theme={theme} setTheme={setTheme} />
-    </>
+    </div>
   );
 }
 function ScrollReset() {
@@ -184,143 +177,69 @@ function ScrollReset() {
 }
 function Header({ onEnquire }) {
   const [open, setOpen] = useState(false);
-  const { pathname, search } = useLocation();
-  const soldView =
-    pathname === "/stock" &&
-    new URLSearchParams(search).get("status") === "sold";
-  useEffect(() => setOpen(false), [pathname, search]);
+  const { pathname, search, hash } = useLocation();
+  const soldView = pathname === "/stock" && new URLSearchParams(search).get("status") === "sold";
+  useEffect(() => setOpen(false), [pathname, search, hash]);
+  useEffect(() => {
+    const close = (event) => { if (event.key === "Escape") setOpen(false); };
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
+  }, []);
   return (
-    <>
-      <div className="utility">
-        <span>
-          <MapPin size={12} /> Wingfield, South Australia
-        </span>
-        <a href={`tel:${business.tel}`}>
-          <Phone size={12} />
-          {business.phone}
-        </a>
-      </div>
-      <header className="header">
-        <div className="header-inner">
-          <Logo />
-          <nav
-            className={open ? "nav open" : "nav"}
-            aria-label="Main navigation"
-          >
-            <Link className={pathname === "/" ? "active" : ""} to="/">
-              Home
-            </Link>
-            <Link
-              className={
-                pathname.startsWith("/stock") && !soldView ? "active" : ""
-              }
-              to="/stock"
-            >
-              Our stock
-            </Link>
-            <Link className={soldView ? "active" : ""} to="/stock?status=sold">
-              Sold cars
-            </Link>
-            <a href="/#about" onClick={() => setOpen(false)}>
-              Our story
-            </a>
-            <a href="/#reviews" onClick={() => setOpen(false)}>
-              Reviews
-            </a>
-            <button
-              className="button small primary"
-              onClick={() => {
-                setOpen(false);
-                onEnquire();
-              }}
-            >
-              Contact us <Phone size={16} />
-            </button>
-          </nav>
-          <button
-            className="menu-button"
-            aria-label={open ? "Close navigation" : "Open navigation"}
-            aria-expanded={open}
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <X /> : <Menu />}
+    <header className="header">
+      <div className="header-inner">
+        <Logo />
+        <nav id="main-navigation" className={open ? "nav open" : "nav"} aria-label="Main navigation">
+          <Link className={pathname === "/" && !hash ? "active" : ""} to="/">Home</Link>
+          <Link className={hash === "#about" ? "active" : ""} to="/#about">About us</Link>
+          <Link className={pathname.startsWith("/stock") && !soldView ? "active" : ""} to="/stock">Inventory</Link>
+          <Link className={hash === "#services" ? "active" : ""} to="/#services">Services</Link>
+          <div className="nav-extra">
+            <Link to="/stock?status=sold">Sold cars</Link>
+            <Link to="/#reviews">Customer reviews</Link>
+            <button onClick={() => { setOpen(false); onEnquire(); }}>Contact us <ArrowUpRight size={16} /></button>
+            <a href={`tel:${business.tel}`}>{business.phone}</a>
+          </div>
+        </nav>
+        <div className="header-actions">
+          <button className="sell-car-button" onClick={() => { setOpen(false); onEnquire({ purpose: "sell" }); }}>Sell your car</button>
+          <button className="menu-button" aria-controls="main-navigation" aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open} onClick={() => setOpen(!open)}>
+            {open ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
-      </header>
-    </>
+      </div>
+    </header>
   );
 }
 function CarCard({ car, saved, toggleSaved }) {
+  const isSaved = saved.includes(car.id);
   return (
     <article className={`car-card ${car.status === "sold" ? "sold-card" : ""}`}>
-      <div className="card-heading">
-        <Link className="card-title" to={`/stock/${car.id}`}>
-          {car.year} {car.make} {car.model}
+      <div className="card-media">
+        <Link className="card-photo" to={`/stock/${car.id}`} aria-label={`View ${car.year} ${car.make} ${car.model}`}>
+          <img src={car.image} alt={`Illustrative performance car photograph for ${car.make} ${car.model}`} loading="lazy" />
+          {car.status === "sold" && <span className="car-tag sold-tag">SOLD</span>}
         </Link>
-        <p className="card-variant">{car.variant}</p>
+        <button className={`save-car ${isSaved ? "is-saved" : ""}`} aria-label={`${isSaved ? "Unsave" : "Save"} ${car.make} ${car.model}`} aria-pressed={isSaved} onClick={() => toggleSaved(car.id)}>
+          <Bookmark size={18} fill={isSaved ? "currentColor" : "none"} />
+        </button>
       </div>
-      <Link
-        className="card-photo"
-        to={`/stock/${car.id}`}
-        aria-label={`View ${car.year} ${car.make} ${car.model}`}
-      >
-        <img
-          src={car.image}
-          alt={`Illustrative performance car photograph for ${car.make} ${car.model}`}
-          loading="lazy"
-        />
-        {car.status === "sold" && (
-          <span className="car-tag sold-tag">SOLD</span>
-        )}
-      </Link>
       <div className="card-body">
-        <div className="card-bottom">
-          <div>
-            {car.status === "sold" ? (
-              <b className="sold-price">Sold</b>
-            ) : (
-              <>
-                <strong>{money(car.price)}</strong>
-                <small>Excl. government charges</small>
-              </>
-            )}
-          </div>
-          <button
-            className={`save-car ${saved.includes(car.id) ? "is-saved" : ""}`}
-            aria-label={`${saved.includes(car.id) ? "Unsave" : "Save"} ${car.make} ${car.model}`}
-            aria-pressed={saved.includes(car.id)}
-            onClick={() => toggleSaved(car.id)}
-          >
-            <Heart
-              size={22}
-              fill={saved.includes(car.id) ? "currentColor" : "none"}
-            />
-          </button>
+        <div className="card-heading">
+          <Link className="card-title" to={`/stock/${car.id}`}>{car.make} {car.model}</Link>
+          <p className="card-location">Wingfield, SA · {car.year}</p>
         </div>
         <div className="card-specs">
-          <span>
-            <Gauge size={16} />
-            {number(car.kms)} km
-          </span>
-          <span>
-            <Cog size={16} />
-            {car.transmission}
-          </span>
-          <span>
-            <Fuel size={16} />
-            V8
-          </span>
+          <span><Gauge size={17} />{number(car.kms)} km</span>
+          <span><Cog size={17} />{car.transmission}</span>
+          <span><Fuel size={17} />{car.fuel}</span>
         </div>
-        <p className="card-location">
-          <MapPin size={14} />
-          Wingfield, South Australia
-        </p>
-        <Link className="card-detail-button" to={`/stock/${car.id}`}>
-          View vehicle <ChevronRight size={17} />
-        </Link>
-        <a className="card-call-button" href={`tel:${business.tel}`}>
-          Call {business.phone}
-        </a>
+        <div className="card-bottom">
+          <div>
+            {car.status === "sold" ? <b className="sold-price">Sold</b> : <><strong>{money(car.price)}</strong><small>Excl. government charges</small></>}
+          </div>
+          <Link className="card-detail-button" to={`/stock/${car.id}`}>View vehicle</Link>
+        </div>
       </div>
     </article>
   );
@@ -353,7 +272,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
           <span>Performance &amp; prestige vehicles</span>
         </div>
       </section>
-      <nav className="dealer-shortcuts" aria-label="Showroom links">
+      <nav className="dealer-shortcuts" id="services" aria-label="Showroom links">
         <Link to="/stock">
           <CarFront size={22} />
           Available cars <ArrowRight size={18} />
@@ -529,7 +448,11 @@ function Stock({ saved, toggleSaved }) {
   return (
     <main className="stock-page">
       <section className="stock-page-bar">
-        <h1>Used performance cars</h1>
+        <div className="stock-intro">
+          <div className="eyebrow">THE MM PRESTIGE COLLECTION</div>
+          <h1>Cars with character.</h1>
+          <p>Find the one that feels like you. Explore our performance collection.</p>
+        </div>
         <span>
           <MapPin size={16} />
           Wingfield, South Australia
@@ -693,7 +616,7 @@ function Stock({ saved, toggleSaved }) {
           <div className="results-heading">
             <span>
               <b>{filtered.length}</b> {filtered.length === 1 ? "car" : "cars"}{" "}
-              {status === "sold" ? "sold vehicles" : "available to view"}
+              {status === "sold" ? "in our sold collection" : "in the collection"}
             </span>
             <div>
               <button
@@ -1240,7 +1163,7 @@ function Dialog({ title, onClose, className = "", children }) {
     </div>
   );
 }
-function Enquiry({ vehicle, onClose }) {
+function Enquiry({ vehicle, purpose, onClose }) {
   const [ready, setReady] = useState(false),
     [copied, setCopied] = useState(false),
     [form, setForm] = useState({
@@ -1248,7 +1171,9 @@ function Enquiry({ vehicle, onClose }) {
       phone: "",
       message: vehicle
         ? `Hi Madi, I'm interested in the ${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.status === "sold" ? " or something similar" : ""}. Could we arrange a time to chat?`
-        : "Hi Madi, I’d like to chat about your performance car collection.",
+        : purpose === "sell"
+          ? "Hi Madi, I’d like to discuss selling or trading my car."
+          : "Hi Madi, I’d like to chat about your performance car collection.",
     });
   const text = `${form.message}\n\nName: ${form.name}\nPhone: ${form.phone}`;
   return (
@@ -1399,60 +1324,4 @@ function Footer() {
     </footer>
   );
 }
-function PaletteSwitcher({ theme, setTheme }) {
-  const [open, setOpen] = useState(false);
-  const options = [
-    ["red", "Performance red", "Black · White · Red"],
-    ["commodore", "Commodore SS", "Black · Silver · Holden red"],
-    ["blue", "Midnight blue", "Navy · Silver · Cobalt"],
-    ["green", "Racing green", "Forest · Ivory · Bronze"],
-  ];
-  return (
-    <div className="palette-control">
-      {open && (
-        <div className="palette-panel">
-          <div>
-            <b>Choose the look</b>
-            <button
-              onClick={() => setOpen(false)}
-              aria-label="Close colour palettes"
-            >
-              <X size={16} />
-            </button>
-          </div>
-          {options.map(([id, label, desc]) => (
-            <button
-              key={id}
-              className={theme === id ? "chosen" : ""}
-              onClick={() => setTheme(id)}
-              aria-pressed={theme === id}
-            >
-              <span className={`palette-swatches ${id}`}>
-                <i />
-                <i />
-                <i />
-              </span>
-              <span>
-                <b>{label}</b>
-                <small>{desc}</small>
-              </span>
-              {theme === id && <Check size={16} />}
-            </button>
-          ))}
-        </div>
-      )}
-      <button
-        className="palette-pill"
-        onClick={() => setOpen(!open)}
-        aria-expanded={open}
-        aria-label="Compare colour palettes"
-      >
-        <Palette size={16} />
-        <span>Colour palettes</span>
-        <span className={`palette-dot ${theme}`} />
-      </button>
-    </div>
-  );
-}
-
 createRoot(document.getElementById("root")).render(<App />);

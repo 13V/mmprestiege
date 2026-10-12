@@ -164,15 +164,32 @@ try {
     await expect(page.locator('.finance')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Find me something similar' })).toBeVisible();
   });
-  await check('Four colour palettes and persistence', async () => {
-    for (const [theme, name] of [['commodore', 'Commodore SS'], ['blue', 'Midnight blue'], ['green', 'Racing green'], ['red', 'Performance red']]) {
-      if (!(await page.locator('.palette-panel').isVisible())) await page.getByRole('button', { name: 'Compare colour palettes' }).click();
-      await page.locator('.palette-panel').getByRole('button', { name: new RegExp(name) }).click();
-      await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
-      await page.reload();
-      await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
-      expect(await page.evaluate(() => localStorage.getItem('mm-theme'))).toBe(theme);
-    }
+  await check('Black and red theme replaces previous palette preferences', async () => {
+    await page.evaluate(() => localStorage.setItem('mm-theme', 'green'));
+    await page.reload();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'red');
+    const theme = await page.evaluate(() => {
+      const style = getComputedStyle(document.documentElement);
+      return { background: style.getPropertyValue('--canvas').trim(), accent: style.getPropertyValue('--accent').trim() };
+    });
+    expect(theme).toEqual({ background: '#111111', accent: '#ed3545' });
+    await expect(page.locator('.palette-control')).toHaveCount(0);
+  });
+  await check('Desktop menu and sell-your-car enquiry', async () => {
+    await page.getByRole('button', { name: 'Open navigation' }).click();
+    await page.locator('.nav').getByRole('link', { name: 'Sold cars', exact: true }).click();
+    await expect(page).toHaveURL(/\/stock\?status=sold$/);
+    await expect(page.getByRole('button', { name: 'Open navigation' })).toHaveAttribute('aria-expanded', 'false');
+    await page.getByRole('button', { name: 'Open navigation' }).click();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('button', { name: 'Open navigation' })).toHaveAttribute('aria-expanded', 'false');
+    await page.getByRole('button', { name: 'Sell your car', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Enquire with MM Prestige Motors' });
+    await expect(dialog.getByLabel('Your message')).toHaveValue(/selling or trading my car/);
+    await page.keyboard.press('Escape');
+    await page.locator('.nav').getByRole('link', { name: 'Services', exact: true }).click();
+    await expect(page).toHaveURL(/\/#services$/);
+    await expect(page.getByRole('navigation', { name: 'Showroom links' })).toBeVisible();
   });
   await check('Footer story link scrolls from stock to about', async () => {
     await goStock();
@@ -195,7 +212,7 @@ try {
   await check('Mobile navigation opens, navigates and closes', async () => {
     await page.getByRole('button', { name: 'Open navigation' }).click();
     await expect(page.getByRole('button', { name: 'Close navigation' })).toHaveAttribute('aria-expanded', 'true');
-    await page.locator('.nav').getByRole('link', { name: 'Our stock', exact: true }).click();
+    await page.locator('.nav').getByRole('link', { name: 'Inventory', exact: true }).click();
     await expect(page).toHaveURL(/\/stock$/);
     await expect(page.getByRole('button', { name: 'Open navigation' })).toHaveAttribute('aria-expanded', 'false');
   });
@@ -230,14 +247,17 @@ try {
       });
     }
   }
-  await check('Stock fills a wide screen with three large columns', async () => {
+  await check('Stock matches the reference rails with three large columns', async () => {
     await page.setViewportSize({ width: 2493, height: 1265 });
     await goStock();
     const layout = await page.locator('.stock-layout').boundingBox();
     const sidebar = await page.locator('.filters').boundingBox();
-    expect(layout.x).toBeLessThanOrEqual(1);
+    expect(layout.x).toBe(0);
     expect(layout.width).toBe(2493);
-    expect(sidebar.x).toBeLessThanOrEqual(1);
+    expect(sidebar.x).toBeGreaterThan(90);
+    expect(sidebar.x).toBeLessThan(115);
+    expect(sidebar.width).toBeGreaterThan(290);
+    expect(sidebar.width).toBeLessThan(330);
     const first = await cards().nth(0).boundingBox();
     const third = await cards().nth(2).boundingBox();
     expect(first.width).toBeGreaterThan(500);
