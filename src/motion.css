@@ -1,0 +1,116 @@
+/* ==========================================================================
+   Motion: quiet, consistent movement that supports the prestige feel.
+   Heroes ease in on arrival, sections rise into view as they are reached,
+   red actions catch a soft sheen, the sell banner drifts and the showroom
+   pin breathes. Nothing here runs for visitors who prefer reduced motion.
+   ========================================================================== */
+:root {
+  --mm-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes mm-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes mm-hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+@keyframes mm-hero-settle {
+  from {
+    transform: scale(1.06);
+  }
+}
+@keyframes mm-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+}
+@keyframes mm-pin-pulse {
+  0% {
+    box-shadow: 0 0 0 0 #d4253680, 0 0 0 0 #d4253633;
+  }
+  100% {
+    box-shadow: 0 0 0 16px #d4253600, 0 0 0 32px #d4253600;
+  }
+}
+@keyframes mm-drift {
+  from {
+    transform: scale(1.1) translateY(-3%);
+  }
+  to {
+    transform: scale(1.1) translateY(3%);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Arrival: header, then the hero title, control bar and cards. */
+  .site-shell > .header {
+    animation: mm-fade-in 900ms var(--mm-ease-out) backwards;
+  }
+  .reference-hero-content > * {
+    animation: mm-hero-rise 1000ms var(--mm-ease-out) backwards;
+  }
+  .reference-hero-content > :nth-child(2) {
+    animation-delay: 110ms;
+  }
+  .reference-hero-content > :nth-child(3) {
+    animation-delay: 220ms;
+  }
+  .reference-hero .hero-footnote,
+  .reference-hero .hero-map,
+  .vehicle-hero-nav {
+    animation: mm-fade-in 1100ms var(--mm-ease-out) 380ms backwards;
+  }
+  .showroom-hero:not(.vehicle-hero) .reference-hero-image {
+    animation: mm-hero-settle 2400ms var(--mm-ease-out) backwards;
+  }
+
+  /* Scroll reveal (classes are added by useReveal in main.jsx). */
+  .reveal:not(.is-revealed) {
+    opacity: 0;
+  }
+  .reveal.is-revealed {
+    animation: mm-reveal 900ms var(--mm-ease-out) backwards;
+    animation-delay: var(--reveal-delay, 0ms);
+  }
+
+  /* A soft sheen crosses red actions on hover. */
+  :where(.button.primary, .hero-search > button) {
+    position: relative;
+    overflow: hidden;
+  }
+  .button.primary::after,
+  .hero-search > button::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 30%, #ffffff38 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 900ms var(--mm-ease-out);
+  }
+  .button.primary:hover::after,
+  .hero-search > button:hover::after {
+    transform: translateX(120%);
+  }
+
+  /* The showroom pin breathes. */
+  .location-pin {
+    animation: mm-pin-pulse 3200ms var(--mm-ease-out) infinite;
+  }
+}
+
+/* The sell banner photo drifts as it passes through the viewport. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reference-sell > img {
+      animation: mm-drift linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+  }
+}

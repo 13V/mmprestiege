@@ -55,6 +55,7 @@ import "./direction.css";
 import "./showroom-hero.css";
 import "./mm-prestige.css";
 import "./inner-pages.css";
+import "./motion.css";
 
 const StockManagerDemo = lazy(() => import("./StockManagerDemo"));
 const CrmDemo = lazy(() => import("./CrmDemo"));
@@ -154,8 +155,78 @@ function App() {
     </BrowserRouter>
   );
 }
+const REVEAL_TARGETS = [
+  ".marque-words li",
+  ".section-title",
+  ".offer-copy",
+  ".offer-performance",
+  ".offer-stack > *",
+  ".card-grid > .car-card",
+  ".carousel-controls",
+  ".reference-sell > div",
+  ".review-grid > .review",
+  ".contact-copy",
+  ".contact-location",
+  ".vehicle-gallery-bar",
+  ".spec-rows > div",
+  ".stock-toolbar",
+  ".stock-empty",
+  ".stock-help",
+  ".footer-main > div",
+];
+// Elements only start hidden once they are being observed, so anything
+// missed (or re-rendered with a new class list) simply stays visible.
+function useReveal(pathname) {
+  useEffect(() => {
+    if (
+      !("IntersectionObserver" in window) ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
+      return;
+    let observer;
+    const frame = requestAnimationFrame(() => {
+      const shell = document.querySelector(".site-shell");
+      if (!shell) return;
+      // Cards are revealed with their grid: on phones the grid scrolls
+      // sideways, so cards off to the side never cross the viewport.
+      const groups = new Map();
+      observer = new IntersectionObserver(
+        (entries) =>
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            groups
+              .get(entry.target)
+              ?.forEach((el) => el.classList.add("is-revealed"));
+            observer.unobserve(entry.target);
+          }),
+        { rootMargin: "0px 0px -6% 0px", threshold: 0.08 },
+      );
+      shell.querySelectorAll(REVEAL_TARGETS.join(",")).forEach((el) => {
+        if (el.closest(".reference-hero") || el.classList.contains("is-revealed"))
+          return;
+        // Elements kept across a route change are watched again until shown.
+        if (!el.classList.contains("reveal")) {
+          const index = [...el.parentElement.children].indexOf(el);
+          el.style.setProperty("--reveal-delay", `${Math.min(index, 5) * 70}ms`);
+          el.classList.add("reveal");
+        }
+        const target = el.closest(".card-grid") || el;
+        if (!groups.has(target)) {
+          groups.set(target, []);
+          observer.observe(target);
+        }
+        groups.get(target).push(el);
+      });
+    });
+    return () => {
+      cancelAnimationFrame(frame);
+      observer?.disconnect();
+    };
+  }, [pathname]);
+}
 function SiteLayout({ children, onEnquire }) {
   const { pathname } = useLocation();
+  useReveal(pathname);
   if (["/stock-manager", "/crm"].includes(pathname.replace(/\/$/, "")))
     return children;
   return (
@@ -515,7 +586,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
           ),
         )}
       </ul>
-      <section className="reference-offer" id="services">
+      <section className="reference-offer offer-bento" id="services">
         <div className="offer-copy">
           <h2>What we offer</h2>
           <p>
@@ -532,6 +603,9 @@ function Home({ saved, toggleSaved, onEnquire }) {
             </li>
             <li>
               <span>03</span>Buy, sell or trade your next car
+            </li>
+            <li>
+              <span>04</span>Viewings by arrangement in Wingfield
             </li>
           </ol>
           <Link className="button primary" to="/stock">
@@ -550,18 +624,21 @@ function Home({ saved, toggleSaved, onEnquire }) {
           />
           <ArrowUpRight className="offer-arrow" size={23} />
         </Link>
-        <button className="offer-trade" onClick={() => onEnquire({})}>
-          <h3>Next up.</h3>
-          <p>Buy. Sell. Trade.</p>
-          <img
-            src="/images/suv-cutout.webp"
-            alt="Illustrative white SUV"
-            loading="lazy"
-          />
-          <span>
-            Let’s talk cars <ArrowUpRight size={18} />
-          </span>
-        </button>
+        <div className="offer-stack">
+          <button className="offer-trade" onClick={() => onEnquire({})}>
+            <h3>Next up.</h3>
+            <p>Buy. Sell. Trade.</p>
+            <img
+              src="/images/suv-cutout.webp"
+              alt="Illustrative white SUV"
+              loading="lazy"
+            />
+            <span>
+              Let’s talk cars <ArrowUpRight size={18} />
+            </span>
+          </button>
+          <CallTile />
+        </div>
       </section>
       <section className="section collection reference-collection">
         <div className="section-title">
@@ -741,6 +818,16 @@ function Review({ quote, name, detail }) {
 function scrollToSection(element) {
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   element?.scrollIntoView({ behavior: reduce ? "instant" : "smooth", block: "start" });
+}
+function CallTile() {
+  return (
+    <a className="offer-call" href={`tel:${business.tel}`}>
+      <span className="offer-call-label">Talk directly with Madi</span>
+      <b>{business.phone}</b>
+      <small>Call to arrange a viewing.</small>
+      <Phone className="offer-arrow" size={20} />
+    </a>
+  );
 }
 function ShowroomLocation() {
   return (
@@ -1388,7 +1475,10 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
           </button>
         </div>
       </div>
-      <section className="reference-offer vehicle-overview" aria-labelledby="overview-heading">
+      <section
+        className="reference-offer offer-bento vehicle-overview"
+        aria-labelledby="overview-heading"
+      >
         <div className="offer-copy">
           <h2 id="overview-heading">
             {car.make === "HSV"
@@ -1426,20 +1516,24 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
           <img src={photos[photos.length > 1 ? 1 : 0]} alt="" loading="lazy" />
           <Expand className="offer-arrow" size={21} />
         </button>
-        <button
-          className="offer-trade vehicle-enquire-panel"
-          onClick={() => onEnquire(car)}
-        >
-          <h3>{sold ? "Just missed out?" : "Make it yours."}</h3>
-          <p>
-            {sold
-              ? "Madi can help you find something similar."
-              : `Talk to Madi about this ${name}.`}
-          </p>
-          <span>
-            {sold ? "Talk to Madi" : "Start an enquiry"} <ArrowUpRight size={18} />
-          </span>
-        </button>
+        <div className="offer-stack">
+          <button
+            className="offer-trade vehicle-enquire-panel"
+            onClick={() => onEnquire(car)}
+          >
+            <h3>{sold ? "Just missed out?" : "Make it yours."}</h3>
+            <p>
+              {sold
+                ? "Madi can help you find something similar."
+                : `Talk to Madi about this ${name}.`}
+            </p>
+            <span>
+              {sold ? "Talk to Madi" : "Start an enquiry"}{" "}
+              <ArrowUpRight size={18} />
+            </span>
+          </button>
+          <CallTile />
+        </div>
       </section>
       <section
         className="vehicle-specs"
