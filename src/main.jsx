@@ -1385,7 +1385,11 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
               <Heart size={16} fill={isSaved ? "currentColor" : "none"} />
               <span>{isSaved ? "Saved" : "Save"}</span>
             </button>
-            <button className="vehicle-share" onClick={share}>
+            <button
+              className="vehicle-share"
+              aria-label={copied ? "Link copied" : "Share this car"}
+              onClick={share}
+            >
               {copied ? <Check size={16} /> : <Share2 size={16} />}
               <span aria-live="polite">{copied ? "Link copied" : "Share"}</span>
             </button>
