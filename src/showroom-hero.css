@@ -1,0 +1,118 @@
+/* Center the discovery controls across the hero photograph. */
+.showroom-hero::after {
+  background: linear-gradient(
+    180deg,
+    #111c 0%,
+    #1110 21%,
+    #1110 62%,
+    #111c 100%
+  );
+}
+.showroom-hero .reference-hero-content {
+  top: 46%;
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, -50%);
+  width: min(880px, 76%);
+  text-align: center;
+}
+.showroom-hero h1 {
+  font-size: clamp(34px, 3.6vw, 54px);
+  text-shadow: 0 2px 18px #000b;
+}
+.showroom-hero .hero-search {
+  width: 100%;
+  margin: 23px 0 0;
+  background: #232326e8;
+  border-color: #ffffff24;
+}
+.hero-search > .themed-select {
+  flex: 1;
+  width: auto;
+  border-right: 1px solid #ffffff20;
+  --themed-select-font-size: 12px;
+}
+.showroom-hero .hero-search .themed-select__trigger {
+  height: 48px;
+}
+.hero-search > button[type="submit"] {
+  flex-shrink: 0;
+  font-size: 12px;
+  padding: 0 23px;
+}
+.showroom-hero .hero-footnote {
+  top: 100px;
+  bottom: auto;
+}
+.showroom-hero .hero-footnote p {
+  font-size: 9px;
+  text-shadow: 0 1px 8px #000b;
+}
+.showroom-hero .hero-footnote small {
+  color: #dedee0;
+}
+@media (max-width: 850px) {
+  .showroom-hero .reference-hero-content {
+    width: 76%;
+    top: 47%;
+  }
+  .showroom-hero h1 {
+    font-size: 32px;
+    line-height: 1.45;
+  }
+  .showroom-hero .hero-search {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    padding: 5px;
+  }
+  .showroom-hero .hero-search > button[type="submit"] {
+    grid-column: 1 / -1;
+    min-height: 34px;
+    margin: 5px 0 0;
+  }
+  .hero-search > .themed-select {
+    border-bottom: 1px solid #ffffff20;
+  }
+}
+@media (max-width: 600px) {
+  .showroom-hero {
+    height: 690px;
+    background: #262628;
+  }
+  .showroom-hero .reference-hero-image {
+    top: 89px;
+    height: 240px;
+    object-fit: contain;
+    object-position: center;
+  }
+  .showroom-hero::after {
+    background: linear-gradient(#1119, #1110 14%, #1110 58%, #1115);
+  }
+  .showroom-hero .reference-hero-content {
+    top: 335px;
+    bottom: auto;
+    left: 5%;
+    right: 5%;
+    width: auto;
+    padding: 0;
+    transform: none;
+  }
+  .showroom-hero h1 {
+    font-size: clamp(26px, 7vw, 38px);
+    line-height: 1.45;
+  }
+  .showroom-hero .hero-search {
+    margin-top: 20px;
+  }
+  .showroom-hero .hero-search .themed-select__trigger { height: 40px; font-size: 11px; }
+  .showroom-hero .hero-footnote {
+    top: auto;
+    bottom: 25px;
+    max-width: 140px;
+  }
+  .showroom-hero .hero-map {
+    bottom: 25px;
+  }
+}

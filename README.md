@@ -1,6 +1,6 @@
 # MM Prestige Motors website concept
 
-A responsive boutique performance dealership website with a home page, searchable available/sold stock and individual vehicle pages. Built with React, Vite and React Router. Fonts and images are local, so the preview does not depend on external image or font services.
+A responsive boutique performance dealership website with a home page, searchable available/sold stock and individual vehicle pages. Built with React, Vite and React Router. The public pages use the showroom design from the Impulse Automotive concept, adapted for MM Prestige Motors in black and red. Fonts and images are local, so the preview does not depend on external image or font services.
 
 ## Run
 
@@ -26,10 +26,10 @@ Import this directory as a Vite project, or deploy with the Vercel CLI from the 
 
 ## Pages and interactions
 
-- `/`: photo-led home page, featured stock, dealer story, supplied customer reviews, call CTA.
-- `/stock`: available/sold/all collections; model search; make, body, transmission and price filters; sorting; saved cars.
-- `/stock/:id`: carousel with thumbnails and fullscreen viewing; overview/specification tabs; price, illustrative repayment calculator, enquiry, phone and location.
-- The website uses the selected black and red theme, with charcoal panels and locally hosted Michroma display lettering. Saved cars persist in the browser.
+- `/`: full-width studio hero with make, model, budget and availability search; specialties lettering; "What we offer" service panels; a featured stock carousel with in-stock/sold/all tabs; a sell-your-car banner; supplied customer reviews; showroom contact and location.
+- `/stock`: available/sold/all collections; model search; make, body, transmission and price filters; sorting; saved cars. Hero searches arrive with their make, model and budget already applied.
+- `/stock/:id`: gallery with thumbnails and fullscreen viewing (available cars have two photos, sold cars one, and single photos have no carousel controls); overview/specification tabs; price, illustrative repayment calculator, enquiry, phone and location.
+- The website uses the black and red theme, with charcoal panels, keyboard-accessible themed dropdowns and locally hosted Michroma display lettering. Saved cars persist in the browser.
 
 ## Stock management concept
 
@@ -47,13 +47,13 @@ All customers are samples and edits stay in this page until it is refreshed or r
 
 ## Client presentation
 
-Open `/presentation/` for a six-slide walkthrough of the customer website, Telegram stock assistant and dealership CRM. Arrow keys and on-screen controls move between slides; **Read all** provides a responsive reading view, and **Try the demos** links to the working previews. The presentation uses actual interface screenshots and distinguishes the interactive concepts from the live connections still to be implemented.
+Open `/presentation/` for a six-slide walkthrough of the customer website, Telegram stock assistant and dealership CRM. Arrow keys and on-screen controls move between slides; **Read all** provides a responsive reading view, and **Try the demos** links to the working previews. The presentation uses actual interface screenshots and distinguishes the interactive concepts from the live connections still to be implemented. Its website screenshots show the previous public-site design; retake `public/presentation/assets/website-*.jpg` and rebuild if the presentation should show the current one.
 
 The email attachment is [`MM-Prestiege-Motors-Presentation.pdf`](public/presentation/MM-Prestiege-Motors-Presentation.pdf), also available as a [public GitHub download](https://raw.githubusercontent.com/13V/mmprestiege/main/public/presentation/MM-Prestiege-Motors-Presentation.pdf). The prepared text is in [`docs/presentation/email-draft.md`](docs/presentation/email-draft.md); the [email draft file](docs/presentation/MM-Prestiege-Motors-Email-Draft.eml) includes the PDF attachment and leaves the recipient unset. No email has been sent. Rebuild the PDF and email file after editing the presentation, screenshots or email text with `npm run presentation:build`. The exporter uses the same Chromium setup as the browser checks and needs no running web server. Production hosting has not been verified; the PDF and email draft are ready for use independently of hosting.
 
 ## Content
 
-Sample vehicle data is in `src/data.js`; photo assets are in `public/images`. Business address, phone and review excerpts come from the user's supplied MM Prestige Motors profile. All inventory, vehicle specifications, prices and generic photographs are illustrative; replace them with verified dealer-owned content before launch. The preview's photographs do not depict the sample HSV/Holden listings.
+Sample vehicle data is in `src/data.js`; photo assets are in `public/images`. The silver convertible hero, white SUV cutout and silver supercar banner are generated illustrative campaign images carried over from the Impulse concept; they do not depict MM Prestige stock or premises and are labelled as illustrative. The specialties strip uses lettering rather than manufacturer logos and does not claim current inventory. Business address, phone and review excerpts come from the user's supplied MM Prestige Motors profile. All inventory, vehicle specifications, prices and generic photographs are illustrative; replace them with verified dealer-owned content before launch. The preview's photographs do not depict the sample HSV/Holden listings.
 
 The enquiry form prepares a message and opens an SMS link to the supplied dealer number. It does not silently submit to a backend or claim delivery. Call and Google Maps links use the supplied business details. The map graphic is schematic, not live mapping.
 
@@ -61,12 +61,10 @@ The repayment calculator is illustrative, excludes fees/balloons and does not re
 
 ## Design references
 
-The stock sidebar/grid and vehicle gallery/right-hand summary follow the user's references. See [design notes](docs/design-research.md) and [photo sources](docs/photo-sources.md). Live boutique-site research was blocked by the environment's network policy; the two alternative palettes are design recommendations, not claims about inspected websites.
+The public pages adapt the showroom design developed for the Impulse Automotive concept: charcoal surfaces, wide Michroma headings, a studio hero with working search, staggered service panels, compact inventory cards, a sell-your-car banner and a rounded white footer. Its yellow controls are recoloured to MM's red. A deeper red (`#d42536`) sits behind white button text for at least 4.5:1 contrast, and a lighter red (`#f45b67`) is used for small text on charcoal; the `--accent` token remains `#ed3545`. MM-specific styles, including the reviews section, are in `src/mm-prestige.css`. The stock sidebar/grid and vehicle gallery/right-hand summary follow the user's references. See [design notes](docs/design-research.md) and [photo sources](docs/photo-sources.md). Live boutique-site research was blocked by the environment's network policy; the two alternative palettes are design recommendations, not claims about inspected websites.
 
 ## Browser validation
 
-With `npm run dev` running in another terminal, run `npm test`. The suite covers 30 stock, gallery, enquiry, theme, navigation, mobile and layout checks. It uses system Chromium when present; otherwise install Chromium with `npx playwright install chromium`. Override the server URL with `MM_BASE_URL` and the browser executable with `MM_CHROMIUM_PATH` if needed. Screenshots and a results JSON are written to the ignored `.screenshots/` directory.
+With `npm run dev` running in another terminal, run `npm test`. The suite covers 43 checks: branding and contact details, the black and red theme, sample-content disclosures, the CRM and stock-manager routes, hero search and themed dropdowns, the featured carousel, reviews, stock filters and sorting, saved cars, gallery and lightbox, finance, enquiries, keyboard focus, reduced motion, mobile navigation and filters, overflow at 360/390/768px, wide-screen layout, image loading and runtime errors. It uses system Chromium when present; otherwise install Chromium with `npx playwright install chromium`. Override the server URL with `MM_BASE_URL` and the browser executable with `MM_CHROMIUM_PATH` if needed. Screenshots and a results JSON are written to the ignored `.screenshots/` directory.
 
-The stock page follows the supplied dark inventory reference: a full-width black canvas, inset search and inventory rails, red dividers, three photo-first charcoal cards on wide screens, bookmark controls and compact specifications. The home page uses the same typography and prioritises stock, showroom contact details and customer reviews.
-
-Vehicle detail pages retain the full-width gallery and right-hand summary, using the same black canvas, charcoal panels and red controls. Standalone CRM, stock-management and presentation concepts retain their existing routes and content.
+The stock page keeps a black canvas, filter sidebar, three photo-first charcoal cards on wide screens, bookmark controls and compact specifications. Vehicle detail pages keep the gallery and right-hand summary with the same charcoal panels and red controls. Standalone CRM, stock-management and presentation concepts retain their existing routes, content and styling.

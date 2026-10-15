@@ -1,0 +1,687 @@
+/* Impulse Automotive: an original identity for the public website demo. */
+:root {
+  --ink: #181a1c; --dark: #191b1d; --accent: #373b3e; --accent-hover: #181a1c;
+  --paper: #ffffff; --canvas: #f4f4f2; --muted: #6b6f72; --line: #dedfdf; --soft: #e9e9e6;
+  --serif: Georgia, "Times New Roman", serif;
+  color: var(--ink); background: var(--paper); font-size: 14px;
+}
+html { scroll-behavior: smooth; }
+body { min-width: 320px; }
+h1, h2, h3 { color: inherit; }
+h1, h2 { font-family: var(--serif); font-weight: 400; letter-spacing: -1.3px; }
+h1 em, h2 em { font-family: inherit; font-style: normal; }
+.utility { height: 34px; padding: 0 4.6%; background: var(--dark); color: #d8d8d8; font-size: 10px; letter-spacing: .35px; }
+.utility svg { color: #a8aaad; }
+.header { height: 100px; background: var(--paper); color: var(--ink); border-bottom: 1px solid var(--line); }
+.header-inner { padding: 0 4.6%; gap: 34px; }
+.brand { gap: 12px; color: var(--ink); }
+.brand::before { content: ""; display: block; width: 71px; height: 49px; flex-shrink: 0; background: url("/impulse-mark.svg") center / contain no-repeat; }
+.brand b, .footer .brand b { font-family: Georgia, "Times New Roman", serif; font-size: 37px; line-height: .95; font-weight: 400; letter-spacing: -1.6px; }
+.brand small, .footer .brand small { text-align: right; font-family: Georgia, "Times New Roman", serif; font-size: 16px; font-style: italic; line-height: 1; letter-spacing: .15px; padding-top: 4px; font-weight: 400; }
+.nav { gap: 31px; font-size: 12px; font-weight: 700; }
+.nav > a { color: #565656; padding: 28px 0; }
+.nav > a.active, .nav > a:hover { color: var(--ink); }
+.nav > a.active::after { bottom: 18px; height: 2px; }
+.button, .button.small { min-height: 49px; padding: 13px 23px; gap: 22px; font-size: 12px; font-weight: 700; letter-spacing: .1px; }
+.button.primary { background: var(--accent); color: #fff; }
+.button.primary:hover { background: var(--accent-hover); }
+.button.outline { background: transparent; border-color: var(--line); }
+.button.white { color: var(--ink); background: var(--paper); }
+.button:hover svg, .text-link:hover svg { transform: translateX(3px); }
+.button svg, .text-link svg { transition: transform .2s; }
+.text-link { font-size: 12px; gap: 17px; }
+.menu-button { color: var(--ink); }
+.menu-button { min-width: 44px; min-height: 44px; justify-content: center; align-items: center; }
+
+.dealer-banner { grid-template-columns: 43% 57%; min-height: 560px; background: var(--canvas); }
+.dealer-intro { padding: 53px clamp(30px, 4.6vw, 100px); position: relative; }
+.dealer-location { color: #656565; text-transform: uppercase; letter-spacing: 1.6px; font-size: 10px; font-weight: 700; line-height: 1.7; margin-bottom: 23px; max-width: 350px; }
+.dealer-location::before { content: ""; display: inline-block; width: 20px; height: 2px; background: var(--accent); margin: 0 9px 3px 0; }
+.dealer-intro h1 { font-size: clamp(43px, 4.1vw, 79px); font-weight: 400; line-height: 1.09; letter-spacing: -2.1px; max-width: 610px; }
+.dealer-intro h1 em { color: var(--accent); }
+.dealer-intro > p:not(.dealer-location) { color: #606060; font-size: 14px; line-height: 1.9; max-width: 360px; margin: 25px 0 29px; }
+.dealer-intro .button { min-width: 208px; justify-content: space-between; }
+.dealer-phone { margin-top: 19px; font-size: 13px; font-weight: 700; gap: 10px; }
+.dealer-phone svg { color: var(--accent); width: 16px; }
+.dealer-banner-image { min-height: 560px; background: #2f2f2f; }
+.dealer-banner-image img { object-position: center 61%; }
+.dealer-banner-image::after { content: ""; position: absolute; inset: auto 0 0; height: 24%; pointer-events: none; background: linear-gradient(transparent, #191b1d66); }
+.dealer-banner-image > span { bottom: 23px; right: 25px; z-index: 1; background: #191b1ddf; color: #f3f3f3; padding: 7px 12px; font-size: 10px; line-height: 1.6; }
+.dealer-proof { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: var(--paper); padding: 27px 4.6%; border-bottom: 1px solid var(--line); }
+.dealer-proof > * { display: flex; gap: 14px; align-items: center; justify-content: center; min-width: 0; padding: 2px 24px; border-right: 1px solid var(--line); }
+.dealer-proof > :last-child { border: 0; }
+.dealer-proof svg { color: var(--accent); flex-shrink: 0; width: 25px; height: 25px; }
+.dealer-proof b, .dealer-proof strong { display: block; font-size: 14px; line-height: 1.5; font-weight: 700; }
+.dealer-proof small, .dealer-proof p { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; line-height: 1.7; }
+.dealer-shortcuts { background: var(--dark); padding: 0 4.6%; }
+.dealer-shortcuts > a, .dealer-shortcuts > button { min-height: 67px; font-size: 12px; font-weight: 600; border-right-color: #e5e5e526; gap: 15px; }
+.dealer-shortcuts svg { color: #a8aaad; width: 19px; height: 19px; }
+.dealer-shortcuts > a:hover, .dealer-shortcuts > button:hover { background: #ffffff09; }
+
+.dealer-home .section { padding: 63px 4.6% 58px; }
+.dealer-home .collection { background: var(--canvas); }
+.section-title h2, .dealer-home h2 { font-size: 37px; font-weight: 400; line-height: 1.18; letter-spacing: -1.25px; }
+.section-title p { color: var(--muted); font-size: 13px; margin-top: 11px; }
+.dealer-home .section-title { margin-bottom: 30px; }
+.featured { gap: 23px; }
+.car-card { background: var(--paper); border: 1px solid #dfdfdf; border-radius: 3px; box-shadow: 0 3px 0 #d9d9d933; transition: box-shadow .22s, border-color .22s; }
+.car-card:hover { border-color: #b4b4b4; box-shadow: 0 8px 25px #2323230d; transform: none; }
+.card-heading, .stock-grid .card-heading { padding: 21px 21px 16px; min-height: 101px; }
+.card-title, .stock-grid .card-title { font-size: 20px; font-weight: 700; letter-spacing: -.4px; }
+.card-variant, .stock-grid .card-variant { font-size: 12px; margin-top: 6px; line-height: 1.6; color: #6e6e6e; }
+.card-photo { aspect-ratio: 1.55; background: #e8e8e8; }
+.card-photo img { transition: transform .5s; }
+.car-card:hover .card-photo img { transform: scale(1.035); }
+.car-tag, .stock-grid .car-tag { font-size: 9px; letter-spacing: .65px; font-weight: 700; top: 14px; left: 14px; padding: 6px 9px; background: var(--accent); }
+.sold-tag { background: var(--dark); }
+.card-body, .stock-grid .card-body { padding: 20px; }
+.card-bottom { min-height: 66px; padding-bottom: 15px; border-bottom-color: #e0e0e0; }
+.card-bottom strong, .stock-grid .card-bottom strong { font-family: "Manrope", Arial, sans-serif; font-size: 29px; font-weight: 600; letter-spacing: -.9px; }
+.card-bottom small, .stock-grid .card-bottom small { font-size: 10px; line-height: 1.5; color: #717171; }
+.save-car, .stock-grid .save-car { border: 1px solid #e0e0e0; border-radius: 50%; color: #6c6c6c; width: 35px; height: 35px; }
+.save-car svg, .stock-grid .save-car svg { width: 17px; }
+.save-car:hover { border-color: var(--accent); color: var(--accent); }
+.card-specs, .stock-grid .card-specs { font-size: 11px; gap: 5px; padding: 16px 0 8px; color: #6c6c6c; }
+.card-specs svg, .stock-grid .card-specs svg { width: 14px; color: #7a7a7a; }
+.card-location { color: #6d6d6d; font-size: 11px; gap: 5px; margin: 6px 0 19px; }
+.card-detail-button, .card-call-button { min-height: 44px; font-size: 11px; border-radius: 2px; }
+.card-detail-button { background: var(--dark); border-color: var(--dark); }
+.card-call-button { border-color: #d1d1d1; background: transparent; margin-top: 8px; color: #4d4d4d; }
+.card-call-button:hover { background: var(--canvas); border-color: var(--ink); }
+.sample-note { color: #6e6e6e; font-size: 11px; line-height: 1.8; margin-top: 24px; }
+
+.dealer-about { background: var(--dark); color: #ffffff; padding: 66px 7%; grid-template-columns: 1.35fr 1fr; gap: 9%; border-bottom: 0; scroll-margin-top: 100px; }
+.dealer-about h2 { margin-bottom: 24px; }
+.dealer-about p { color: #c2c2c2; font-size: 14px; line-height: 1.95; max-width: 570px; margin-bottom: 17px; }
+.dealer-about .eyebrow { color: #a8aaad; }
+.dealer-about .button { color: #ffffff; border-color: #b8b8b870; margin-top: 15px; }
+.dealer-about .button:hover { background: #ffffff0b; border-color: #ffffff; }
+.dealer-visit { border-left-color: #e4e4e42e; padding-left: 43px; }
+.dealer-visit h3 { font-family: var(--serif); font-size: 27px; font-weight: 400; letter-spacing: -.7px; margin-bottom: 25px; }
+.dealer-visit > a { font-size: 14px; gap: 12px; color: #e4e4e4; }
+.dealer-visit > a svg { color: #a8aaad; flex-shrink: 0; }
+.dealer-visit > .text-link { font-size: 12px; color: #ffffff; border-color: #a1a1a160; margin-top: 9px; }
+.dealer-visit p { font-size: 12px; color: #b7b7b7; }
+.reviews { background: var(--paper); }
+.rating > b { font-family: "Manrope", Arial, sans-serif; font-size: 36px; font-weight: 500; }
+.rating small { font-size: 10px; color: #6c6c6c; }
+.stars { color: var(--accent); letter-spacing: 2px; font-size: 13px; }
+.review-grid { gap: 21px; }
+.review { background: #f5f5f5; border: 1px solid #e2e2e2; border-radius: 3px; padding: 27px; min-height: 253px; }
+.review-quote-mark { color: var(--accent); stroke-width: 1.5; }
+.review blockquote { color: #505050; font-size: 13px; line-height: 1.9; margin: 19px 0 26px; }
+.review-person b { font-size: 11px; }
+.review-person small { font-size: 9px; line-height: 1.7; }
+.avatar { background: #e6e6e6; color: #555555; font-family: "Manrope", sans-serif; font-size: 11px; font-weight: 700; }
+.google-g { color: #787878; font-size: 19px; }
+
+.footer { background: #151719; color: #e1e1e1; padding: 0 4.6%; border-top: 1px solid #ffffff10; }
+.footer-main { padding: 47px 0 39px; gap: 50px; grid-template-columns: 1.2fr 1fr 1.1fr; }
+.footer .brand { color: #ffffff; }
+.footer .brand::before { width: 64px; height: 45px; filter: brightness(0) invert(1); }
+.footer .brand b { font-size: 34px; }
+.footer .brand small { font-size: 14px; letter-spacing: .15px; }
+.footer-main p, .footer-main a:not(.brand) { color: #bebebe; font-size: 12px; line-height: 1.9; }
+.footer-label { font-size: 9px; letter-spacing: 1.7px; color: #9d9d9d; margin-bottom: 6px; }
+.footer-main a:hover { color: #ffffff; }
+.footer-appointment { color: #9d9d9d; font-size: 10px; }
+.footer-bottom { border-top-color: #e2e2e219; color: #a1a1a1; padding: 22px 0; font-size: 10px; }
+.footer-bottom > span:last-child { font-size: 9px; letter-spacing: .2px; }
+
+.stock-page, .vehicle-page { background: var(--canvas); }
+.stock-page-bar { background: var(--dark); min-height: 68px; padding: 15px 3%; }
+.stock-page-bar h1 { font-family: "Manrope", Arial, sans-serif; font-size: 24px; letter-spacing: -.5px; font-weight: 600; }
+.stock-page-bar > span { font-size: 11px; color: #c9c9c9; }
+.stock-layout { grid-template-columns: clamp(266px, 18.5vw, 380px) minmax(0, 1fr); }
+.filters { background: var(--paper); padding: 30px 24px; border-right: 1px solid var(--line); }
+.filter-heading h2 { font-family: "Manrope", Arial, sans-serif; font-size: 23px; font-weight: 600; }
+.search-field { height: 45px; background: #f7f7f7; border-color: #dbdbdb; }
+.search-field input { font-size: 12px; }
+.filter-applied, .filter-applied b { font-size: 11px; }
+.filter-group legend, .select-field { font-size: 13px; letter-spacing: .1px; }
+.filter-group { padding: 20px 0; }
+.check-row { font-size: 12px; min-height: 26px; }
+.check-row small { font-size: 10px; }
+.select-field select { font-size: 12px; border-color: #dbdbdb; background: #f7f7f7; }
+.filter-contact p, .filter-contact .text-link { font-size: 12px; }
+.stock-results { padding: 24px 27px 48px; }
+.stock-grid { gap: 20px; }
+.stock-tabs button { min-height: 43px; font-size: 12px; padding: 10px 15px; }
+.stock-tabs button.active { background: var(--dark); color: white; }
+.stock-tabs span { font-size: 10px; }
+.saved-button { font-size: 12px; }
+.results-heading { font-size: 12px; min-height: 70px; }
+.results-heading > span > b { font-size: 18px; }
+.sort-label, .sort-label select { font-size: 12px; }
+
+.vehicle-page .breadcrumbs { padding: 22px 3%; font-size: 11px; }
+.vehicle-layout { padding: 0 3%; gap: 28px; grid-template-columns: minmax(0, 1fr) clamp(345px, 31vw, 680px); }
+.gallery-main { background: #e4e4e4; border-radius: 3px; aspect-ratio: 1.5; }
+.gallery-thumbs { gap: 10px; }
+.gallery-thumbs button { border-radius: 2px; }
+.gallery-note { color: #6d6d6d; font-size: 10px; line-height: 1.8; }
+.gallery-count { font-size: 11px; background: #191b1ddf; }
+.vehicle-summary { background: var(--paper); border: 1px solid #dedede; padding: 29px; border-top: 3px solid var(--accent); }
+.vehicle-summary h1 { font-size: clamp(31px, 2.8vw, 50px); font-weight: 400; letter-spacing: -1.4px; line-height: 1.13; }
+.vehicle-summary .eyebrow { font-size: 10px; letter-spacing: 1.7px; }
+.vehicle-variant { font-size: 13px; color: #6e6e6e; }
+.summary-specs { padding: 25px 0; gap: 23px 20px; }
+.summary-specs small { color: #797979; font-size: 10px; }
+.summary-specs b { font-size: 13px; font-weight: 600; }
+.vehicle-price { padding: 24px 0; }
+.vehicle-price strong { font-family: "Manrope", Arial, sans-serif; font-size: 42px; font-weight: 600; letter-spacing: -1.5px; }
+.vehicle-price small { font-size: 11px; }
+.vehicle-price .price-label { font-size: 9px; }
+.vehicle-summary > .button { min-height: 52px; font-size: 12px; }
+.vehicle-phone { padding: 24px 0; }
+.vehicle-phone small { font-size: 10px; }
+.vehicle-phone b { font-size: 23px; }
+.map-address { font-size: 11px; background: #f0f0f0; color: var(--ink); }
+.map-address small { font-size: 10px; }
+.map-art { background-color: #e9e9e9; }
+.summary-stock, .summary-stock span { font-size: 9px; color: #797979; }
+.vehicle-info { background: var(--paper); border: 1px solid #dedede; padding: 0 28px 30px; margin-top: 26px; }
+.detail-tabs button { font-size: 12px; }
+.vehicle-info h2 { font-size: 31px; }
+.vehicle-info > div[role="tabpanel"] > p { color: #696969; font-size: 13px; line-height: 1.9; }
+.overview-highlights span { font-size: 12px; }
+.spec-table > div { font-size: 12px; padding: 14px 1px; }
+.vehicle-page .related { padding: 55px 3%; }
+.vehicle-page .related h2 { font-size: 34px; }
+.modal-backdrop { background: #151719b3; backdrop-filter: blur(4px); }
+.enquiry-dialog { border-radius: 4px; }
+.enquiry-dialog h2 { font-size: 32px; }
+.enquiry-dialog input, .enquiry-dialog textarea { background: #f9f9f9; border-color: #dbdbdb; }
+
+@media (min-width: 1800px) {
+  .dealer-banner, .dealer-banner-image { min-height: 660px; }
+  .dealer-intro > p:not(.dealer-location) { font-size: 16px; max-width: 430px; }
+  .dealer-home .section { padding: 75px 4.6%; }
+  .card-title, .stock-grid .card-title { font-size: 23px; }
+  .card-variant, .stock-grid .card-variant { font-size: 14px; }
+}
+@media (max-width: 1150px) {
+  .header-inner { padding: 0 3%; gap: 20px; }
+  .nav { gap: 23px; font-size: 11px; }
+  .nav .button { padding: 11px 17px; font-size: 11px; }
+  .brand b { font-size: 36px; }
+  .dealer-intro { padding: 38px 32px; }
+  .dealer-intro h1 { font-size: 46px; }
+  .dealer-intro > p:not(.dealer-location) { font-size: 13px; }
+  .dealer-banner, .dealer-banner-image { min-height: 540px; }
+  .dealer-proof > * { padding: 2px 14px; gap: 11px; }
+  .dealer-proof b, .dealer-proof strong { font-size: 12px; }
+  .dealer-proof small, .dealer-proof p { font-size: 10px; }
+  .card-specs, .stock-grid .card-specs { font-size: 10px; }
+  .card-heading, .stock-grid .card-heading { padding: 18px 17px 14px; }
+  .card-body, .stock-grid .card-body { padding: 17px; }
+  .card-title, .stock-grid .card-title { font-size: 18px; }
+  .stock-layout { grid-template-columns: 238px minmax(0, 1fr); }
+  .filters { padding: 28px 20px; }
+  .stock-results { padding: 23px 21px 45px; }
+  .stock-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .vehicle-layout { padding: 0 2%; gap: 22px; grid-template-columns: minmax(0, 1fr) 342px; }
+  .vehicle-summary { padding: 25px; }
+}
+@media (max-width: 850px) {
+  .header { height: 84px; }
+  .header-inner { padding: 0 23px; }
+  .brand::before { width: 63px; height: 43px; }
+  .brand b { font-size: 34px; }
+  .brand small { font-size: 14px; letter-spacing: .15px; padding-top: 4px; }
+  .nav { top: 84px; background: var(--paper); border-bottom-color: var(--line); }
+  .nav > a { color: var(--ink); font-size: 14px; }
+  .nav .button { font-size: 13px; min-height: 49px; }
+  .menu-button { color: var(--ink); }
+  .dealer-banner { grid-template-columns: 47% 53%; }
+  .dealer-intro { padding: 37px 27px; }
+  .dealer-intro h1 { font-size: 40px; letter-spacing: -1.5px; }
+  .dealer-location { font-size: 9px; letter-spacing: 1.1px; margin-bottom: 18px; }
+  .dealer-intro > p:not(.dealer-location) { line-height: 1.85; margin: 22px 0 25px; }
+  .dealer-intro .button { min-width: 0; font-size: 11px; gap: 19px; padding: 13px 20px; }
+  .dealer-banner, .dealer-banner-image { min-height: 510px; }
+  .dealer-phone { font-size: 12px; }
+  .dealer-proof { padding: 23px 18px; }
+  .dealer-proof > * { gap: 10px; padding: 0 12px; }
+  .dealer-proof svg { width: 21px; height: 21px; }
+  .dealer-proof b, .dealer-proof strong { font-size: 11px; }
+  .dealer-shortcuts { padding: 0; grid-template-columns: repeat(2, 1fr); }
+  .dealer-shortcuts > a, .dealer-shortcuts > button { min-height: 59px; font-size: 11px; gap: 12px; }
+  .dealer-shortcuts > :nth-child(2) { border-right: 0; }
+  .dealer-home .section { padding: 49px 25px; }
+  .section-title h2, .dealer-home h2 { font-size: 33px; }
+  .dealer-home .featured { gap: 19px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dealer-home .featured > .car-card:last-child { grid-column: 1 / -1; max-width: calc(50% - 9.5px); }
+  .card-specs, .stock-grid .card-specs { font-size: 10px; }
+  .dealer-about { padding: 49px 28px; gap: 32px; }
+  .dealer-about p { font-size: 13px; }
+  .dealer-visit { padding-left: 29px; }
+  .dealer-visit h3 { font-size: 25px; }
+  .dealer-visit > a { font-size: 12px; }
+  .review-grid { grid-template-columns: 1fr; }
+  .review { min-height: 0; padding: 25px; }
+  .review blockquote { margin: 15px 0 21px; }
+  .stock-layout { grid-template-columns: 220px minmax(0, 1fr); }
+  .stock-results { padding: 19px 15px 38px; }
+  .stock-grid { gap: 15px; }
+  .stock-grid .card-heading { padding: 15px 13px; min-height: 93px; }
+  .stock-grid .card-body { padding: 16px 13px; }
+  .stock-grid .card-title { font-size: 16px; }
+  .stock-grid .card-variant { font-size: 11px; }
+  .stock-grid .card-specs { font-size: 10px; flex-wrap: wrap; gap: 9px; }
+  .stock-grid .card-location { font-size: 10px; }
+  .stock-tabs button { font-size: 10px; padding: 9px; }
+  .saved-button { font-size: 10px; }
+  .vehicle-layout { gap: 18px; grid-template-columns: minmax(0, 1fr) 310px; }
+  .vehicle-summary { padding: 22px; }
+  .vehicle-summary h1 { font-size: 30px; }
+  .vehicle-variant { font-size: 12px; }
+  .summary-specs { gap: 21px 12px; }
+  .summary-specs small { font-size: 9px; }
+  .summary-specs b { font-size: 11px; }
+  .gallery-main { aspect-ratio: 1; }
+  .vehicle-price strong { font-size: 38px; }
+  .footer-main { grid-template-columns: 1fr 1fr; padding: 42px 0 30px; gap: 30px; }
+  .footer-main > div:first-child { grid-column: span 2; }
+}
+@media (max-width: 650px) {
+  .utility { height: 31px; padding: 0 18px; font-size: 9px; }
+  .header { height: 79px; }
+  .header-inner { padding: 0 20px; }
+  .brand { gap: 10px; }
+  .brand::before { width: 57px; height: 40px; }
+  .brand b { font-size: 32px; }
+  .brand small { font-size: 14px; letter-spacing: .15px; }
+  .nav { top: 79px; }
+  .nav > a { padding: 14px 0; }
+  .dealer-banner { display: flex; flex-direction: column; min-height: 0; }
+  .dealer-intro { padding: 36px 25px 33px; }
+  .dealer-intro h1 { font-size: clamp(42px, 10.2vw, 57px); max-width: 500px; letter-spacing: -1.7px; }
+  .dealer-location { font-size: 9px; line-height: 1.7; margin-bottom: 19px; letter-spacing: 1.2px; }
+  .dealer-intro > p:not(.dealer-location) { font-size: 13px; margin: 20px 0 23px; max-width: 340px; line-height: 1.85; }
+  .dealer-intro .button { min-height: 48px; font-size: 12px; gap: 28px; padding: 13px 22px; }
+  .dealer-phone { margin-top: 17px; font-size: 12px; }
+  .dealer-banner-image { min-height: 0; height: 300px; aspect-ratio: 1.38; }
+  .dealer-banner-image img { object-position: center 60%; }
+  .dealer-banner-image > span { font-size: 9px; bottom: 15px; right: 15px; }
+  .dealer-proof { display: flex; flex-wrap: wrap; padding: 22px 20px; gap: 15px; }
+  .dealer-proof > * { flex: 1 1 calc(50% - 15px); justify-content: flex-start; border: 0; padding: 0; gap: 11px; }
+  .dealer-proof > :last-child { flex-basis: 100%; padding-top: 14px; border-top: 1px solid var(--line); }
+  .dealer-proof b, .dealer-proof strong { font-size: 11px; }
+  .dealer-proof small, .dealer-proof p { font-size: 9px; }
+  .dealer-proof svg { width: 21px; height: 21px; }
+  .dealer-shortcuts > a, .dealer-shortcuts > button { font-size: 10px; gap: 9px; min-height: 55px; padding: 10px; }
+  .dealer-shortcuts svg { width: 16px; height: 16px; }
+  .dealer-home .section { padding: 39px 19px; }
+  .section-title { align-items: flex-start; gap: 19px; }
+  .section-title h2, .dealer-home h2 { font-size: 31px; }
+  .section-title p { font-size: 12px; margin-top: 9px; line-height: 1.8; }
+  .dealer-home .section-title { margin-bottom: 24px; }
+  .section-title > .text-link { font-size: 11px; padding: 9px 0; gap: 9px; white-space: nowrap; margin-top: 5px; }
+  .dealer-home .featured { grid-template-columns: 1fr; gap: 21px; }
+  .dealer-home .featured > .car-card:last-child { grid-column: auto; max-width: none; }
+  .card-heading, .stock-grid .card-heading { padding: 20px 19px 16px; min-height: 0; }
+  .card-title, .stock-grid .card-title { font-size: 20px; }
+  .card-variant, .stock-grid .card-variant { font-size: 12px; }
+  .card-photo { aspect-ratio: 1.48; }
+  .card-body, .stock-grid .card-body { padding: 20px 19px; }
+  .card-bottom strong, .stock-grid .card-bottom strong { font-size: 29px; }
+  .card-bottom small, .stock-grid .card-bottom small { font-size: 10px; }
+  .card-specs, .stock-grid .card-specs { font-size: 11px; flex-wrap: nowrap; gap: 5px; }
+  .card-specs svg, .stock-grid .card-specs svg { width: 14px; }
+  .card-location, .stock-grid .card-location { font-size: 11px; }
+  .card-detail-button, .card-call-button { min-height: 45px; font-size: 11px; }
+  .sample-note { font-size: 10px; margin-top: 22px; }
+  .dealer-about { display: block; padding: 44px 25px; }
+  .dealer-about h2 { font-size: 33px; }
+  .dealer-about p { font-size: 13px; line-height: 1.9; }
+  .dealer-about .button { font-size: 12px; }
+  .dealer-visit { border-left: 0; border-top: 1px solid #cdcdcd30; padding: 28px 0 0; margin-top: 32px; }
+  .dealer-visit h3 { font-size: 26px; margin-bottom: 20px; }
+  .dealer-visit > a { font-size: 13px; }
+  .dealer-visit p { font-size: 12px; }
+  .reviews .section-title { flex-direction: column; align-items: flex-start; gap: 18px; }
+  .reviews .rating { gap: 12px; }
+  .reviews .rating > b { font-size: 34px; }
+  .reviews .rating small { font-size: 10px; }
+  .review { padding: 25px; }
+  .review blockquote { font-size: 13px; }
+  .footer { padding: 0 25px; }
+  .footer-main { padding: 40px 0 30px; gap: 28px 22px; grid-template-columns: 1fr 1fr; }
+  .footer-main > div:first-child { grid-column: span 2; }
+  .footer .brand b { font-size: 34px; }
+  .footer-main p, .footer-main a:not(.brand) { font-size: 11px; }
+  .footer-label { font-size: 9px; }
+  .footer-bottom { align-items: flex-start; font-size: 9px; gap: 14px; }
+  .footer-bottom > span:last-child { font-size: 9px; }
+  .stock-page-bar { min-height: 59px; padding: 15px 19px; }
+  .stock-page-bar h1 { font-size: 25px; }
+  .stock-page-bar > span { display: none; }
+  .stock-layout { display: block; }
+  .stock-results { padding: 20px 17px 38px; }
+  .stock-grid { grid-template-columns: 1fr; gap: 21px; }
+  .stock-tabs button { font-size: 11px; min-height: 40px; padding: 9px 11px; }
+  .saved-button { font-size: 10px; }
+  .results-heading { font-size: 11px; padding: 14px 0; gap: 13px; }
+  .results-heading > div { width: 100%; }
+  .sort-label, .sort-label select { font-size: 11px; }
+  .filter-toggle { font-size: 11px; min-height: 41px; padding: 10px 14px; }
+  .filters.filters-open { padding: 28px 25px 80px; background: var(--paper); }
+  .filters .filter-heading h2 { font-size: 26px; }
+  .filters .filter-group legend, .filters .select-field { font-size: 14px; }
+  .filters .check-row { font-size: 14px; }
+  .vehicle-page .breadcrumbs { padding: 19px 19px; font-size: 10px; }
+  .vehicle-layout { display: flex; flex-direction: column; padding: 0 17px; gap: 23px; }
+  .gallery-main { aspect-ratio: 1.36; }
+  .gallery-thumbs { gap: 7px; }
+  .gallery-thumbs button { aspect-ratio: 1.45; }
+  .gallery-main .car-tag { font-size: 9px; }
+  .gallery-note { font-size: 9px; }
+  .vehicle-summary { padding: 27px 24px; }
+  .vehicle-summary h1 { font-size: 35px; line-height: 1.12; }
+  .vehicle-summary .eyebrow { font-size: 10px; }
+  .vehicle-variant { font-size: 12px; }
+  .summary-specs { gap: 22px 15px; }
+  .summary-specs small { font-size: 10px; }
+  .summary-specs b { font-size: 12px; }
+  .vehicle-price strong { font-size: 40px; }
+  .vehicle-price small { font-size: 10px; }
+  .vehicle-summary > .button { font-size: 12px; }
+  .vehicle-phone b { font-size: 24px; }
+  .map-address { font-size: 11px; }
+  .map-address small { font-size: 10px; }
+  .vehicle-info { margin-top: 23px; padding: 0 20px 27px; }
+  .detail-tabs button { font-size: 12px; padding: 19px 0; }
+  .vehicle-info h2 { font-size: 29px; }
+  .vehicle-info > div[role="tabpanel"] > p { font-size: 12px; }
+  .overview-highlights span, .spec-table > div { font-size: 11px; }
+  .vehicle-page .related { padding: 40px 17px; }
+  .vehicle-page .related h2 { font-size: 31px; }
+  .enquiry-dialog h2 { font-size: 29px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}
+
+/* Prestige refinement: photographic lead, editorial type and a quieter rhythm. */
+:root { font-size: 16px; }
+.utility { height: 32px; font-size: 11px; }
+.header { height: 104px; }
+.header-inner { padding: 0 5.5%; }
+.nav { font-size: 13px; font-weight: 500; gap: 28px; }
+.nav > a { color: #45484b; }
+.nav > a.active::after { height: 1px; bottom: 17px; }
+.nav .button { min-height: 48px; padding: 12px 21px; font-size: 12px; }
+.button, .button.small { border-radius: 0; min-height: 54px; padding: 15px 26px; font-size: 13px; font-weight: 600; }
+.button.primary { background: #191b1d; }
+.button.primary:hover { background: #35383b; }
+.text-link { font-size: 13px; font-weight: 500; padding: 11px 0; border-bottom-width: 1px; }
+.eyebrow { font-size: 10px; letter-spacing: 2px; font-weight: 600; }
+
+.dealer-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 640px;
+  height: clamp(640px, 76svh, 900px);
+  overflow: hidden;
+  color: #fff;
+  background: #141619;
+}
+.dealer-banner-image { position: absolute; inset: 0; min-height: 0; height: 100%; }
+.dealer-banner-image img { object-fit: cover; object-position: center 55%; }
+.dealer-banner-image::after {
+  inset: 0;
+  height: auto;
+  background: linear-gradient(90deg, #080a0de6 0%, #080a0d9e 36%, #080a0d33 69%, #080a0d17 100%), linear-gradient(0deg, #080a0d63, #080a0d08 60%);
+}
+.dealer-banner-image > span { background: transparent; color: #e1e2e3; right: 5.5%; bottom: 26px; font-size: 10px; padding: 0; letter-spacing: .4px; }
+.dealer-intro { position: relative; z-index: 2; align-self: auto; width: 100%; padding: 78px 6.5% 88px; }
+.dealer-location { color: #d8dadd; font-size: 11px; letter-spacing: 2px; font-weight: 500; margin-bottom: 26px; max-width: none; }
+.dealer-location::before { display: none; }
+.dealer-intro h1 { color: #fff; font-size: clamp(66px, 5.65vw, 92px); font-weight: 400; line-height: 1.04; letter-spacing: -2.8px; max-width: 800px; }
+.dealer-intro h1 em { display: block; color: #fff; font-style: italic; }
+.dealer-intro > p:not(.dealer-location) { color: #e0e2e3; font-size: 16px; line-height: 1.85; max-width: 415px; margin: 27px 0 34px; }
+.dealer-hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 29px; }
+.dealer-intro .button { min-width: 218px; min-height: 58px; font-size: 13px; background: #fff; color: #17191b; border-color: #fff; padding: 16px 26px; }
+.dealer-intro .button:hover { background: #e8e9e8; border-color: #e8e9e8; }
+.dealer-intro .button:focus-visible, .dealer-hero-visit:focus-visible { outline-color: #fff; }
+.dealer-hero-visit, .dealer-intro .dealer-phone { color: #f1f2f2; font-size: 13px; font-weight: 400; gap: 12px; border-bottom: 1px solid #ffffff70; padding: 10px 0; margin: 0; }
+.dealer-hero-visit svg, .dealer-intro .dealer-phone svg { color: #fff; }
+.dealer-intro > .dealer-phone { display: inline-flex; margin-top: 18px; }
+
+.dealer-proof { background: #fff; padding: 23px 6.5%; min-height: 83px; border-bottom: 0; }
+.dealer-proof > * { justify-content: center; border-color: #e6e7e7; padding: 0 24px; gap: 12px; }
+.dealer-proof svg { width: 20px; height: 20px; color: #5d6369; stroke-width: 1.4; }
+.dealer-proof b, .dealer-proof strong { font-size: 13px; font-weight: 500; letter-spacing: .1px; }
+.dealer-proof small { font-size: 11px; color: #7a7f83; }
+.dealer-shortcuts { background: #fff; color: #343a3e; padding: 0 6.5%; border-top: 1px solid #ececec; border-bottom: 1px solid #e4e5e5; }
+.dealer-shortcuts > a, .dealer-shortcuts > button { min-height: 56px; border-right-color: #e5e6e6; font-size: 12px; font-weight: 500; gap: 11px; }
+.dealer-shortcuts > :last-child { border-right: 0; }
+.dealer-shortcuts svg { color: #72777d; width: 16px; height: 16px; stroke-width: 1.4; }
+.dealer-shortcuts > a:hover, .dealer-shortcuts > button:hover { background: #f5f5f4; }
+
+.dealer-home .section { padding: 93px 6.5%; }
+.dealer-home .collection { background: #f5f5f3; }
+.section-title h2, .dealer-home h2 { font-size: clamp(36px, 3.15vw, 50px); line-height: 1.15; letter-spacing: -1.4px; }
+.section-title p { font-size: 15px; line-height: 1.85; margin-top: 16px; max-width: 620px; }
+.dealer-home .section-title { margin-bottom: 41px; gap: 28px; }
+.dealer-home .section-title .eyebrow { margin-bottom: 16px; color: #73787b; }
+.dealer-home .section-title > .text-link { margin-bottom: 5px; font-size: 13px; }
+.dealer-home .featured { gap: 29px; }
+.dealer-home .car-card { background: #fff; border: 0; border-radius: 0; box-shadow: none; }
+.dealer-home .car-card:hover { border: 0; box-shadow: none; }
+.dealer-home .card-photo { order: -1; aspect-ratio: 1.47; }
+.dealer-home .card-heading { padding: 26px 25px 14px; min-height: 0; }
+.dealer-home .card-title { font-size: 21px; font-weight: 600; line-height: 1.45; letter-spacing: -.4px; }
+.dealer-home .card-variant { font-size: 14px; line-height: 1.8; margin-top: 7px; color: #71767a; }
+.dealer-home .card-body { padding: 0 25px 13px; }
+.dealer-home .card-bottom { padding: 7px 0 20px; min-height: 70px; border-bottom: 0; }
+.dealer-home .card-bottom strong { font-size: 29px; font-weight: 500; letter-spacing: -.7px; }
+.dealer-home .card-bottom small { font-size: 10px; letter-spacing: .15px; margin-top: 6px; }
+.dealer-home .save-car { border: 0; width: 34px; height: 34px; color: #6f7477; }
+.dealer-home .save-car svg { stroke-width: 1.5; }
+.dealer-home .card-specs { font-size: 14px; color: #686e72; padding: 0 0 20px; gap: 8px 14px; flex-wrap: wrap; justify-content: flex-start; }
+.dealer-home .card-specs svg { display: none; }
+.dealer-home .card-location { display: none; }
+.dealer-home .card-detail-button { background: transparent; color: #25292c; border: 0; border-top: 1px solid #dedfdf; border-radius: 0; min-height: 57px; justify-content: space-between; font-size: 12px; font-weight: 500; padding: 15px 0; }
+.dealer-home .card-detail-button:hover { color: #000; background: transparent; border-color: #8e9497; }
+.dealer-home .card-call-button { display: none; }
+.dealer-home .sample-note { max-width: 850px; margin: 28px auto 0; color: #777d81; font-size: 11px; }
+
+.dealer-about { background: #fff; color: var(--ink); padding: 104px 6.5% 86px; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); align-items: center; gap: 46px 7%; }
+.dealer-story-image { position: relative; min-width: 0; margin: 0; }
+.dealer-story-image img { width: 100%; aspect-ratio: 1.08; object-fit: cover; object-position: center; filter: saturate(.65); }
+.dealer-story-image figcaption, .dealer-story-image > span, .dealer-story-image > small { display: block; font-size: 10px; letter-spacing: .25px; color: #747a7e; margin-top: 12px; line-height: 1.6; }
+.dealer-about-copy { padding: 8px 0; }
+.dealer-about .eyebrow { color: #777d82; font-size: 10px; font-weight: 500; letter-spacing: 1.7px; margin-bottom: 22px; }
+.dealer-about h2 { font-size: clamp(39px, 3.45vw, 57px); line-height: 1.13; margin-bottom: 28px; max-width: 620px; }
+.dealer-about p { font-size: 16px; line-height: 1.9; color: #61696f; max-width: 565px; margin-bottom: 21px; }
+.dealer-about .button { margin-top: 12px; background: #191b1d; color: #fff; border-color: #191b1d; min-height: 56px; font-size: 13px; }
+.dealer-about .button:hover { background: #383c40; border-color: #383c40; }
+.dealer-visit { grid-column: 1 / -1; display: grid; grid-template-columns: 1.25fr 1.25fr auto; align-items: start; gap: 18px 35px; border-left: 0; border-top: 1px solid #dedfdf; padding: 31px 0 0; margin-top: 11px; }
+.dealer-visit h3 { font-size: 27px; margin: 0; line-height: 1.4; }
+.dealer-visit p { font-size: 13px; color: #6b747a; line-height: 1.9; margin: 0; }
+.dealer-visit > a { font-size: 14px; color: #333c43; margin: 3px 0 0; gap: 11px; }
+.dealer-visit > a svg { color: #6d767e; width: 17px; height: 17px; }
+.dealer-visit > .text-link { color: #353c42; border-bottom-color: #a8afb3; font-size: 12px; margin: 0; justify-self: start; }
+.dealer-visit > p:nth-of-type(2) { grid-column: 2; }
+
+.dealer-home .reviews { background: #f5f5f3; padding-top: 93px; padding-bottom: 97px; }
+.rating { gap: 17px; }
+.rating > b { font-size: 35px; font-weight: 400; }
+.rating small { font-size: 11px; }
+.review-grid { gap: 0; }
+.review { min-height: 250px; border: 0; border-radius: 0; background: transparent; padding: 8px 35px 0; border-right: 1px solid #dcdede; }
+.review:first-child { padding-left: 0; }
+.review:last-child { padding-right: 0; border-right: 0; }
+.review-quote-mark { width: 23px; height: 23px; color: #8a9195; stroke-width: 1.3; }
+.review blockquote { font-family: Georgia, "Times New Roman", serif; font-size: 21px; line-height: 1.65; color: #41484d; margin: 18px 0 29px; }
+.review-person { gap: 12px; }
+.review-person b { font-size: 12px; font-weight: 600; }
+.review-person small { font-size: 10px; margin-top: 4px; color: #7d858a; }
+.avatar { background: #e8e9e7; font-size: 11px; width: 35px; height: 35px; }
+.google-g { color: #838a8f; font-size: 17px; font-weight: 500; }
+.footer { padding: 0 6.5%; }
+.footer-main { padding: 70px 0 60px; gap: 60px; }
+.footer-main p, .footer-main a:not(.brand) { font-size: 13px; line-height: 1.9; }
+.footer-label { font-size: 10px; letter-spacing: 1.6px; }
+.footer-bottom { padding: 24px 0; font-size: 10px; }
+
+/* Keep the inherited stock and detail tools, with comfortable reading sizes. */
+.search-field input, .select-field select, .filter-applied, .filter-applied b { font-size: 13px; }
+.filter-group legend, .select-field, .check-row { font-size: 14px; }
+.stock-grid .card-title { font-size: 20px; }
+.stock-grid .card-variant { font-size: 13px; }
+.stock-grid .card-specs, .stock-grid .card-location { font-size: 14px; }
+.stock-grid .card-detail-button, .stock-grid .card-call-button { font-size: 12px; min-height: 46px; }
+.vehicle-variant, .summary-specs b, .overview-highlights span { font-size: 14px; }
+.vehicle-info > div[role="tabpanel"] > p { font-size: 15px; line-height: 1.9; }
+.spec-table > div, .detail-tabs button { font-size: 14px; }
+.gallery-note { font-size: 11px; }
+
+@media (min-width: 1800px) {
+  .dealer-home .section { padding: 110px 6.5%; }
+  .dealer-intro { padding-left: 6.5%; }
+  .dealer-intro h1 { max-width: 950px; }
+  .dealer-intro > p:not(.dealer-location) { font-size: 17px; max-width: 480px; }
+  .dealer-home .card-title { font-size: 24px; }
+  .dealer-home .card-variant { font-size: 14px; }
+}
+@media (max-width: 1150px) {
+  .header-inner { padding: 0 4%; }
+  .nav { font-size: 12px; gap: 21px; }
+  .nav .button { padding: 12px 16px; font-size: 12px; }
+  .dealer-banner { min-height: 610px; height: 70svh; }
+  .dealer-intro { padding: 70px 6%; }
+  .dealer-intro h1 { font-size: 68px; }
+  .dealer-home .section { padding: 78px 5%; }
+  .dealer-home .featured { gap: 23px; }
+  .dealer-home .card-heading { padding: 22px 19px 12px; }
+  .dealer-home .card-body { padding: 0 19px 9px; }
+  .dealer-home .card-title { font-size: 19px; }
+  .dealer-home .card-specs { font-size: 14px; }
+  .dealer-about { padding: 83px 5% 67px; gap: 40px 6%; }
+  .dealer-about p { font-size: 15px; }
+  .review { padding-left: 25px; padding-right: 25px; }
+  .review blockquote { font-size: 19px; }
+}
+@media (max-width: 850px) {
+  .header { height: 86px; }
+  .header-inner { padding: 0 25px; }
+  .nav { top: 86px; gap: 15px; }
+  .nav > a { font-size: 15px; }
+  .dealer-banner { min-height: 580px; height: 66svh; }
+  .dealer-banner-image img { object-position: 58% center; }
+  .dealer-intro { padding: 65px 6%; }
+  .dealer-intro h1 { font-size: 61px; max-width: 610px; letter-spacing: -2px; }
+  .dealer-intro > p:not(.dealer-location) { font-size: 15px; max-width: 380px; margin: 26px 0 30px; }
+  .dealer-proof { padding: 22px 4%; }
+  .dealer-proof > * { padding: 0 13px; gap: 8px; }
+  .dealer-proof b { font-size: 11px; }
+  .dealer-proof small { font-size: 10px; }
+  .dealer-shortcuts { grid-template-columns: repeat(4, 1fr); padding: 0 3%; }
+  .dealer-shortcuts > a, .dealer-shortcuts > button { min-height: 57px; font-size: 10px; padding: 9px; border-bottom: 0; gap: 8px; }
+  .dealer-shortcuts svg:first-child { display: none; }
+  .dealer-shortcuts > :nth-child(2) { border-right: 1px solid #e5e6e6; }
+  .dealer-home .section { padding: 65px 5%; }
+  .section-title h2, .dealer-home h2 { font-size: 35px; }
+  .section-title p { font-size: 14px; }
+  .dealer-home .featured { gap: 23px; }
+  .dealer-home .featured > .car-card:last-child { max-width: calc(50% - 11.5px); }
+  .dealer-home .card-title { font-size: 20px; }
+  .dealer-home .card-specs { font-size: 14px; }
+  .dealer-about { padding: 68px 5% 60px; gap: 35px 5%; }
+  .dealer-story-image img { aspect-ratio: .85; }
+  .dealer-about h2 { font-size: 37px; }
+  .dealer-about p { font-size: 14px; line-height: 1.85; }
+  .dealer-visit { grid-template-columns: 1.1fr 1.3fr auto; gap: 12px 21px; }
+  .dealer-visit h3 { font-size: 24px; }
+  .dealer-visit p { font-size: 12px; }
+  .dealer-visit > a { font-size: 12px; }
+  .dealer-home .reviews { padding-top: 68px; padding-bottom: 70px; }
+  .review-grid { grid-template-columns: 1fr; }
+  .review, .review:first-child, .review:last-child { padding: 29px 0; min-height: 0; border-right: 0; border-bottom: 1px solid #dcdede; }
+  .review:last-child { padding-bottom: 0; border-bottom: 0; }
+  .review:first-child { padding-top: 0; }
+  .review blockquote { font-size: 21px; max-width: 660px; }
+  .footer-main { padding: 55px 0 45px; gap: 35px; }
+  .stock-grid .card-title { font-size: 17px; }
+  .stock-grid .card-specs { font-size: 14px; }
+}
+@media (max-width: 650px) {
+  .utility { height: 29px; font-size: 9px; padding: 0 21px; }
+  .header { height: 81px; }
+  .header-inner { padding: 0 21px; }
+  .nav { top: 81px; }
+  .dealer-banner { display: flex; flex-direction: row; align-items: center; min-height: 545px; height: 65svh; max-height: 670px; }
+  .dealer-banner-image { position: absolute; inset: 0; height: 100%; aspect-ratio: auto; min-height: 0; }
+  .dealer-banner-image img { object-position: 60% center; }
+  .dealer-banner-image::after { background: linear-gradient(90deg, #090b0eb8, #090b0e74), linear-gradient(0deg, #090b0e80, #090b0e05 80%); }
+  .dealer-banner-image > span { bottom: 18px; right: 22px; font-size: 8px; max-width: 250px; text-align: right; }
+  .dealer-intro { padding: 52px 26px 65px; }
+  .dealer-location { font-size: 9px; letter-spacing: 1.5px; margin-bottom: 26px; line-height: 1.8; }
+  .dealer-intro h1 { font-size: clamp(44px, 11.75vw, 60px); line-height: 1.08; letter-spacing: -1.8px; max-width: 460px; }
+  .dealer-intro > p:not(.dealer-location) { font-size: 14px; line-height: 1.9; max-width: 330px; margin: 25px 0 29px; color: #f0f1f1; }
+  .dealer-hero-actions { gap: 23px; }
+  .dealer-intro .button { min-width: 200px; min-height: 55px; padding: 15px 22px; font-size: 12px; }
+  .dealer-hero-visit { font-size: 12px; padding: 10px 0; }
+  .dealer-proof { display: flex; flex-wrap: nowrap; justify-content: space-between; gap: 15px; padding: 21px 24px; min-height: 69px; }
+  .dealer-proof > * { padding: 0; flex: 0 1 auto; gap: 7px; border-right: 0; }
+  .dealer-proof > :last-child { display: none; padding: 0; border: 0; }
+  .dealer-proof svg { width: 15px; height: 15px; }
+  .dealer-proof b { font-size: 10px; font-weight: 500; }
+  .dealer-proof small { display: none; }
+  .dealer-shortcuts { display: grid; grid-template-columns: repeat(2, 1fr); padding: 0; }
+  .dealer-shortcuts > a, .dealer-shortcuts > button { min-height: 44px; font-size: 10px; border-bottom: 1px solid #e8e9e9; gap: 8px; padding: 8px 10px; }
+  .dealer-shortcuts > :nth-child(2), .dealer-shortcuts > :last-child { border-right: 0; }
+  .dealer-shortcuts > :nth-child(n + 3) { border-bottom: 0; }
+  .dealer-home .section { padding: 58px 23px; }
+  .section-title h2, .dealer-home h2 { font-size: 33px; letter-spacing: -1.1px; }
+  .section-title p { font-size: 14px; margin-top: 15px; line-height: 1.85; }
+  .dealer-home .section-title { margin-bottom: 30px; gap: 19px; }
+  .dealer-home .section-title > .text-link { font-size: 12px; margin: 0; padding: 8px 0; }
+  .dealer-home .featured { grid-template-columns: 1fr; gap: 31px; }
+  .dealer-home .featured > .car-card:last-child { max-width: none; }
+  .dealer-home .card-photo { aspect-ratio: 1.38; }
+  .dealer-home .card-heading { padding: 23px 22px 13px; }
+  .dealer-home .card-title { font-size: 20px; line-height: 1.4; }
+  .dealer-home .card-variant { font-size: 14px; margin-top: 6px; }
+  .dealer-home .card-body { padding: 0 22px 10px; }
+  .dealer-home .card-bottom { padding-bottom: 19px; }
+  .dealer-home .card-bottom strong { font-size: 28px; }
+  .dealer-home .card-specs { font-size: 14px; gap: 8px 14px; padding-bottom: 20px; }
+  .dealer-home .card-detail-button { font-size: 12px; min-height: 54px; }
+  .dealer-home .sample-note { font-size: 10px; line-height: 1.9; margin-top: 25px; }
+  .dealer-about { display: grid; grid-template-columns: 1fr; padding: 61px 23px; gap: 36px; }
+  .dealer-story-image img { aspect-ratio: 1.17; }
+  .dealer-story-image figcaption, .dealer-story-image > small { font-size: 9px; }
+  .dealer-about-copy { padding: 0; }
+  .dealer-about .eyebrow { margin-bottom: 20px; font-size: 9px; line-height: 1.8; }
+  .dealer-about h2 { font-size: 36px; letter-spacing: -1.2px; margin-bottom: 24px; }
+  .dealer-about p { font-size: 15px; line-height: 1.9; }
+  .dealer-about .button { margin-top: 10px; font-size: 12px; min-height: 55px; }
+  .dealer-visit { grid-column: auto; display: flex; flex-direction: column; align-items: flex-start; gap: 15px; margin-top: 6px; padding-top: 29px; border-top-color: #dedfdf; }
+  .dealer-visit h3 { font-size: 26px; }
+  .dealer-visit p { font-size: 13px; margin: 0; }
+  .dealer-visit > a { font-size: 13px; margin: 0; }
+  .dealer-visit > .text-link { font-size: 12px; padding: 9px 0; }
+  .dealer-home .reviews { padding-top: 59px; padding-bottom: 60px; }
+  .reviews .section-title { gap: 23px; }
+  .reviews .rating > b { font-size: 32px; }
+  .reviews .rating small { font-size: 10px; }
+  .review blockquote { font-size: 20px; line-height: 1.65; margin: 15px 0 24px; }
+  .review-person b { font-size: 12px; }
+  .review-person small { font-size: 10px; }
+  .footer { padding: 0 25px; }
+  .footer-main { padding: 53px 0 39px; gap: 35px 24px; }
+  .footer-main p, .footer-main a:not(.brand) { font-size: 12px; }
+  .footer-label { font-size: 9px; }
+  .footer-bottom { font-size: 9px; }
+  .stock-grid .card-title { font-size: 20px; }
+  .stock-grid .card-specs, .stock-grid .card-location { font-size: 14px; }
+  .vehicle-variant, .summary-specs b { font-size: 13px; }
+  .vehicle-info > div[role="tabpanel"] > p { font-size: 14px; }
+  .spec-table > div, .detail-tabs button { font-size: 13px; }
+}

@@ -1,3 +1,5 @@
+// Preview records, not verified MM Prestige stock. Photographs are generic and
+// do not depict the listed HSV/Holden models; prices and specifications are samples.
 export const vehicles = [
   {
     id: "hsv-gts-2016",
@@ -15,6 +17,7 @@ export const vehicles = [
     power: "430 kW",
     status: "available",
     image: "/images/car-1.jpg",
+    gallery: ["/images/car-1.jpg", "/images/detail-2.jpg"],
     tag: "THE ICON",
     stock: "MM101",
     description:
@@ -36,6 +39,7 @@ export const vehicles = [
     power: "304 kW",
     status: "available",
     image: "/images/car-2.jpg",
+    gallery: ["/images/car-2.jpg", "/images/detail-2.jpg"],
     tag: "JUST ARRIVED",
     stock: "MM102",
     description:
@@ -57,6 +61,7 @@ export const vehicles = [
     power: "340 kW",
     status: "available",
     image: "/images/car-3.jpg",
+    gallery: ["/images/car-3.jpg", "/images/detail-2.jpg"],
     tag: "ENTHUSIAST PICK",
     stock: "MM103",
     description:
@@ -78,6 +83,7 @@ export const vehicles = [
     power: "304 kW",
     status: "available",
     image: "/images/car-4.jpg",
+    gallery: ["/images/car-4.jpg", "/images/detail-2.jpg"],
     tag: "",
     stock: "MM104",
     description:
@@ -99,6 +105,7 @@ export const vehicles = [
     power: "339 kW",
     status: "available",
     image: "/images/car-5.jpg",
+    gallery: ["/images/car-5.jpg", "/images/detail-2.jpg"],
     tag: "",
     stock: "MM105",
     description:
@@ -120,6 +127,7 @@ export const vehicles = [
     power: "340 kW",
     status: "available",
     image: "/images/car-6.jpg",
+    gallery: ["/images/car-6.jpg", "/images/detail-2.jpg"],
     tag: "",
     stock: "MM106",
     description:
@@ -141,6 +149,7 @@ export const vehicles = [
     power: "317 kW",
     status: "sold",
     image: "/images/car-7.jpg",
+    gallery: ["/images/car-7.jpg"],
     tag: "FOUND ITS NEXT DRIVER",
     stock: "MM097",
     description:
@@ -162,6 +171,7 @@ export const vehicles = [
     power: "304 kW",
     status: "sold",
     image: "/images/car-8.jpg",
+    gallery: ["/images/car-8.jpg"],
     tag: "FOUND ITS NEXT DRIVER",
     stock: "MM098",
     description:

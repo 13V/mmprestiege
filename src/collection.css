@@ -1,0 +1,234 @@
+/* Compact inventory cards shared across every page. */
+.car-card.collection-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #242426;
+  border: 0;
+  border-radius: 11px;
+  padding: 9px 9px 0;
+  box-shadow: none;
+  color: #f5f5f3;
+  overflow: hidden;
+}
+.car-card.collection-card:hover {
+  border: 0;
+  box-shadow: none;
+  transform: none;
+}
+.collection-card .card-photo {
+  order: -1;
+  aspect-ratio: 1.62;
+  border-radius: 7px;
+  background: #373739;
+  overflow: hidden;
+}
+.collection-card .card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+.collection-card:hover .card-photo img {
+  transform: scale(1.035);
+}
+.collection-card .card-heading {
+  min-height: 0;
+  padding: 16px 7px 12px;
+}
+.collection-card .card-title {
+  font-family: Manrope, sans-serif;
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: #fff;
+  letter-spacing: -0.2px;
+  text-transform: none;
+}
+.collection-card .card-variant {
+  font-size: 9px;
+  color: #a2a2a6;
+  line-height: 1.5;
+  margin-top: 5px;
+}
+.collection-card .card-body {
+  padding: 0 7px 17px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.collection-card .card-specs {
+  order: 0;
+  display: grid;
+  grid-template-columns: 1.25fr 0.8fr 1fr;
+  gap: 8px;
+  justify-content: stretch;
+  padding: 14px 0 16px;
+  border: 0;
+  border-top: 1px solid #363639;
+  border-bottom: 1px solid #363639;
+  color: #a4a4a8;
+  font-size: 9px;
+  margin: 0 0 15px;
+}
+.collection-card .card-specs > span {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+  white-space: normal;
+}
+.collection-card .card-specs svg {
+  display: block;
+  width: 19px;
+  height: 19px;
+  border: 1px solid #454548;
+  padding: 3px;
+  border-radius: 3px;
+  color: #a4a4a8;
+  stroke-width: 1.5;
+}
+.collection-card .card-specs small {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.collection-card .card-bottom {
+  order: 1;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  margin-top: auto;
+}
+.collection-card .card-bottom > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.collection-card .card-bottom strong {
+  font-family: Manrope, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: #fff;
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+}
+.collection-card .card-bottom small {
+  font-size: 7px;
+  line-height: 1.4;
+  margin: 0;
+  color: #909094;
+  max-width: 100px;
+}
+.collection-card .save-car {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+  width: 27px;
+  height: 29px;
+  background: #f6f6f2;
+  color: #606068;
+  border: 0;
+  border-radius: 4px;
+  box-shadow: none;
+}
+.collection-card .save-car svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 1.7;
+}
+.collection-card .save-car:hover,
+.collection-card .save-car.is-saved {
+  color: #fff;
+  background: var(--accent-strong);
+}
+.collection-card .card-detail-button {
+  order: 2;
+  width: auto;
+  position: absolute;
+  bottom: 20px;
+  right: 16px;
+  justify-content: flex-end;
+  min-height: 22px;
+  padding: 0;
+  background: transparent;
+  color: var(--accent-text);
+  font-size: 9px;
+  font-weight: 400;
+  border: 0;
+  gap: 3px;
+}
+.collection-card .card-detail-button svg {
+  display: none;
+}
+.collection-card .card-detail-button:hover {
+  background: transparent;
+  color: var(--accent-text-hover);
+  border: 0;
+  text-decoration: underline;
+}
+.collection-card .card-location,
+.collection-card .card-call-button {
+  display: none;
+}
+.collection-card .sold-tag {
+  background: var(--accent-strong);
+  color: #fff;
+  font-size: 8px;
+  top: 12px;
+  left: 12px;
+  padding: 5px 8px;
+}
+.collection-card .sold-price {
+  font-size: 16px;
+  color: #eee;
+}
+@media (min-width: 1900px) {
+  .collection-card .card-title {
+    font-size: 17px;
+  }
+  .collection-card .card-variant {
+    font-size: 11px;
+  }
+  .collection-card .card-specs {
+    font-size: 11px;
+  }
+  .collection-card .card-bottom strong {
+    font-size: 23px;
+  }
+  .collection-card .card-detail-button {
+    font-size: 11px;
+  }
+}
+@media (max-width: 700px) {
+  .collection-card .card-title {
+    font-size: 14px;
+  }
+  .collection-card .card-specs {
+    font-size: 10px;
+  }
+  .collection-card .card-bottom strong {
+    font-size: 20px;
+  }
+  .collection-card .card-detail-button {
+    font-size: 10px;
+  }
+  .collection-card .card-photo {
+    aspect-ratio: 1.6;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .collection-card .card-photo img {
+    transition: none;
+  }
+  .collection-card:hover .card-photo img {
+    transform: none;
+  }
+}
