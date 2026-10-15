@@ -52,10 +52,9 @@ import "./dealer.css";
 import "./foundation.css";
 import "./collection.css";
 import "./direction.css";
-import "./showroom.css";
 import "./showroom-hero.css";
-import "./vehicle-card.css";
 import "./mm-prestige.css";
+import "./inner-pages.css";
 
 const StockManagerDemo = lazy(() => import("./StockManagerDemo"));
 const CrmDemo = lazy(() => import("./CrmDemo"));
@@ -140,14 +139,7 @@ function App() {
           />
           <Route
             path="*"
-            element={
-              <div className="not-found">
-                <h1>That road ends here.</h1>
-                <Link className="button primary" to="/stock">
-                  Explore our stock <ArrowRight size={18} />
-                </Link>
-              </div>
-            }
+            element={<NotFound />}
           />
         </Routes>
         </Suspense>
@@ -168,7 +160,7 @@ function SiteLayout({ children, onEnquire }) {
     return children;
   return (
     <div
-      className={`site-shell ${pathname === "/" ? "home-shell" : "inner-shell"}`}
+      className="site-shell home-shell"
     >
       <Header onEnquire={onEnquire} />
       {children}
@@ -724,45 +716,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
             </div>
           </div>
         </div>
-        <div className="contact-location">
-          <a
-            className="contact-map"
-            href={business.maps}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="View MM Prestige Motors on Google Maps"
-          >
-            <div className="location-roads" aria-hidden="true">
-              <i />
-              <i />
-              <i />
-              <i />
-              <i />
-              <span>GRAND JUNCTION ROAD</span>
-              <b>WINGFIELD</b>
-            </div>
-            <span className="location-pin">
-              <MapPin size={25} fill="currentColor" />
-            </span>
-            <div className="location-address">
-              {business.address}
-              <br />
-              {business.suburb}
-              <small>
-                Open Google Maps for directions <ArrowUpRight size={12} />
-              </small>
-            </div>
-          </a>
-          <div className="contact-pills">
-            <a href={`tel:${business.tel}`}>
-              <Phone size={17} />
-              {business.phone}
-            </a>
-            <a href={business.maps} target="_blank" rel="noreferrer">
-              Get directions <ArrowUpRight size={17} />
-            </a>
-          </div>
-        </div>
+        <ShowroomLocation />
       </section>
     </main>
   );
@@ -784,6 +738,75 @@ function Review({ quote, name, detail }) {
     </figure>
   );
 }
+function scrollToSection(element) {
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  element?.scrollIntoView({ behavior: reduce ? "instant" : "smooth", block: "start" });
+}
+function ShowroomLocation() {
+  return (
+    <div className="contact-location">
+      <a
+        className="contact-map"
+        href={business.maps}
+        target="_blank"
+        rel="noreferrer"
+        aria-label="View MM Prestige Motors on Google Maps"
+      >
+        <div className="location-roads" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+          <i />
+          <i />
+          <span>GRAND JUNCTION ROAD</span>
+          <b>WINGFIELD</b>
+        </div>
+        <span className="location-pin">
+          <MapPin size={25} fill="currentColor" />
+        </span>
+        <div className="location-address">
+          {business.address}
+          <br />
+          {business.suburb}
+          <small>
+            Open Google Maps for directions <ArrowUpRight size={12} />
+          </small>
+        </div>
+      </a>
+      <div className="contact-pills">
+        <a href={`tel:${business.tel}`}>
+          <Phone size={17} />
+          {business.phone}
+        </a>
+        <a href={business.maps} target="_blank" rel="noreferrer">
+          Get directions <ArrowUpRight size={17} />
+        </a>
+      </div>
+    </div>
+  );
+}
+function NotFound({ title = "That road ends here." }) {
+  return (
+    <main className="dealer-home inner-page">
+      <section className="reference-hero showroom-hero page-hero not-found-hero">
+        <img
+          className="reference-hero-image"
+          src="/images/studio-hero.webp"
+          alt=""
+          fetchPriority="high"
+        />
+        <div className="reference-hero-content">
+          <h1>{title}</h1>
+          <div className="page-hero-actions">
+            <Link className="button primary" to="/stock">
+              Explore our stock <ArrowRight size={18} />
+            </Link>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
 function Stock({ saved, toggleSaved }) {
   const [params, setParams] = useSearchParams();
   const status = params.get("status") || "available";
@@ -797,6 +820,7 @@ function Stock({ saved, toggleSaved }) {
     [sort, setSort] = useState("newest"),
     [savedOnly, setSavedOnly] = useState(false),
     [filtersOpen, setFiltersOpen] = useState(false);
+  const results = useRef(null);
   const filtered = useMemo(
     () =>
       vehicles
@@ -825,6 +849,12 @@ function Stock({ saved, toggleSaved }) {
     [status, savedOnly, saved, search, makes, body, transmission, max, sort],
   );
   const filterCount = makes.length + !!search + !!body + !!transmission + !!max;
+  const counts = {
+    available: vehicles.filter((c) => c.status === "available").length,
+    sold: vehicles.filter((c) => c.status === "sold").length,
+    all: vehicles.length,
+  };
+  const carsLabel = (n) => `${n} ${n === 1 ? "car" : "cars"}`;
   function clear() {
     setSearch("");
     setMakes([]);
@@ -837,54 +867,152 @@ function Stock({ saved, toggleSaved }) {
     setParams(value === "available" ? {} : { status: value });
   }
   return (
-    <main className="stock-page">
-      <section className="stock-page-bar">
-        <div>
-          <span className="eyebrow">THE MM PRESTIGE COLLECTION</span>
+    <main className="dealer-home inner-page stock-browse">
+      <section className="reference-hero showroom-hero page-hero stock-hero">
+        <img
+          className="reference-hero-image"
+          src="/images/car-1.jpg"
+          alt=""
+          fetchPriority="high"
+        />
+        <div className="reference-hero-content">
           <h1>Cars with character.</h1>
+          <form
+            className="hero-search stock-search"
+            role="search"
+            aria-label="Search the collection"
+            onSubmit={(event) => {
+              event.preventDefault();
+              scrollToSection(results.current);
+            }}
+          >
+            <label className="hero-field">
+              <Search size={16} aria-hidden="true" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Make, model or year"
+                aria-label="Search stock"
+              />
+            </label>
+            <ThemedSelect
+              label="Sort stock"
+              value={sort}
+              onChange={setSort}
+              options={[
+                { value: "newest", label: "Newest model" },
+                { value: "price-low", label: "Price: low to high" },
+                { value: "price-high", label: "Price: high to low" },
+                { value: "kms", label: "Lowest kilometres" },
+              ]}
+            />
+            <button type="submit">Search</button>
+          </form>
+        </div>
+        <div className="hero-footnote">
           <p>
-            Find the one that feels like you. Explore our performance
-            collection.
+            The MM Prestige collection.
+            <br />
+            HSV, Holden and Australian muscle.
+            <br />
+            Wingfield, South Australia.
+          </p>
+          <small>Sample stock and generic photos</small>
+        </div>
+        <button
+          className="hero-map stock-count-card"
+          onClick={() => changeStatus(status === "sold" ? "available" : "sold")}
+        >
+          <span>
+            <CarFront size={22} />
+            <b>{status === "sold" ? "View available cars" : "View sold cars"}</b>
+          </span>
+          <p>
+            {carsLabel(counts.available)} available
+            <br />
+            {counts.sold} recently sold
+          </p>
+        </button>
+      </section>
+      <section
+        className="reference-collection stock-collection"
+        ref={results}
+        aria-labelledby="results-heading"
+      >
+        <div className="section-title">
+          <h2 id="results-heading">
+            {status === "sold"
+              ? "Sold cars"
+              : status === "all"
+                ? "All cars"
+                : "Available cars"}
+          </h2>
+          <p className="results-count" aria-live="polite">
+            <b>{filtered.length}</b> {filtered.length === 1 ? "car" : "cars"}
           </p>
         </div>
-        <span>
-          <MapPin size={16} />
-          Wingfield, South Australia
-        </span>
-      </section>
-      <div className="stock-layout">
-        <aside className={`filters ${filtersOpen ? "filters-open" : ""}`}>
-          <div className="filter-heading">
-            <h2>Refine your search</h2>
+        <div className="home-collection-toolbar stock-toolbar">
+          <div
+            className="home-collection-tabs collection-tabs"
+            role="group"
+            aria-label="Vehicle availability"
+          >
+            {[
+              ["available", "Available"],
+              ["sold", "Sold"],
+              ["all", "All cars"],
+            ].map(([value, label]) => (
+              <button
+                key={value}
+                className={status === value ? "selected" : ""}
+                aria-pressed={status === value}
+                onClick={() => changeStatus(value)}
+              >
+                {label}
+                <span>{counts[value]}</span>
+              </button>
+            ))}
+          </div>
+          <div className="stock-toolbar-actions">
             <button
-              className="close-filter"
+              className={`saved-toggle ${savedOnly ? "selected" : ""}`}
+              aria-pressed={savedOnly}
+              onClick={() => setSavedOnly(!savedOnly)}
+            >
+              <Heart size={15} />
+              Saved <span>{saved.length}</span>
+            </button>
+            <button
+              className="filters-button"
+              aria-expanded={filtersOpen}
+              aria-controls="stock-filters"
+              onClick={() => setFiltersOpen(true)}
+            >
+              <SlidersHorizontal size={15} />
+              Filters {filterCount > 0 && `(${filterCount})`}
+            </button>
+          </div>
+        </div>
+        <aside
+          id="stock-filters"
+          className={`collection-filters ${filtersOpen ? "is-open" : ""}`}
+          aria-label="Filters"
+        >
+          <div className="collection-filters-head">
+            <h3>Refine your search</h3>
+            <button
+              className="filters-close"
               aria-label="Close filters"
               onClick={() => setFiltersOpen(false)}
             >
               <X size={20} />
             </button>
           </div>
-          <label className="search-field">
-            <Search size={18} />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Make, model or year"
-              aria-label="Search stock"
-            />
-          </label>
-          <div className="filter-applied">
-            <b>
-              {filterCount
-                ? `${filterCount} active filter${filterCount === 1 ? "" : "s"}`
-                : "No filters applied"}
-            </b>
-            <button onClick={clear}>Reset</button>
-          </div>
-          <fieldset className="filter-group">
+          <fieldset className="filter-pills">
             <legend>Make</legend>
+            <div className="filter-pill-row">
             {[...new Set(vehicles.map((car) => car.make))].map((make) => (
-              <label className="check-row" key={make}>
+              <label className="filter-pill" key={make}>
                 <input
                   type="checkbox"
                   checked={makes.includes(make)}
@@ -908,11 +1036,13 @@ function Stock({ saved, toggleSaved }) {
                 </small>
               </label>
             ))}
+            </div>
           </fieldset>
-          <fieldset className="filter-group">
+          <fieldset className="filter-pills">
             <legend>Body style</legend>
+            <div className="filter-pill-row">
             {[...new Set(vehicles.map((car) => car.body))].map((v) => (
-              <label className="check-row" key={v}>
+              <label className="filter-pill" key={v}>
                 <input
                   type="radio"
                   name="body"
@@ -923,12 +1053,13 @@ function Stock({ saved, toggleSaved }) {
               </label>
             ))}
             {body && (
-              <button className="clear-link" onClick={() => setBody("")}>
+              <button className="filter-clear" onClick={() => setBody("")}>
                 All body styles
               </button>
             )}
+            </div>
           </fieldset>
-          <div className="select-field">
+          <div className="filter-select">
             <span>Transmission</span>
             <ThemedSelect
               label="Transmission"
@@ -941,7 +1072,7 @@ function Stock({ saved, toggleSaved }) {
               ]}
             />
           </div>
-          <div className="select-field">
+          <div className="filter-select">
             <span>Maximum price</span>
             <ThemedSelect
               label="Maximum price"
@@ -949,141 +1080,79 @@ function Stock({ saved, toggleSaved }) {
               onChange={setMax}
               options={[
                 { value: "", label: "No maximum" },
-                ...[50000, 60000, 70000, 100000].map(
-                  (value) => ({ value: String(value), label: money(value) }),
-                ),
+                ...[50000, 60000, 70000, 100000].map((value) => ({
+                  value: String(value),
+                  label: money(value),
+                })),
               ]}
             />
           </div>
-          <div className="filter-contact">
-            <MessageSquare size={24} />
-            <h3>
-              Something specific
-              <br />
-              in mind?
-            </h3>
-            <p>
-              Talk cars with Madi. We're here to help you find your next drive.
-            </p>
-            <a className="text-link" href={`tel:${business.tel}`}>
-              Let's talk <ArrowUpRight size={17} />
-            </a>
+          <div className="filter-status">
+            <span>
+              {filterCount
+                ? `${filterCount} active filter${filterCount === 1 ? "" : "s"}`
+                : "No filters applied"}
+            </span>
+            <button className="filter-reset" onClick={clear}>
+              Reset
+            </button>
           </div>
           <button
-            className="button primary mobile-show-results"
+            className="button primary filter-show"
             onClick={() => setFiltersOpen(false)}
           >
             Show {filtered.length} cars <ArrowRight size={17} />
           </button>
         </aside>
-        <section className="stock-results">
-          <div className="stock-toolbar">
-            <div
-              className="stock-tabs"
-              role="group"
-              aria-label="Vehicle availability"
-            >
-              {[
-                ["available", "Available"],
-                ["sold", "Sold"],
-                ["all", "All cars"],
-              ].map(([value, label]) => (
-                <button
-                  className={status === value ? "selected" : ""}
-                  onClick={() => changeStatus(value)}
-                  key={value}
-                >
-                  {label}
-                  <span>
-                    {
-                      vehicles.filter(
-                        (c) => value === "all" || c.status === value,
-                      ).length
-                    }
-                  </span>
-                </button>
-              ))}
-            </div>
+        {filtered.length ? (
+          <div className="card-grid collection-grid">
+            {filtered.map((car) => (
+              <CarCard key={car.id} {...{ car, saved, toggleSaved }} />
+            ))}
+          </div>
+        ) : (
+          <div className="stock-empty">
+            <Search size={28} />
+            <h3>No cars in this lane.</h3>
+            <p>Try adjusting your filters or explore the full collection.</p>
             <button
-              className={`saved-button ${savedOnly ? "selected" : ""}`}
-              onClick={() => setSavedOnly(!savedOnly)}
-              aria-pressed={savedOnly}
+              className="button primary"
+              onClick={() => {
+                clear();
+                changeStatus("all");
+              }}
             >
-              <Heart size={16} />
-              Saved <span>{saved.length}</span>
+              Reset all filters <ArrowRight size={16} />
             </button>
           </div>
-          <div className="results-heading">
-            <span>
-              <b>{filtered.length}</b> {filtered.length === 1 ? "car" : "cars"}{" "}
-              {status === "sold"
-                ? "in our sold collection"
-                : "in the collection"}
-            </span>
-            <div>
-              <button
-                className="filter-toggle"
-                onClick={() => setFiltersOpen(true)}
-              >
-                <SlidersHorizontal size={17} />
-                Filters {filterCount > 0 && `(${filterCount})`}
-              </button>
-              <div className="sort-label">
-                <span>Sort by</span>
-                <ThemedSelect
-                  label="Sort stock"
-                  value={sort}
-                  onChange={setSort}
-                  options={[
-                    { value: "newest", label: "Newest model" },
-                    { value: "price-low", label: "Price: low to high" },
-                    { value: "price-high", label: "Price: high to low" },
-                    { value: "kms", label: "Lowest kilometres" },
-                  ]}
-                />
-              </div>
-            </div>
+        )}
+        <aside className="stock-help" aria-labelledby="stock-help-heading">
+          <div>
+            <h3 id="stock-help-heading">Something specific in mind?</h3>
+            <p>Talk cars with Madi. We're here to help you find your next drive.</p>
           </div>
-          {filtered.length ? (
-            <div className="card-grid stock-grid">
-              {filtered.map((car) => (
-                <CarCard key={car.id} {...{ car, saved, toggleSaved }} />
-              ))}
-            </div>
-          ) : (
-            <div className="empty-state">
-              <Search size={40} />
-              <h2>No cars in this lane.</h2>
-              <p>Try adjusting your filters or explore the full collection.</p>
-              <button
-                className="button primary"
-                onClick={() => {
-                  clear();
-                  changeStatus("all");
-                }}
-              >
-                Reset all filters <ArrowRight size={18} />
-              </button>
-            </div>
-          )}
-          <p className="sample-note">
-            Preview collection · All vehicle imagery, stock, prices and
-            specifications are illustrative.
-          </p>
-        </section>
-      </div>
+          <a className="button stock-help-call" href={`tel:${business.tel}`}>
+            <Phone size={16} />
+            Call {business.phone}
+          </a>
+        </aside>
+        <p className="sample-note">
+          Preview collection · All vehicle imagery, stock, prices and
+          specifications are illustrative.
+        </p>
+      </section>
     </main>
   );
 }
 function Vehicle({ saved, toggleSaved, onEnquire }) {
   const { id } = useParams();
   const car = vehicles.find((c) => c.id === id);
+  const specsSection = useRef(null);
   const [index, setIndex] = useState(0),
     [zoom, setZoom] = useState(false),
-    [tab, setTab] = useState("overview");
+    [loaded, setLoaded] = useState({ src: null, lowRes: false });
   useEffect(() => {
     setIndex(0);
-    setTab("overview");
     setZoom(false);
   }, [id]);
   const photos = car ? (car.gallery?.length ? car.gallery : [car.image]) : [];
@@ -1098,15 +1167,19 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
     window.addEventListener("keydown", fn);
     return () => window.removeEventListener("keydown", fn);
   }, [zoom, photos.length]);
-  if (!car)
-    return (
-      <div className="not-found">
-        <h1>We couldn't find that car.</h1>
-        <Link className="button primary" to="/stock">
-          Back to stock
-        </Link>
-      </div>
-    );
+  if (!car) return <NotFound title="We couldn't find that car." />;
+  const sold = car.status === "sold";
+  const photoState =
+    loaded.src !== photos[index]
+      ? "is-loading"
+      : loaded.lowRes
+        ? "is-contained"
+        : "";
+  const isSaved = saved.includes(car.id);
+  const name = `${car.make} ${car.model}`;
+  const photoLabel = (i) =>
+    `Illustrative ${name} photo ${i + 1} of ${photos.length}`;
+  const counter = `${String(index + 1).padStart(2, "0")} / ${String(photos.length).padStart(2, "0")}`;
   const specs = [
     ["Year", car.year],
     ["Make", car.make],
@@ -1121,308 +1194,300 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
     ["Stock number", car.stock],
     ["Location", "Wingfield, SA"],
   ];
+  const highlights = [
+    `${number(car.kms)} km on the clock`,
+    `${car.transmission} transmission`,
+    car.engine,
+    `${car.power} · ${car.fuel}`,
+  ];
+  const related = vehicles
+    .filter((c) => c.id !== id && c.status === "available")
+    .slice(0, 4);
   return (
-    <main className="vehicle-page">
-      <div className="breadcrumbs">
-        <Link to="/stock">
-          <ArrowLeft size={16} />
-          Back to stock
-        </Link>
-        <span>
-          Our collection <ChevronRight size={12} />
-          {car.make} {car.model}
-        </span>
-      </div>
-      <div className="vehicle-layout">
-        <div className="vehicle-left">
-          <section className="gallery" aria-label="Vehicle photo gallery">
-            <div className="gallery-main">
-              <img
-                src={photos[index] || photos[0]}
-                alt={`Illustrative ${car.make} ${car.model} photo ${index + 1} of ${photos.length}`}
-              />
-              <span
-                className={`car-tag ${car.status === "sold" ? "sold-tag" : ""}`}
-              >
-                {car.status === "sold" ? "SOLD" : "AVAILABLE NOW"}
-              </span>
-              <button
-                className="gallery-expand"
-                aria-label="Expand vehicle photos"
-                onClick={() => setZoom(true)}
-              >
-                <Expand size={19} />
-              </button>
-              {photos.length > 1 && (
-                <button
-                  className="gallery-prev gallery-nav"
-                  aria-label="Previous vehicle photo"
-                  onClick={() => move(-1)}
-                >
-                  <ChevronLeft size={24} />
-                </button>
-              )}
-              {photos.length > 1 && (
-                <button
-                  className="gallery-next gallery-nav"
-                  aria-label="Next vehicle photo"
-                  onClick={() => move(1)}
-                >
-                  <ChevronRight size={24} />
-                </button>
-              )}
-              <span className="gallery-count">
-                {String(index + 1).padStart(2, "0")} /{" "}
-                {String(photos.length).padStart(2, "0")}
-              </span>
-            </div>
-            {photos.length > 1 && (
-              <div className="gallery-thumbs">
-                {photos.map((photo, i) => (
-                  <button
-                    key={i}
-                    className={i === index ? "current" : ""}
-                    aria-label={`Show vehicle photo ${i + 1}`}
-                    aria-pressed={i === index}
-                    onClick={() => setIndex(i)}
-                  >
-                    <img src={photo} alt="" />
-                    <span>{String(i + 1).padStart(2, "0")}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-            <p className="gallery-note">
-              Generic preview photography · Images do not depict this vehicle.
-            </p>
-          </section>
-          <section className="vehicle-info">
-            <div
-              className="detail-tabs"
-              role="tablist"
-              aria-label="Vehicle information"
-            >
-              <button
-                role="tab"
-                id="overview-tab"
-                aria-controls="overview-panel"
-                aria-selected={tab === "overview"}
-                className={tab === "overview" ? "active" : ""}
-                onClick={() => setTab("overview")}
-              >
-                Overview
-              </button>
-              <button
-                role="tab"
-                id="specifications-tab"
-                aria-controls="specifications-panel"
-                aria-selected={tab === "specifications"}
-                className={tab === "specifications" ? "active" : ""}
-                onClick={() => setTab("specifications")}
-              >
-                Specifications
-              </button>
-            </div>
-            {tab === "overview" ? (
-              <div
-                id="overview-panel"
-                role="tabpanel"
-                aria-labelledby="overview-tab"
-              >
-                <div className="eyebrow">A CAR WITH CHARACTER</div>
-                <h2>
-                  {car.make === "HSV"
-                    ? "Australian muscle."
-                    : car.make === "Holden"
-                      ? "An Australian icon."
-                      : "Built for the enthusiast."}
-                  <br />
-                  <em>Unmistakable attitude.</em>
-                </h2>
-                <p>{car.description}</p>
-                <div className="overview-highlights">
-                  <span>
-                    <CarFront size={22} />
-                    {car.engine}
-                  </span>
-                  <span>
-                    <Cog size={22} />
-                    {car.transmission}
-                  </span>
-                  <span>
-                    <Gauge size={22} />
-                    {number(car.kms)} km
-                  </span>
-                </div>
-                <p className="detail-note">
-                  This listing is a design preview. Vehicle details and pricing
-                  are sample data. Contact the dealer to confirm actual stock,
-                  condition and specifications.
-                </p>
-              </div>
-            ) : (
-              <div
-                id="specifications-panel"
-                role="tabpanel"
-                aria-labelledby="specifications-tab"
-                className="spec-table"
-              >
-                {specs.map(([label, value]) => (
-                  <div key={label}>
-                    <span>{label}</span>
-                    <b>{value}</b>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
+    <main className="dealer-home inner-page vehicle-detail">
+      <section
+        className={`reference-hero showroom-hero page-hero vehicle-hero ${photoState}`}
+        aria-label="Vehicle photo gallery"
+      >
+        <div
+          className="vehicle-hero-ambient"
+          style={{ backgroundImage: `url(${photos[index]})` }}
+          aria-hidden="true"
+        />
+        <img
+          className="reference-hero-image"
+          src={photos[index]}
+          alt={photoLabel(index)}
+          fetchPriority="high"
+          // Small placeholder photos are shown whole over a blurred backdrop
+          // instead of being stretched across the slab.
+          onLoad={(e) =>
+            setLoaded({
+              src: photos[index],
+              lowRes: e.currentTarget.naturalWidth < 1200,
+            })
+          }
+        />
+        <div className="hero-footnote">
+          <p>
+            Stock no. {car.stock}
+            <br />
+            Wingfield, South Australia
+            <br />
+            {sold ? "Sold" : "Available now"}
+          </p>
+          <small className="vehicle-photo-note">
+            Generic preview photography · Images do not depict this vehicle.
+          </small>
         </div>
-        <aside className="vehicle-summary">
-          <div className="vehicle-summary-top">
-            <span className="vehicle-identity">
-              <span
-                className="vehicle-year"
-                aria-label={`Model year ${car.year}`}
-              >
-                {car.year}
-              </span>
-              <span className="vehicle-marque">{car.make}</span>
-            </span>
+        <aside className="hero-map vehicle-price-card" aria-label="Price">
+          <div className="vehicle-price-top">
+            <span className="vehicle-price-label">{sold ? "Status" : "Asking price"}</span>
             <button
-              className={`detail-save ${saved.includes(car.id) ? "is-saved" : ""}`}
-              aria-label={
-                saved.includes(car.id) ? "Unsave vehicle" : "Save vehicle"
-              }
-              aria-pressed={saved.includes(car.id)}
+              className={`vehicle-save ${isSaved ? "is-saved" : ""}`}
+              aria-label={isSaved ? "Unsave vehicle" : "Save vehicle"}
+              aria-pressed={isSaved}
               onClick={() => toggleSaved(car.id)}
             >
-              <Heart
-                size={21}
-                fill={saved.includes(car.id) ? "currentColor" : "none"}
-              />
+              <Heart size={17} fill={isSaved ? "currentColor" : "none"} />
             </button>
           </div>
-          <h1>{car.model}</h1>
-          <p className="vehicle-variant">{car.variant}</p>
-          <div className="summary-specs">
-            <span>
-              <Gauge size={21} />
-              <small>Kilometres</small>
-              <b>{number(car.kms)} km</b>
-            </span>
-            <span>
-              <Cog size={21} />
-              <small>Transmission</small>
-              <b>{car.transmission}</b>
-            </span>
-            <span>
-              <CalendarDays size={21} />
-              <small>Year</small>
-              <b>{car.year}</b>
-            </span>
-            <span>
-              <Fuel size={21} />
-              <small>Engine</small>
-              <b>{car.engine}</b>
-            </span>
-          </div>
-          <div className="vehicle-price">
-            {car.status === "sold" ? (
-              <>
-                <div className="sold-word">SOLD</div>
-                <p>This one has found its next driver.</p>
-              </>
-            ) : (
-              <>
-                <span className="price-label">Asking price</span>
-                <strong>
-                  <span className="price-currency">$</span>
-                  <span className="price-amount">{number(car.price)}</span>
-                </strong>
-                <small>Excludes government charges · Sample price</small>
-              </>
-            )}
-          </div>
-          {car.status === "available" && <Finance price={car.price} />}
-          <button
-            className="button primary full"
-            onClick={() => onEnquire(car)}
-          >
-            {car.status === "sold"
-              ? "Find me something similar"
-              : "Enquire about this car"}
-            <ArrowUpRight size={20} />
-          </button>
-          <a className="vehicle-phone" href={`tel:${business.tel}`}>
-            <Phone size={22} />
-            <span>
-              <small>Talk cars with Madi</small>
-              <b>{business.phone}</b>
-            </span>
-            <ArrowUpRight size={20} />
-          </a>
-          <a
-            className="map-card"
-            href={business.maps}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <div className="map-art" aria-hidden="true">
-              <span className="map-road road-one">GRAND JUNCTION RD</span>
-              <span className="map-road road-two" />
-              <span className="map-block b1" />
-              <span className="map-block b2" />
-              <span className="map-block b3" />
-              <span className="map-pin">
-                <MapPin size={26} fill="currentColor" />
-              </span>
-              <b>WINGFIELD</b>
-            </div>
-            <div className="map-address">
-              <MapPin size={17} />
-              <span>
-                {business.address}
-                <small>{business.suburb}</small>
-              </span>
-              <ArrowUpRight size={19} />
-            </div>
-          </a>
-          <p className="summary-stock">
-            Stock no. {car.stock} <span>MM PRESTIGE MOTORS</span>
-          </p>
+          {sold ? (
+            <>
+              <strong className="vehicle-sold">SOLD</strong>
+              <p>This one has found its next driver.</p>
+            </>
+          ) : (
+            <>
+              <strong>{money(car.price)}</strong>
+              <p>Excludes government charges · Sample price</p>
+            </>
+          )}
         </aside>
-      </div>
-      <section className="related section">
-        <div className="section-title">
-          <div>
-            <div className="eyebrow">KEEP EXPLORING</div>
-            <h2>
-              More cars. <em>More character.</em>
-            </h2>
+        {photos.length > 1 && (
+          <>
+            <button
+              className="vehicle-hero-nav prev"
+              aria-label="Previous vehicle photo"
+              onClick={() => move(-1)}
+            >
+              <ChevronLeft size={22} />
+            </button>
+            <button
+              className="vehicle-hero-nav next"
+              aria-label="Next vehicle photo"
+              onClick={() => move(1)}
+            >
+              <ChevronRight size={22} />
+            </button>
+          </>
+        )}
+        <div className="reference-hero-content vehicle-hero-content">
+          <p className="vehicle-kicker">
+            {car.year} · {car.make}
+            {sold && <span className="vehicle-status">Sold</span>}
+          </p>
+          <h1>{name}</h1>
+          <div className="hero-search vehicle-facts">
+            <dl>
+              <div>
+                <dt>Kilometres</dt>
+                <dd>{number(car.kms)} km</dd>
+              </div>
+              <div>
+                <dt>Transmission</dt>
+                <dd>{car.transmission}</dd>
+              </div>
+              <div>
+                <dt>Engine</dt>
+                <dd>{car.engine}</dd>
+              </div>
+              <div>
+                <dt>Year</dt>
+                <dd>{car.year}</dd>
+              </div>
+            </dl>
+            <button
+              type="button"
+              aria-label={sold ? "Find me something similar" : "Enquire about this car"}
+              onClick={() => onEnquire(car)}
+            >
+              {sold ? "Find similar" : "Enquire"} <ArrowUpRight size={16} />
+            </button>
           </div>
-          <Link className="text-link" to="/stock">
-            View all stock <ArrowUpRight size={18} />
-          </Link>
-        </div>
-        <div className="card-grid featured">
-          {vehicles
-            .filter((c) => c.id !== id && c.status === "available")
-            .slice(0, 3)
-            .map((c) => (
-              <CarCard key={c.id} car={c} {...{ saved, toggleSaved }} />
-            ))}
         </div>
       </section>
+      <div className="vehicle-gallery-bar">
+        {photos.length > 1 ? (
+          <div className="vehicle-thumbs" role="group" aria-label="Choose a photo">
+            {photos.map((photo, i) => (
+              <button
+                key={photo + i}
+                className={i === index ? "current" : ""}
+                aria-label={`Show vehicle photo ${i + 1}`}
+                aria-pressed={i === index}
+                onClick={() => setIndex(i)}
+              >
+                <img src={photo} alt="" />
+              </button>
+            ))}
+          </div>
+        ) : (
+          <span />
+        )}
+        <div className="vehicle-gallery-tools">
+          <span className="vehicle-hero-count" aria-live="polite">
+            {counter}
+          </span>
+          <button
+            className="vehicle-hero-expand"
+            aria-label="Expand vehicle photos"
+            onClick={() => setZoom(true)}
+          >
+            <Expand size={17} />
+          </button>
+        </div>
+      </div>
+      <section className="reference-offer vehicle-overview" aria-labelledby="overview-heading">
+        <div className="offer-copy">
+          <h2 id="overview-heading">
+            {car.make === "HSV"
+              ? "Australian muscle."
+              : car.make === "Holden"
+                ? "An Australian icon."
+                : "Built for the enthusiast."}
+          </h2>
+          <p>{car.description}</p>
+          <ol>
+            {highlights.map((text, i) => (
+              <li key={text}>
+                <span>{String(i + 1).padStart(2, "0")}</span>
+                {text}
+              </li>
+            ))}
+          </ol>
+          <button
+            className="button primary"
+            onClick={() => scrollToSection(specsSection.current)}
+          >
+            Full specifications <ArrowRight size={16} />
+          </button>
+        </div>
+        <button
+          className="offer-performance vehicle-gallery-panel"
+          onClick={() => setZoom(true)}
+        >
+          <div>
+            <h3>Gallery</h3>
+            <p>
+              {photos.length} {photos.length === 1 ? "photo" : "photos"} ·
+              generic preview photography
+            </p>
+          </div>
+          <img src={photos[photos.length > 1 ? 1 : 0]} alt="" loading="lazy" />
+          <Expand className="offer-arrow" size={21} />
+        </button>
+        <button
+          className="offer-trade vehicle-enquire-panel"
+          onClick={() => onEnquire(car)}
+        >
+          <h3>{sold ? "Just missed out?" : "Make it yours."}</h3>
+          <p>
+            {sold
+              ? "Madi can help you find something similar."
+              : `Talk to Madi about this ${name}.`}
+          </p>
+          <span>
+            {sold ? "Talk to Madi" : "Start an enquiry"} <ArrowUpRight size={18} />
+          </span>
+        </button>
+      </section>
+      <section
+        className="vehicle-specs"
+        id="specifications"
+        ref={specsSection}
+        aria-labelledby="specs-heading"
+      >
+        <div className="section-title">
+          <h2 id="specs-heading">Specifications</h2>
+        </div>
+        <dl className="spec-rows">
+          {specs.map(([label, value]) => (
+            <div key={label}>
+              <dt>{label}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))}
+        </dl>
+        <p className="detail-note">
+          This listing is a design preview. Vehicle details and pricing are
+          sample data. Contact the dealer to confirm actual stock, condition and
+          specifications.
+        </p>
+      </section>
+      <section
+        className="reference-contact dealer-about vehicle-contact"
+        aria-labelledby="vehicle-contact-heading"
+      >
+        <div className="contact-copy">
+          <h2 id="vehicle-contact-heading">
+            See it in
+            <br />
+            Wingfield
+          </h2>
+          <p>
+            Arrange a viewing at our showroom, ask about finance or discuss a
+            trade-in. Madi will take you through the car.
+          </p>
+          <button className="button primary" onClick={() => onEnquire(car)}>
+            Contact Madi <ArrowRight size={15} />
+          </button>
+          <div className="contact-hours vehicle-pricing">
+            <h3>{sold ? "This car has sold" : "Pricing"}</h3>
+            <div>
+              <span>{sold ? "STATUS" : "ASKING PRICE"}</span>
+              <span>{sold ? "Sold" : money(car.price)}</span>
+            </div>
+            {!sold && (
+              <div>
+                <span>GOVERNMENT CHARGES</span>
+                <span>Excluded</span>
+              </div>
+            )}
+            <div>
+              <span>STOCK NO.</span>
+              <span>{car.stock}</span>
+            </div>
+            {!sold && <Finance price={car.price} />}
+          </div>
+        </div>
+        <ShowroomLocation />
+      </section>
+      {related.length > 0 && (
+        <section
+          className="reference-collection vehicle-related"
+          aria-labelledby="related-heading"
+        >
+          <div className="section-title">
+            <h2 id="related-heading">More from our collection</h2>
+            <Link className="text-link" to="/stock">
+              View all stock <ArrowRight size={18} />
+            </Link>
+          </div>
+          <div className="card-grid featured">
+            {related.map((c) => (
+              <CarCard key={c.id} car={c} {...{ saved, toggleSaved }} />
+            ))}
+          </div>
+        </section>
+      )}
       {zoom && (
         <Dialog
           title="Vehicle photo gallery"
           onClose={() => setZoom(false)}
           className="lightbox"
         >
-          <img
-            src={photos[index] || photos[0]}
-            alt={`Illustrative ${car.make} ${car.model} photo ${index + 1} of ${photos.length}`}
-          />
+          <img src={photos[index] || photos[0]} alt={photoLabel(index)} />
           <div className="lightbox-controls">
             {photos.length > 1 && (
               <button

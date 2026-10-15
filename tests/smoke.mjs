@@ -31,9 +31,9 @@ async function check(name, work) {
   try { await work(); results.push({ name, passed: true }); console.log(`PASS ${name}`); }
   catch (error) { results.push({ name, passed: false, error: error.message }); console.error(`FAIL ${name}: ${error.message}`); }
 }
-const cards = () => page.locator('.stock-grid .car-card');
-const status = value => page.locator('.stock-tabs button').filter({ hasText: new RegExp(`^${value}`) });
-const reset = () => page.locator('.filter-applied button').click();
+const cards = () => page.locator('.collection-grid .car-card');
+const status = value => page.locator('.collection-tabs button').filter({ hasText: new RegExp(`^${value}`) });
+const reset = () => page.locator('.filter-reset').click();
 const goStock = () => page.goto(`${baseURL}/stock`);
 const screenshot = name => page.screenshot({ path: resolve(screenshotDir, name), fullPage: true });
 const controlledListbox = async control => {
@@ -103,10 +103,10 @@ try {
   await check('Sample stock and generic photographs are clearly disclosed', async () => {
     await expect(page.locator('.sample-note')).toContainText('Sample stock and generic photos');
     await page.goto(`${baseURL}${firstVehicleRoute}`);
-    await expect(page.locator('.gallery-note')).toContainText('Generic preview photography');
-    await expect(page.locator('.gallery-note')).toContainText('do not depict this vehicle');
+    await expect(page.locator('.vehicle-photo-note')).toContainText('Generic preview photography');
+    await expect(page.locator('.vehicle-photo-note')).toContainText('do not depict this vehicle');
     await expect(page.locator('.detail-note')).toContainText('sample data');
-    await expect(page.locator('.vehicle-price')).toContainText('Sample price');
+    await expect(page.locator('.vehicle-price-card')).toContainText('Sample price');
     await expect(page.locator('.finance p')).toContainText('not a finance offer');
     await page.goto(baseURL);
   });
@@ -235,7 +235,7 @@ try {
   await check('Available, sold and all stock', async () => {
     await status('Sold').click();
     await expect(cards()).toHaveCount(2);
-    await expect(page.locator('.stock-grid .sold-tag')).toHaveCount(2);
+    await expect(page.locator('.collection-grid .sold-tag')).toHaveCount(2);
     await status('All cars').click();
     await expect(cards()).toHaveCount(8);
     await status('Available').click();
@@ -273,7 +273,7 @@ try {
   });
   await check('Sorting by price and kilometres', async () => {
     await chooseSelect(page.getByRole('combobox', { name: 'Sort stock', exact: true }), 'price-low');
-    const prices = await page.locator('.stock-grid .card-bottom strong').allTextContents();
+    const prices = await page.locator('.collection-grid .card-bottom strong').allTextContents();
     expect(prices.map(s => +s.replace(/\D/g, ''))).toEqual([57990, 59990, 64990, 67990, 69990, 94990]);
     await chooseSelect(page.getByRole('combobox', { name: 'Sort stock', exact: true }), 'price-high');
     await expect(cards().first()).toContainText('GTS');
@@ -286,26 +286,29 @@ try {
     await firstSave.click();
     await expect(cards().first().getByRole('button', { name: /^Unsave / })).toHaveAttribute('aria-pressed', 'true');
     await page.reload();
-    await page.locator('.saved-button').click();
+    await page.locator('.saved-toggle').click();
     await expect(cards()).toHaveCount(1);
     await expect(cards().first().locator('.card-title')).toHaveText('Ford Mustang GT');
-    await page.locator('.saved-button').click();
+    await page.locator('.saved-toggle').click();
     await expect(cards()).toHaveCount(6);
   });
   await check('Vehicle detail and carousel', async () => {
     await page.goto(`${baseURL}${firstVehicleRoute}`);
-    await expect(page.locator('.vehicle-summary h1')).toHaveText('GTS');
-    await expect(page.locator('.gallery-count')).toHaveText('01 / 02');
-    await expect(page.locator('.gallery-main img')).toHaveAttribute('src', '/images/car-1.jpg');
+    const count = page.locator('.vehicle-hero-count');
+    const photo = page.locator('.vehicle-hero .reference-hero-image');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('HSV GTS');
+    await expect(page.locator('.vehicle-price-card')).toContainText('$94,990');
+    await expect(count).toHaveText('01 / 02');
+    await expect(photo).toHaveAttribute('src', '/images/car-1.jpg');
     await page.getByRole('button', { name: 'Next vehicle photo', exact: true }).click();
-    await expect(page.locator('.gallery-count')).toHaveText('02 / 02');
-    await expect(page.locator('.gallery-main img')).toHaveAttribute('src', '/images/detail-2.jpg');
+    await expect(count).toHaveText('02 / 02');
+    await expect(photo).toHaveAttribute('src', '/images/detail-2.jpg');
     await page.getByRole('button', { name: 'Previous vehicle photo', exact: true }).click();
-    await expect(page.locator('.gallery-count')).toHaveText('01 / 02');
+    await expect(count).toHaveText('01 / 02');
     await page.getByRole('button', { name: 'Previous vehicle photo', exact: true }).click();
-    await expect(page.locator('.gallery-count')).toHaveText('02 / 02');
+    await expect(count).toHaveText('02 / 02');
     await page.getByRole('button', { name: 'Show vehicle photo 1', exact: true }).click();
-    await expect(page.locator('.gallery-count')).toHaveText('01 / 02');
+    await expect(count).toHaveText('01 / 02');
     await expect(page.getByRole('button', { name: 'Show vehicle photo 1', exact: true })).toHaveAttribute('aria-pressed', 'true');
     await expect(page.getByRole('button', { name: 'Show vehicle photo 2', exact: true })).toHaveAttribute('aria-pressed', 'false');
   });
@@ -321,14 +324,14 @@ try {
     await page.keyboard.press('Escape');
     await expect(page.getByRole('dialog')).toHaveCount(0);
   });
-  await check('Overview and specification tabs', async () => {
-    await page.getByRole('tab', { name: 'Specifications' }).click();
-    await expect(page.getByRole('tab', { name: 'Specifications' })).toHaveAttribute('aria-selected', 'true');
-    await expect(page.locator('#specifications-panel')).toContainText('430 kW');
-    await expect(page.locator('#specifications-panel')).toContainText('MM101');
-    await expect(page.locator('#specifications-panel')).toContainText('Wingfield, SA');
-    await page.getByRole('tab', { name: 'Overview' }).click();
-    await expect(page.locator('#overview-panel')).toBeVisible();
+  await check('Overview highlights and full specifications', async () => {
+    await expect(page.getByRole('heading', { level: 2, name: 'Australian muscle.' })).toBeVisible();
+    await expect(page.locator('.vehicle-overview li')).toHaveCount(4);
+    await page.getByRole('button', { name: 'Full specifications' }).click();
+    await expect(page.locator('#specifications')).toBeInViewport();
+    await expect(page.locator('#specifications')).toContainText('430 kW');
+    await expect(page.locator('#specifications')).toContainText('MM101');
+    await expect(page.locator('#specifications')).toContainText('Wingfield, SA');
   });
   await check('Repayment calculator updates at zero interest', async () => {
     await page.locator('.finance-toggle').click();
@@ -361,8 +364,8 @@ try {
   });
   await check('Sold vehicle hides price, has one photo and offers similar cars', async () => {
     await page.goto(`${baseURL}${soldVehicleRoute}`);
-    await expect(page.locator('.sold-word')).toHaveText('SOLD');
-    await expect(page.locator('.gallery-count')).toHaveText('01 / 01');
+    await expect(page.locator('.vehicle-sold')).toHaveText('SOLD');
+    await expect(page.locator('.vehicle-hero-count')).toHaveText('01 / 01');
     await expect(page.getByRole('button', { name: 'Next vehicle photo', exact: true })).toHaveCount(0);
     await expect(page.locator('.finance')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Find me something similar' })).toBeVisible();
@@ -446,10 +449,10 @@ try {
   await goStock();
   await check('Mobile filters show results and reset', async () => {
     await page.getByRole('button', { name: /^Filters/ }).click();
-    await expect(page.locator('.filters')).toHaveClass(/filters-open/);
+    await expect(page.locator('.collection-filters')).toHaveClass(/is-open/);
     await page.getByRole('checkbox', { name: /^Ford/ }).check();
     await page.getByRole('button', { name: 'Show 1 cars', exact: true }).click();
-    await expect(page.locator('.filters')).not.toHaveClass(/filters-open/);
+    await expect(page.locator('.collection-filters')).not.toHaveClass(/is-open/);
     await expect(cards()).toHaveCount(1);
     await page.getByRole('button', { name: /^Filters/ }).click();
     await reset();
@@ -468,35 +471,41 @@ try {
       });
     }
   }
-  await check('Stock has three generous columns and a usable sidebar on a wide screen', async () => {
+  await check('Stock follows the home layout with four generous columns on a wide screen', async () => {
     await page.setViewportSize({ width: 2493, height: 1265 });
     await goStock();
-    const layout = await page.locator('.stock-layout').boundingBox();
-    const sidebar = await page.locator('.filters').boundingBox();
-    expect(layout.x).toBeGreaterThanOrEqual(0);
-    expect(layout.x).toBeLessThanOrEqual(2493 * 0.1);
-    expect(layout.x + layout.width).toBeLessThanOrEqual(2493);
-    expect(sidebar.width).toBeGreaterThanOrEqual(220);
-    expect(sidebar.x).toBeGreaterThanOrEqual(layout.x);
+    const hero = await page.locator('.stock-hero').boundingBox();
+    expect(hero.x).toBeLessThanOrEqual(20);
+    expect(hero.width).toBeGreaterThan(2493 - 40);
     const first = await cards().nth(0).boundingBox();
-    const third = await cards().nth(2).boundingBox();
+    const fourth = await cards().nth(3).boundingBox();
     expect(first.width).toBeGreaterThan(350);
-    expect(first.x).toBeGreaterThanOrEqual(sidebar.x + sidebar.width);
-    expect(third.x + third.width).toBeLessThanOrEqual(layout.x + layout.width);
-    expect(third.y).toBe(first.y);
+    expect(first.x).toBeLessThanOrEqual(2493 * 0.05);
+    expect(fourth.y).toBe(first.y);
+    expect(fourth.x + fourth.width).toBeGreaterThanOrEqual(2493 * 0.95);
   });
-  await check('Vehicle gallery and summary remain generous on a wide screen', async () => {
+  await check('Vehicle page follows the home layout on a wide screen', async () => {
     await page.setViewportSize({ width: 2493, height: 1265 });
     await page.goto(`${baseURL}/stock/holden-ss-v-redline-2017`);
-    const gallery = await page.locator('.gallery-main').boundingBox();
-    const summary = await page.locator('.vehicle-summary').boundingBox();
-    expect(gallery.x).toBeGreaterThanOrEqual(0);
-    expect(gallery.x).toBeLessThanOrEqual(2493 * 0.05);
-    expect(gallery.width).toBeGreaterThan(1000);
-    expect(summary.width).toBeGreaterThan(400);
-    expect(gallery.x + gallery.width).toBeLessThanOrEqual(summary.x);
-    expect(2493 - summary.x - summary.width).toBeGreaterThanOrEqual(0);
-    expect(2493 - summary.x - summary.width).toBeLessThanOrEqual(2493 * 0.05);
+    const hero = await page.locator('.vehicle-hero').boundingBox();
+    const price = await page.locator('.vehicle-price-card').boundingBox();
+    expect(hero.x).toBeLessThanOrEqual(20);
+    expect(hero.width).toBeGreaterThan(2493 - 40);
+    expect(price.x + price.width).toBeLessThanOrEqual(hero.x + hero.width);
+    expect(price.y).toBeGreaterThan(hero.y);
+    const copy = await page.locator('.vehicle-overview .offer-copy').boundingBox();
+    const gallery = await page.locator('.vehicle-gallery-panel').boundingBox();
+    const enquire = await page.locator('.vehicle-enquire-panel').boundingBox();
+    expect(gallery.x).toBeGreaterThan(copy.x + copy.width - 1);
+    expect(enquire.x).toBeGreaterThan(gallery.x + gallery.width - 1);
+    expect(Math.abs(enquire.y - copy.y)).toBeLessThan(80);
+  });
+  await check('Unknown pages use the hero slab and lead back to stock', async () => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(`${baseURL}/nope`);
+    await expect(page.locator('.not-found-hero h1')).toHaveText('That road ends here.');
+    await page.locator('.not-found-hero').getByRole('link', { name: /Explore our stock/ }).click();
+    await expect(page).toHaveURL(/\/stock$/);
   });
   await check('All local images load', async () => {
     for (const route of ['/', '/stock?status=all', firstVehicleRoute, soldVehicleRoute]) {

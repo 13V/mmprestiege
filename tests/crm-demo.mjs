@@ -249,9 +249,9 @@ try {
   await check('CRM edits do not change the public website inventory', async () => {
     await addExampleLead();
     await page.goto(`${baseURL}/stock`);
-    await expect(page.locator('.stock-grid .car-card')).toHaveCount(6);
-    await page.locator('.stock-tabs button').filter({ hasText: /^Sold/ }).click();
-    await expect(page.locator('.stock-grid .car-card')).toHaveCount(2);
+    await expect(page.locator('.collection-grid .car-card')).toHaveCount(6);
+    await page.locator('.collection-tabs button').filter({ hasText: /^Sold/ }).click();
+    await expect(page.locator('.collection-grid .car-card')).toHaveCount(2);
     await page.goto(`${baseURL}/crm`);
     await total(8);
   });

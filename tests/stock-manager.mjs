@@ -255,9 +255,9 @@ try {
     await button('Publish listing').click();
     await counts(7, 2);
     await page.goto(`${baseURL}/stock`);
-    await expect(page.locator('.stock-grid .car-card')).toHaveCount(6);
-    await page.locator('.stock-tabs button').filter({ hasText: /^Sold/ }).click();
-    await expect(page.locator('.stock-grid .car-card')).toHaveCount(2);
+    await expect(page.locator('.collection-grid .car-card')).toHaveCount(6);
+    await page.locator('.collection-tabs button').filter({ hasText: /^Sold/ }).click();
+    await expect(page.locator('.collection-grid .car-card')).toHaveCount(2);
     await page.goto(`${baseURL}/stock-manager`);
     await reset();
   });
