@@ -803,6 +803,27 @@ function NotFound({ title = "That road ends here." }) {
             </Link>
           </div>
         </div>
+        <div className="hero-footnote">
+          <p>
+            MM Prestige Motors.
+            <br />
+            HSV, Holden and Australian muscle.
+            <br />
+            Wingfield, South Australia.
+          </p>
+          <small>Illustrative campaign imagery</small>
+        </div>
+        <a className="hero-map" href={business.maps} target="_blank" rel="noreferrer">
+          <span>
+            <MapPin size={24} fill="currentColor" />
+            <b>View on the map</b>
+          </span>
+          <p>
+            {business.address}
+            <br />
+            {business.suburb}
+          </p>
+        </a>
       </section>
     </main>
   );
@@ -821,6 +842,20 @@ function Stock({ saved, toggleSaved }) {
     [savedOnly, setSavedOnly] = useState(false),
     [filtersOpen, setFiltersOpen] = useState(false);
   const results = useRef(null);
+  const filtersButton = useRef(null);
+  const filtersClose = useRef(null);
+  useEffect(() => {
+    if (!filtersOpen) return;
+    filtersClose.current?.focus();
+    const close = (event) => {
+      if (event.key === "Escape") {
+        setFiltersOpen(false);
+        filtersButton.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
+  }, [filtersOpen]);
   const filtered = useMemo(
     () =>
       vehicles
@@ -958,8 +993,8 @@ function Stock({ saved, toggleSaved }) {
             aria-label="Vehicle availability"
           >
             {[
-              ["available", "Available"],
-              ["sold", "Sold"],
+              ["available", "In stock"],
+              ["sold", "Sold cars"],
               ["all", "All cars"],
             ].map(([value, label]) => (
               <button
@@ -983,6 +1018,7 @@ function Stock({ saved, toggleSaved }) {
               Saved <span>{saved.length}</span>
             </button>
             <button
+              ref={filtersButton}
               className="filters-button"
               aria-expanded={filtersOpen}
               aria-controls="stock-filters"
@@ -1001,9 +1037,13 @@ function Stock({ saved, toggleSaved }) {
           <div className="collection-filters-head">
             <h3>Refine your search</h3>
             <button
+              ref={filtersClose}
               className="filters-close"
               aria-label="Close filters"
-              onClick={() => setFiltersOpen(false)}
+              onClick={() => {
+                setFiltersOpen(false);
+                filtersButton.current?.focus();
+              }}
             >
               <X size={20} />
             </button>
@@ -1380,8 +1420,7 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
           <div>
             <h3>Gallery</h3>
             <p>
-              {photos.length} {photos.length === 1 ? "photo" : "photos"} ·
-              generic preview photography
+              {photos.length} {photos.length === 1 ? "photo" : "photos"}
             </p>
           </div>
           <img src={photos[photos.length > 1 ? 1 : 0]} alt="" loading="lazy" />

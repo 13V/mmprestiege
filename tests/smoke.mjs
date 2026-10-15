@@ -238,7 +238,7 @@ try {
     await expect(page.locator('.collection-grid .sold-tag')).toHaveCount(2);
     await status('All cars').click();
     await expect(cards()).toHaveCount(8);
-    await status('Available').click();
+    await status('In stock').click();
     await expect(cards()).toHaveCount(6);
   });
   await check('Search and reset', async () => {

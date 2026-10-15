@@ -15,11 +15,14 @@
 }
 .page-hero.stock-hero::after,
 .page-hero.not-found-hero::after {
-  background: radial-gradient(ellipse 34% 30% at 0% 0%, #111111b3, #11111100),
+  background: radial-gradient(ellipse 34% 64% at 0% 0%, #111111eb, #111111c2 55%, #11111100),
     linear-gradient(180deg, #111111d9 0%, #11111173 30%, #11111159 62%, #111111d1 100%);
 }
 .stock-hero .reference-hero-image {
   object-position: center 64%;
+}
+.dealer-home .page-hero.not-found-hero {
+  margin-bottom: 12px;
 }
 .showroom-hero.page-hero .reference-hero-content {
   top: 54%;
@@ -257,7 +260,14 @@
   --themed-select-font-size: 13px;
 }
 .filter-select .themed-select__trigger {
-  min-height: 38px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-color: #404042;
+  border-radius: var(--radius-control);
+}
+.filter-select .themed-select__trigger:hover {
+  border-color: #6e6e72;
 }
 .filter-status {
   display: flex;
@@ -344,7 +354,7 @@
 }
 .vehicle-hero::after {
   z-index: 1;
-  background: radial-gradient(ellipse 34% 32% at 0% 0%, #111111c7, #11111100),
+  background: radial-gradient(ellipse 34% 52% at 0% 0%, #111111eb, #111111c2 55%, #11111100),
     linear-gradient(180deg, #111111d1 0%, #11111140 24%, #11111100 44%, #11111126 62%, #111111f0 100%);
 }
 .vehicle-hero-ambient {
@@ -374,6 +384,7 @@
   width: auto;
   max-width: 64%;
   height: 46%;
+  max-height: 320px;
   object-fit: cover;
   border-radius: var(--radius-md);
   box-shadow: 0 28px 56px -18px #000000d9;
@@ -409,6 +420,7 @@
   line-height: 1.15;
 }
 .showroom-hero .hero-search.vehicle-facts {
+  display: flex;
   width: min(880px, 100%);
   margin: 22px auto 0;
 }
@@ -421,7 +433,7 @@
 .vehicle-facts dl > div {
   flex: 1;
   min-width: 0;
-  padding: 7px 16px;
+  padding: 4px 16px;
   text-align: left;
   border-right: 1px solid #ffffff20;
 }
@@ -435,7 +447,7 @@
   color: #b9b9bd;
 }
 .vehicle-facts dd {
-  margin: 3px 0 0;
+  margin: 1px 0 0;
   overflow: hidden;
   font-size: var(--fs-small);
   font-weight: 600;
@@ -449,12 +461,20 @@
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
+  min-height: 48px;
   padding: 0 22px;
+  border-radius: var(--radius-control);
   font-size: var(--fs-small);
   font-weight: 600;
 }
 .vehicle-hero .hero-footnote {
   z-index: 2;
+}
+.hero-search.vehicle-facts > button:hover {
+  box-shadow: 0 10px 24px -12px var(--accent-strong);
+}
+.page-hero .hero-footnote small {
+  text-shadow: 0 1px 8px #000b;
 }
 .vehicle-photo-note {
   max-width: 240px;
@@ -576,7 +596,7 @@
 }
 .vehicle-thumbs button.current {
   opacity: 1;
-  box-shadow: 0 0 0 2px #111, 0 0 0 4px var(--accent);
+  box-shadow: 0 0 0 2px #111, 0 0 0 4px var(--off-white);
 }
 .vehicle-gallery-tools {
   display: flex;
@@ -622,8 +642,17 @@
 .vehicle-gallery-panel p {
   color: #aaa8a3;
 }
-.offer-trade.vehicle-enquire-panel h3 {
-  right: 23px;
+.offer-trade.vehicle-enquire-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.offer-trade.vehicle-enquire-panel h3,
+.offer-trade.vehicle-enquire-panel p {
+  position: static;
+}
+.offer-trade.vehicle-enquire-panel p {
+  margin-top: 10px;
 }
 
 /* ---------- Vehicle: specifications ---------- */
@@ -773,9 +802,55 @@
 }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 1280px) {
-  .collection-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+@media (min-width: 701px) and (max-width: 1279px) {
+  .collection-filters {
+    display: grid;
+    grid-template-columns: max-content max-content minmax(0, 1fr);
+    align-items: end;
+  }
+  .collection-filters .filter-pills {
+    grid-row: 1;
+  }
+  .collection-filters .filter-select {
+    grid-row: 2;
+  }
+  .collection-filters .filter-status {
+    grid-row: 2;
+    grid-column: 3;
+    justify-self: end;
+    margin-left: 0;
+  }
+}
+@media (min-width: 701px) and (max-width: 1100px) {
+  /* The footnote keeps its top-left place; the title block owns the bottom. */
+  .showroom-hero.vehicle-hero .hero-footnote {
+    top: 100px;
+    bottom: auto;
+  }
+  .showroom-hero .hero-search.vehicle-facts dl > div:nth-child(4) {
+    display: none;
+  }
+  .vehicle-facts dl > div {
+    padding-inline: 12px;
+  }
+  .vehicle-facts dd {
+    white-space: normal;
+  }
+}
+@media (min-width: 701px) and (max-width: 850px) {
+  .showroom-hero.vehicle-hero .vehicle-hero-content {
+    width: 88%;
+  }
+}
+@media (min-width: 701px) and (max-width: 1000px) {
+  /* The stage photo sits between the footnote/price row and the title block. */
+  .dealer-home .page-hero.vehicle-hero.is-contained {
+    min-height: 760px;
+  }
+  .vehicle-hero.is-contained .reference-hero-image {
+    top: 280px;
+    height: calc(100% - 280px - 6% - 240px);
+    max-height: 300px;
   }
 }
 @media (max-width: 1100px) {
@@ -786,12 +861,14 @@
     max-width: 190px;
   }
 }
+@media (max-width: 1100px) {
+  .collection-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
 @media (max-width: 900px) {
   .collection-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .showroom-hero .hero-search.vehicle-facts dl > div:nth-child(4) {
-    display: none;
   }
   .spec-rows {
     grid-template-columns: 1fr;
@@ -974,7 +1051,7 @@
     background: #111;
     border: 0;
     border-radius: 0;
-    animation: mm-drawer-in var(--mm-base) var(--mm-ease) both;
+    animation: mm-drawer-in var(--mm-base) var(--mm-ease) backwards;
   }
   body:has(.collection-filters.is-open) {
     overflow: hidden;
@@ -1034,5 +1111,12 @@
 @media (max-width: 600px) {
   .collection-grid {
     grid-template-columns: 1fr;
+  }
+  .offer-performance.vehicle-gallery-panel img {
+    inset: auto 0 0;
+    height: 52%;
+  }
+  .dealer-home .page-hero.not-found-hero {
+    margin-bottom: 8px;
   }
 }
