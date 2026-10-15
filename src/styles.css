@@ -1326,7 +1326,7 @@ select {
   color: var(--accent);
 }
 .vehicle-info p.detail-note {
-  font-size: 8px !important;
+  font-size: 8px;
   padding-top: 13px;
 }
 .spec-table > div {
@@ -2906,7 +2906,7 @@ section[id] {
     font-size: 8px;
   }
   .summary-stock {
-    font-size: 8px !important;
+    font-size: 8px;
   }
   .summary-stock span {
     font-size: 6px;
@@ -3069,7 +3069,7 @@ section[id] {
   }
   .finance p,
   .vehicle-info p.detail-note {
-    font-size: 10px !important;
+    font-size: 10px;
   }
   .gallery-note {
     font-size: 10px;

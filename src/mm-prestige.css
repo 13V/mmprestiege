@@ -217,13 +217,15 @@ html:has(.vehicle-page) {
   }
 }
 /* Narrow phones: "Sell your car" stays on one line inside the header. */
-@media (max-width: 359px) {
+.header .button.header-enquire {
+  white-space: nowrap;
+}
+@media (max-width: 374px) {
   .header .brand b {
     font-size: 11px;
   }
   .header .button.header-enquire {
     padding-inline: 12px;
-    white-space: nowrap;
   }
 }
 /* The longer MM heading stays on one line above the search bar. */
@@ -259,3 +261,606 @@ html:has(.vehicle-page) {
     font-size: 25px;
   }
 }
+
+/* ==========================================================================
+   Beauty pass: one type scale, one spacing rhythm, one surface/radius set,
+   one easing, built on the showroom design rather than replacing it.
+   ========================================================================== */
+
+/* B02 Tokens + text rendering */
+:root {
+  --fs-display: clamp(34px, 3.6vw, 54px);
+  --fs-h2: clamp(26px, 2.7vw, 40px);
+  --fs-lead: clamp(15px, 1.1vw, 16px);
+  --fs-body: 14px;
+  --fs-small: 13px;
+  --fs-caption: 12px;
+  --fs-label: 11px;
+  --track-display: -0.01em;
+  --track-label: 0.14em;
+  --surface-1: #1c1c1e;
+  --surface-2: #232325;
+  --hairline: #2a2a2d;
+  --hairline-strong: #3d3d40;
+  --off-white: #f5f5f3;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --radius-control: 6px;
+  --radius-xs: 4px;
+  --section-gap: clamp(64px, 7vw, 120px);
+  --grid-gap: 24px;
+  --mm-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --mm-fast: 160ms;
+  --mm-base: 240ms;
+  --mm-slow: 600ms;
+}
+:is(.site-shell, .modal-backdrop) {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+:is(.site-shell, .modal-backdrop) :is(h1, h2, h3) { text-wrap: balance; }
+:is(.site-shell, .modal-backdrop) :is(p, blockquote) { text-wrap: pretty; }
+
+/* B03 Headings: one h2 voice, matched page titles */
+.section-title h2,
+.offer-copy h2,
+.reference-sell h2,
+.reference-contact h2,
+.vehicle-page .related h2,
+.vehicle-page .vehicle-info h2,
+.stock-page .empty-state h2 {
+  font-size: var(--fs-h2);
+  line-height: 1.22;
+  letter-spacing: var(--track-display);
+}
+.vehicle-page .related h2 em,
+.vehicle-page .vehicle-info h2 em { font-size: 0.6em; line-height: 1.3; letter-spacing: 0; }
+.vehicle-page .related h2 em { display: inline-block; }
+.showroom-hero h1,
+.stock-page-bar h1 { line-height: 1.15; letter-spacing: var(--track-display); }
+.stock-page-bar h1 { font-size: var(--fs-display); }
+@media (max-width: 700px) {
+  .stock-page-bar h1 { font-size: clamp(26px, 7vw, 38px); }
+}
+
+/* B04 Eyebrows + uppercase labels */
+.eyebrow,
+.stock-page .stock-page-bar .eyebrow,
+.vehicle-page .vehicle-summary .eyebrow,
+.vehicle-page .price-label {
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+
+/* B05 Lead copy + offer list */
+.offer-copy > p,
+.contact-copy > p,
+.reference-sell p,
+.stock-page .stock-page-bar p { font-size: var(--fs-lead); line-height: 1.65; max-width: 34em; }
+.reference-sell p { max-width: 26em; color: #e4e4e9; }
+.offer-copy li { font-size: 15px; border-bottom-color: var(--hairline); }
+.offer-copy li > span { font-size: var(--fs-label); font-variant-numeric: tabular-nums; letter-spacing: 0.08em; color: #8d8c88; }
+@media (max-width: 1200px) {
+  .desktop-break { display: none; }
+}
+
+/* B06 Control type */
+.button,
+.button.small,
+.offer-copy .button,
+.home-collection-toolbar > .button,
+.footer-next-drive .button { font-size: var(--fs-small); font-weight: 600; letter-spacing: 0.01em; }
+.header-actions .button.small { font-size: var(--fs-caption); }
+.nav { font-size: var(--fs-small); }
+.text-link,
+.section-title > .text-link,
+.stock-page .filter-contact .text-link { font-size: var(--fs-small); font-weight: 600; }
+.home-collection-tabs button { font-size: var(--fs-caption); }
+.hero-search > .themed-select { --themed-select-font-size: 13px; }
+.hero-search > button[type="submit"] { font-size: var(--fs-small); font-weight: 600; }
+@media (max-width: 600px) {
+  .home-collection-tabs button,
+  .home-collection-toolbar > .button { font-size: var(--fs-label); }
+}
+
+/* B07 Control shape + sizes */
+.button,
+.button.small,
+.header-enquire,
+.hero-search > button[type="submit"],
+.home-collection-tabs button,
+.carousel-controls button,
+.contact-pills > a,
+.vehicle-page .gallery-expand,
+.vehicle-page .gallery-nav,
+.vehicle-page .vehicle-summary > .button { border-radius: var(--radius-control); }
+.dealer-about.reference-contact .button { min-height: 44px; }
+.home-collection-toolbar > .button,
+.home-collection-tabs button { min-height: 36px; }
+.home-collection-toolbar > .button { padding: 8px 16px; }
+.carousel-controls button { width: 40px; height: 40px; }
+
+/* B08 Red hierarchy: secondary actions go light or ghost */
+.offer-copy .button.primary { background: var(--off-white); border-color: var(--off-white); color: #111; }
+.offer-copy .button.primary:hover { background: var(--accent-strong); border-color: var(--accent-strong); color: #fff; }
+.home-collection-toolbar > .button.primary { background: transparent; border-color: var(--hairline-strong); color: var(--off-white); }
+.home-collection-toolbar > .button.primary:hover { background: var(--off-white); border-color: var(--off-white); color: #111; }
+.carousel-controls button,
+.carousel-controls button:first-child { background: transparent; color: var(--off-white); border-color: var(--hairline-strong); }
+.carousel-controls button:not([aria-disabled="true"]):hover { background: var(--accent-strong); border-color: var(--accent-strong); color: #fff; }
+.carousel-controls button[aria-disabled="true"],
+.carousel-controls button[aria-disabled="true"]:first-child { cursor: default; background: transparent; border-color: var(--hairline); color: #6d6d70; }
+
+/* B09 Motion + interactive states */
+:is(.site-shell, .modal-backdrop) :is(a, button) {
+  transition: background-color var(--mm-fast) var(--mm-ease), color var(--mm-fast) var(--mm-ease),
+    border-color var(--mm-fast) var(--mm-ease), box-shadow var(--mm-base) var(--mm-ease),
+    opacity var(--mm-base) var(--mm-ease), transform var(--mm-base) var(--mm-ease);
+}
+.button svg, .text-link svg { transition: transform var(--mm-base) var(--mm-ease); }
+.button.primary:hover,
+.hero-search > button[type="submit"]:hover { box-shadow: 0 10px 24px -12px var(--accent-strong); }
+.button:active,
+.hero-search > button[type="submit"]:active,
+.home-collection-tabs button:active,
+.carousel-controls button:not([aria-disabled="true"]):active,
+.contact-pills > a:active { transform: translateY(1px); box-shadow: none; }
+.vehicle-page .vehicle-summary > .button:hover { background: var(--accent-strong-hover); border-color: var(--accent-strong-hover); color: #fff; }
+.home-collection-tabs button:not(.selected):hover { border-color: #6e6e72; background: #ffffff0d; color: #fff; }
+.stock-page .stock-tabs button:not(.selected):hover,
+.vehicle-page .detail-tabs button:not(.active):hover,
+.stock-page .saved-button:hover { color: var(--off-white); }
+.contact-pills > a:hover { border-color: #6e6e72; background: var(--surface-1); }
+.vehicle-page .vehicle-phone:hover b { color: var(--accent-text); }
+.vehicle-page .map-card:hover { border-color: #5a5a5e; }
+
+/* B10 Inventory card: surface + photo frame */
+.car-card.collection-card {
+  container-type: inline-size;
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 1px 0 #ffffff0a;
+  transition: background-color var(--mm-base) var(--mm-ease), border-color var(--mm-base) var(--mm-ease),
+    box-shadow var(--mm-base) var(--mm-ease), transform var(--mm-base) var(--mm-ease);
+}
+.collection-card .card-photo { position: relative; border-radius: var(--radius-sm); background: var(--surface-2); }
+.collection-card .card-photo::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px #ffffff12; pointer-events: none; }
+.collection-card .card-photo img { transition: transform var(--mm-slow) var(--mm-ease); }
+.collection-card .sold-tag { font-size: var(--fs-label); letter-spacing: 0.12em; border-radius: var(--radius-xs); }
+
+/* B11 Inventory card: type + specs */
+.collection-card .card-title { font-size: 16px; font-weight: 600; line-height: 1.35; letter-spacing: -0.01em; }
+.collection-card .card-title:hover { color: var(--accent-text); }
+.collection-card .card-variant { margin-top: 4px; font-size: var(--fs-caption); }
+.collection-card .card-specs {
+  grid-template-columns: repeat(3, minmax(max-content, 1fr));
+  font-size: var(--fs-caption);
+  font-variant-numeric: tabular-nums;
+  border-top-color: var(--hairline);
+  border-bottom-color: var(--hairline);
+}
+.collection-card .card-specs svg { width: 16px; height: 16px; padding: 0; border: 0; border-radius: 0; color: #8d8c88; }
+.collection-card .card-bottom strong { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; font-variant-numeric: tabular-nums; }
+.collection-card .card-bottom small { max-width: none; font-size: var(--fs-label); color: #9a9a9e; }
+.collection-card .card-detail-button { font-size: var(--fs-caption); font-weight: 600; }
+@container (width < 260px) {
+  .collection-card .card-specs { gap: 6px; font-size: var(--fs-label); }
+  .collection-card .card-detail-button { position: static; align-self: flex-start; justify-content: flex-start; margin-top: 12px; }
+}
+@media (min-width: 1900px) {
+  .collection-card .card-title { font-size: 18px; }
+  .collection-card .card-variant,
+  .collection-card .card-specs,
+  .collection-card .card-detail-button { font-size: var(--fs-small); }
+  .collection-card .card-bottom strong { font-size: 24px; }
+}
+
+/* B12 Inventory card: save chip (fixes red-on-red saved icon) */
+.collection-card .save-car {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  background: #111111a6;
+  color: var(--off-white);
+  border: 1px solid #ffffff1f;
+  border-radius: 50%;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.collection-card .save-car::after { content: ""; position: absolute; inset: -5px; }
+.collection-card .save-car:hover,
+.collection-card .save-car.is-saved { background: var(--accent-strong); border-color: var(--accent-strong); }
+/* Beats legacy styles.css `.is-saved { color: var(--accent) !important; }`, which paints the icon red on red. */
+.collection-card .save-car:hover,
+.collection-card .save-car.is-saved { color: #fff !important; }
+.collection-card .save-car.is-saved svg { fill: currentColor; }
+
+/* B13 Inventory card: hover + grid gutters */
+@media (hover: hover) {
+  .car-card.collection-card:hover,
+  .car-card.collection-card:has(:focus-visible) {
+    background: #202022;
+    border-color: var(--hairline-strong);
+    box-shadow: inset 0 1px 0 #ffffff0a, 0 24px 40px -24px #000;
+  }
+  .collection-card:hover .card-photo img { transform: scale(1.05); }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .car-card.collection-card:hover,
+  .car-card.collection-card:has(:focus-visible) { transform: translateY(-4px); }
+}
+.stock-page .stock-grid { gap: 32px var(--grid-gap); }
+@media (min-width: 1101px) {
+  .dealer-home .featured,
+  .vehicle-page .related .featured { gap: var(--grid-gap); }
+}
+
+/* B14 Hero: composition + radius */
+.reference-hero { border-radius: var(--radius-lg); }
+@media (min-width: 1101px) {
+  .showroom-hero .reference-hero-content { width: min(1000px, 84%); }
+  .showroom-hero .hero-search { width: min(880px, 100%); margin-inline: auto; }
+}
+@media (min-width: 601px) and (max-width: 1100px) {
+  .showroom-hero .hero-footnote { top: auto; bottom: 5.5%; }
+}
+@media (max-width: 850px) {
+  .showroom-hero .hero-search > button[type="submit"] { min-height: 44px; }
+}
+
+/* B15 Hero: footnote + map card */
+.showroom-hero .hero-footnote p { font-size: var(--fs-caption); line-height: 1.6; }
+.hero-footnote small,
+.reference-sell > small { font-size: var(--fs-label); }
+.showroom-hero .hero-map {
+  background: var(--off-white);
+  border-radius: var(--radius-md);
+  transition: transform var(--mm-base) var(--mm-ease), box-shadow var(--mm-base) var(--mm-ease);
+}
+.showroom-hero .hero-map > span > svg { color: var(--accent-strong); }
+.hero-map b { font-size: var(--fs-caption); font-weight: 600; }
+.hero-map p { font-size: var(--fs-caption); line-height: 1.55; }
+@media (hover: hover) {
+  .showroom-hero .hero-map:hover { transform: translateY(-2px); box-shadow: 0 16px 32px -14px #000c; }
+}
+@media (min-width: 601px) {
+  .showroom-hero .hero-map { width: max-content; }
+}
+@media (max-width: 850px) {
+  .showroom-hero .hero-footnote p,
+  .hero-map b,
+  .hero-map p { font-size: var(--fs-label); }
+  .hero-footnote small,
+  .reference-sell > small { font-size: 10px; }
+}
+
+/* B16 Hero: phone */
+@media (max-width: 600px) {
+  .reference-hero { border-radius: var(--radius-md); }
+  .showroom-hero { background: #1b1b1e; }
+  .showroom-hero .hero-search .themed-select__trigger { height: 44px; font-size: var(--fs-caption); }
+  .showroom-hero .reference-hero-image {
+    -webkit-mask-image: linear-gradient(transparent 6%, #000 32%, #000 80%, transparent 94%);
+    mask-image: linear-gradient(transparent 6%, #000 32%, #000 80%, transparent 94%);
+  }
+  .showroom-hero h1,
+  .showroom-hero .hero-footnote p { text-shadow: none; }
+}
+
+/* B17 Specialties strip: the single row lines up with the content edges */
+@media (min-width: 701px) {
+  .marque-strip.marque-words { justify-content: space-between; }
+}
+
+/* B18 Home section rhythm */
+.dealer-home .reference-offer { padding-bottom: var(--section-gap); }
+.dealer-home .reference-collection { padding-block: 0 var(--section-gap); }
+.dealer-home .mm-reviews { padding-block: var(--section-gap); border-top: 0; }
+.dealer-home .reference-contact { padding-block: 0 var(--section-gap); }
+
+/* B19 What we offer: panel surfaces */
+.offer-performance,
+.offer-trade { border-radius: var(--radius-lg); }
+.offer-performance { background: var(--surface-1); color: var(--off-white); border: 1px solid var(--hairline); }
+.offer-performance img {
+  -webkit-mask-image: linear-gradient(transparent 0%, #000 36%);
+  mask-image: linear-gradient(transparent 0%, #000 36%);
+}
+.offer-trade { background: linear-gradient(155deg, var(--accent-strong) 35%, var(--accent-strong-hover) 100%); box-shadow: inset 0 1px 0 #ffffff26; }
+
+/* B20 What we offer: panel type + hover */
+.offer-performance h3,
+.offer-trade h3 { line-height: 1.2; }
+.offer-performance p,
+.offer-trade p { font-size: var(--fs-small); }
+.offer-performance p { max-width: 240px; color: #aaa8a3; }
+.offer-trade > span { font-size: var(--fs-caption); font-weight: 600; }
+.offer-performance img,
+.offer-trade img,
+.offer-arrow,
+.offer-trade > span svg { transition: transform var(--mm-slow) var(--mm-ease); }
+@media (hover: hover) {
+  .offer-performance:hover img { transform: scale(1.04); }
+  .offer-trade:hover img { transform: translateX(-8px); }
+  .offer-performance:hover .offer-arrow,
+  .offer-trade:hover > span svg { transform: translate(3px, -3px); }
+}
+@media (min-width: 851px) {
+  .offer-performance h3,
+  .offer-trade h3 { letter-spacing: var(--track-display); }
+}
+@media (max-width: 600px) {
+  .offer-performance p,
+  .offer-trade p,
+  .offer-trade > span { font-size: var(--fs-label); }
+  .offer-trade p { top: 44px; }
+}
+
+/* B21 What we offer: tablet + phone layout (paired tiles share one bottom edge) */
+@media (max-width: 850px) {
+  .reference-offer { align-items: stretch; }
+  .offer-trade { height: auto; aspect-ratio: auto; }
+}
+@media (min-width: 601px) and (max-width: 850px) {
+  .reference-offer { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .offer-copy { grid-column: 1 / -1; padding: 0; margin-bottom: 12px; }
+  .offer-performance { aspect-ratio: 0.95; }
+  .offer-performance h3,
+  .offer-trade h3 { font-size: 20px; }
+  .offer-trade p { top: 58px; }
+}
+
+/* B22 Featured stock: footer row + phone toolbar */
+.dealer-home .reference-collection { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 24px; align-items: center; }
+.dealer-home .reference-collection > * { grid-column: 1 / -1; }
+.dealer-home .reference-collection > .carousel-controls { grid-column: 1; }
+.dealer-home .reference-collection > .collection-explore { grid-column: 2; grid-row: 4; margin-top: 20px; }
+.dealer-home .sample-note,
+.stock-page .sample-note { text-align: left; }
+@media (max-width: 600px) {
+  .home-collection-toolbar { flex-wrap: wrap; }
+  .home-collection-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); flex: 1 1 100%; gap: 4px; padding: 4px; border: 1px solid var(--hairline-strong); border-radius: 10px; }
+  .home-collection-tabs button { min-height: 38px; border: 0; }
+  .home-collection-toolbar > .button { display: none; }
+  .carousel-controls button { width: 44px; height: 44px; }
+}
+
+/* B23 Sell banner */
+.reference-sell { width: 100%; margin: 0; display: flex; align-items: center; background: var(--surface-1); border-radius: var(--radius-lg); }
+.reference-sell > img { filter: saturate(0.3) brightness(0.92); }
+.reference-sell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, #111111d9 0%, #11111199 30%, #11111100 58%), linear-gradient(0deg, #11111166 0%, #11111100 35%);
+}
+.reference-sell > div { padding: 56px 4%; }
+@media (min-width: 1900px) {
+  .reference-sell { max-height: 820px; }
+}
+@media (max-width: 600px) {
+  .reference-sell { align-items: flex-start; min-height: 540px; border-radius: var(--radius-md); }
+  .reference-sell > div { width: 100%; padding: 32px 5%; }
+  .reference-sell > img {
+    inset: auto 0 0;
+    height: 58%;
+    object-position: right bottom;
+    -webkit-mask-image: linear-gradient(transparent, #000 24%);
+    mask-image: linear-gradient(transparent, #000 24%);
+  }
+  .reference-sell::after { background: none; }
+}
+
+/* B24 Reviews */
+.mm-reviews .review { border-color: var(--hairline); border-radius: var(--radius-md); box-shadow: inset 0 1px 0 #ffffff0a; }
+.mm-reviews .review-person { border-top-color: var(--hairline); }
+.mm-reviews .rating > b { line-height: 1; }
+.mm-reviews .review blockquote { font-size: var(--fs-lead); line-height: 1.7; }
+.mm-reviews .review-person b { font-size: var(--fs-body); }
+.mm-reviews .rating small,
+.mm-reviews .review-person small { font-size: var(--fs-caption); }
+
+/* B25 Contact: balance + card */
+@media (min-width: 1101px) {
+  .dealer-about.reference-contact { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); column-gap: 7%; }
+}
+@media (min-width: 601px) {
+  .dealer-about.reference-contact { align-items: stretch; }
+  .contact-location { display: flex; flex-direction: column; }
+  .contact-map { flex: 1 1 auto; height: auto; min-height: 300px; }
+}
+.contact-hours { background: var(--surface-1); border: 1px solid var(--hairline); border-radius: var(--radius-md); }
+.contact-hours h3 { font-size: 15px; font-weight: 600; border-bottom-color: var(--hairline-strong); }
+.contact-hours > div { font-size: var(--fs-small); }
+.contact-hours > div > :first-child { font-size: var(--fs-label); letter-spacing: 0.12em; }
+.contact-pills > a { font-size: var(--fs-small); }
+@media (max-width: 850px) {
+  .contact-pills > a { min-height: 44px; padding: 10px 16px; }
+}
+
+/* B26 Contact: schematic map */
+.contact-map { background-color: var(--surface-1); border: 1px solid var(--hairline); border-radius: var(--radius-md); }
+.location-roads i { background: #ffffff1f; }
+.location-roads i:nth-child(3) { width: 5px; background: #ffffff3d; }
+.location-roads span { left: 24%; color: #8d8c88; }
+.location-roads b { color: #8d8c88; }
+.location-pin {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 8px #d4253633, 0 0 0 18px #d425361a;
+  transition: transform var(--mm-slow) var(--mm-ease);
+}
+.location-address { background: #f5f5f3eb; border-radius: var(--radius-sm); font-size: var(--fs-small); }
+.location-address small { font-size: var(--fs-label); }
+@media (hover: hover) {
+  .contact-map:hover .location-pin { transform: translateY(-4px); }
+}
+
+/* B27 Footer */
+.footer { background: var(--off-white); }
+.footer-bottom { max-width: none; border-top-color: #e0e0dc; font-size: var(--fs-caption); }
+.footer-bottom > span:last-child { font-size: var(--fs-label); letter-spacing: var(--track-label); }
+.footer-main a:not(.brand):not(.button),
+.footer-main p,
+.footer-main > div:first-child p { font-size: var(--fs-body); line-height: 1.75; }
+.footer-label { font-size: var(--fs-label); font-weight: 700; letter-spacing: var(--track-label); text-transform: uppercase; }
+.footer-appointment { font-size: var(--fs-caption); }
+.footer-next-drive h3 { font-family: var(--display); font-size: 20px; font-weight: 400; line-height: 1.3; letter-spacing: 0; }
+.footer-next-drive p { font-size: var(--fs-body); }
+.footer .footer-next-drive .button { font-size: var(--fs-small); }
+.footer .brand:hover { color: #111; opacity: 0.7; }
+.footer-main a:not(.brand):not(.button):hover { color: var(--accent-strong); }
+.footer-next-drive .button:hover { background: var(--accent-strong); }
+@media (max-width: 600px) {
+  .footer { padding-inline: 5%; border-radius: var(--radius-md); }
+  .footer-main { grid-template-columns: minmax(0, 1fr) auto; column-gap: 24px; }
+  .footer-main a:not(.brand):not(.button),
+  .footer-main p,
+  .footer-main > div:first-child p { font-size: var(--fs-small); }
+}
+
+/* B28 Stock page: header rule + controls */
+.stock-page .stock-page-bar { position: relative; border-bottom: 1px solid var(--hairline); }
+.stock-page .stock-page-bar::after { content: ""; position: absolute; left: 4%; bottom: -1px; width: 72px; height: 3px; background: var(--accent); }
+.stock-page .stock-page-bar > span,
+.stock-page .stock-tabs button,
+.stock-page .saved-button,
+.stock-page .results-heading,
+.stock-page .sort-label,
+.stock-page .filter-toggle { font-size: var(--fs-small); }
+.stock-page .stock-tabs span { font-size: var(--fs-label); font-variant-numeric: tabular-nums; }
+.stock-page .results-heading > span > b { font-weight: 400; }
+.stock-page .filter-applied b,
+.stock-page .filter-applied button { font-size: var(--fs-caption); }
+.stock-page .check-row { font-size: var(--fs-body); }
+.stock-page .check-row small { font-size: var(--fs-caption); font-variant-numeric: tabular-nums; }
+.stock-page .filter-contact p { font-size: var(--fs-small); line-height: 1.65; }
+.stock-page .filter-contact,
+.stock-page .empty-state { border: 1px solid var(--hairline); border-radius: var(--radius-md); }
+@media (max-width: 700px) {
+  .stock-page .stock-page-bar::after { left: 5%; }
+}
+
+/* B29 Small-print floor (needs the styles.css !important removal in B01) */
+.dealer-home .sample-note,
+.stock-page .sample-note,
+.vehicle-page .gallery-note,
+.vehicle-page .vehicle-info p.detail-note { font-size: var(--fs-caption); line-height: 1.7; }
+.vehicle-page .finance p,
+.vehicle-page .summary-stock { font-size: var(--fs-caption); }
+.vehicle-page .summary-stock span { font-size: var(--fs-label); letter-spacing: 0.12em; }
+
+/* B30 Stock page: phone filter drawer */
+@keyframes mm-drawer-in { from { opacity: 0; transform: translateY(24px); } }
+@media (max-width: 700px) {
+  .stock-page .filters.filters-open { animation: mm-drawer-in var(--mm-base) var(--mm-ease) both; }
+  body:has(.filters-open) { overflow: hidden; }
+  .stock-page .mobile-show-results {
+    left: 16px;
+    right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    width: auto;
+    min-height: 54px;
+    height: 54px;
+    border-radius: 10px;
+    box-shadow: 0 -16px 32px 8px #111;
+  }
+}
+
+/* B31 Vehicle page: gutters */
+.vehicle-page .related { max-width: none; }
+@media (min-width: 701px) {
+  .vehicle-page .breadcrumbs,
+  .vehicle-page .vehicle-layout { width: 92%; }
+  .vehicle-page .vehicle-layout { padding-bottom: clamp(56px, 5vw, 88px); }
+}
+
+/* B32 Vehicle page: summary panel */
+.vehicle-page .vehicle-summary { border: 1px solid var(--hairline); border-radius: var(--radius-md); box-shadow: inset 0 1px 0 #ffffff0a; }
+.vehicle-page .summary-specs,
+.vehicle-page .vehicle-phone { border-color: var(--hairline); }
+.vehicle-page .summary-specs { grid-template-columns: max-content minmax(0, 1fr); column-gap: 28px; }
+.vehicle-page .summary-specs > span { align-content: start; }
+.vehicle-page .summary-specs b { line-height: 1.35; }
+.vehicle-page .summary-specs b,
+.vehicle-page .finance-toggle b,
+.vehicle-page .vehicle-phone b { font-variant-numeric: tabular-nums; }
+.vehicle-page .vehicle-summary > .button { font-size: var(--fs-body); font-weight: 600; }
+.vehicle-page .vehicle-price small,
+.vehicle-page .finance-toggle small,
+.vehicle-page .vehicle-phone small { font-size: var(--fs-caption); }
+.vehicle-page .vehicle-price p,
+.vehicle-page .map-address { font-size: var(--fs-small); }
+.vehicle-page .map-address small { font-size: var(--fs-caption); }
+.vehicle-page .finance { background: var(--surface-2); border-color: var(--hairline); border-radius: var(--radius-sm); }
+@media (max-width: 1289px) {
+  .vehicle-page .summary-specs { grid-template-columns: 1fr; gap: 20px; }
+}
+
+/* B33 Vehicle page: gallery chrome, overview, location card */
+.vehicle-page .breadcrumbs,
+.vehicle-page .detail-tabs button,
+.vehicle-page .overview-highlights span { font-size: var(--fs-small); }
+.vehicle-page .vehicle-info > div[role="tabpanel"] > p { max-width: 62ch; font-size: 15px; line-height: 1.75; }
+.vehicle-page .gallery-count,
+.vehicle-page .gallery-expand,
+.vehicle-page .gallery-nav,
+.vehicle-page .gallery-main .car-tag {
+  background: #111111b3;
+  color: var(--off-white);
+  border: 1px solid #ffffff1f;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.vehicle-page .gallery-count { border-radius: var(--radius-xs); font-size: var(--fs-caption); font-variant-numeric: tabular-nums; }
+.vehicle-page .gallery-main .car-tag { border-radius: var(--radius-xs); font-size: var(--fs-label); letter-spacing: 0.12em; }
+.vehicle-page .gallery-nav:hover,
+.vehicle-page .gallery-expand:hover { background: var(--accent-strong); border-color: var(--accent-strong); color: #fff; }
+.vehicle-page .gallery-thumbs button { border: 0; border-radius: var(--radius-sm); opacity: 0.55; }
+.vehicle-page .gallery-thumbs button:hover { opacity: 0.85; }
+.vehicle-page .gallery-thumbs button.current { opacity: 1; box-shadow: 0 0 0 2px #111111, 0 0 0 4px var(--accent); }
+.vehicle-page .gallery-thumbs button span { font-size: 10px; font-variant-numeric: tabular-nums; }
+.vehicle-page .map-card { border-color: var(--hairline); border-radius: var(--radius-sm); }
+.vehicle-page .map-art {
+  background-color: #19191b;
+  background-image: linear-gradient(#ffffff06 1px, transparent 1px), linear-gradient(90deg, #ffffff06 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.vehicle-page .map-road { background: #ffffff14; border-color: transparent; }
+.vehicle-page .map-block { background: transparent; border-color: #ffffff12; }
+.vehicle-page .map-address { background: var(--surface-2); border-top: 1px solid var(--hairline); }
+@media (max-width: 700px) {
+  .vehicle-page .overview-highlights { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .vehicle-page .gallery-thumbs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* B34 Overlays: menu panel, dialogs, lightbox, enquiry fields */
+@keyframes mm-pop { from { opacity: 0; transform: translateY(-6px) scale(0.98); } }
+@keyframes mm-fade { from { opacity: 0; } }
+@keyframes mm-rise { from { opacity: 0; transform: translateY(12px) scale(0.985); } }
+.nav.open { transform-origin: top right; animation: mm-pop var(--mm-base) var(--mm-ease) both; }
+.nav.open > a { border-bottom: 1px solid #2e2e31; }
+.nav.open > a:last-child { border-bottom: 0; }
+.nav.open > a.active { color: var(--accent-text); }
+.modal-backdrop { animation: mm-fade var(--mm-base) var(--mm-ease) both; }
+.modal-backdrop > .dialog { animation: mm-rise var(--mm-base) var(--mm-ease) both; }
+.lightbox-controls { gap: 24px; font-variant-numeric: tabular-nums; }
+.lightbox-controls button,
+.lightbox .dialog-close { width: 44px; height: 44px; border: 1px solid #3a3a3d; border-radius: 50%; color: var(--off-white); }
+.lightbox-controls button:hover,
+.lightbox .dialog-close:hover { background: var(--accent-strong); border-color: var(--accent-strong); color: #fff; }
+.enquiry-dialog label input,
+.enquiry-dialog label textarea { font-weight: 400; border-radius: var(--radius-control); }
+.enquiry-dialog label input:focus-visible,
+.enquiry-dialog label textarea:focus-visible { outline-offset: 0; border-color: var(--accent); }
+
+/* B35 Icon stroke */
+:is(.header, .dealer-home, .stock-page, .vehicle-page, .footer, .enquiry-dialog) svg.lucide { stroke-width: 1.6; }
