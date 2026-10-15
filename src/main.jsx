@@ -61,9 +61,9 @@ const CrmDemo = lazy(() => import("./CrmDemo"));
 
 function Logo() {
   return (
-    <Link to="/" className="brand" aria-label="MM Prestiege Motors home">
+    <Link to="/" className="brand" aria-label="MM Prestige Motors home">
       <span>
-        <b>MM Prestiege</b>
+        <b>MM Prestige</b>
         <small>Motors</small>
       </span>
     </Link>
@@ -175,9 +175,9 @@ function ScrollReset() {
     const route = pathname.replace(/\/$/, "");
     document.title =
       route === "/crm"
-        ? "Sales CRM mockup | MM Prestiege Motors"
+        ? "Sales CRM mockup | MM Prestige Motors"
         : route === "/stock-manager"
-          ? "Stock management demo | MM Prestiege Motors"
+          ? "Stock management demo | MM Prestige Motors"
           : vehicle
             ? `${vehicle.year} ${vehicle.make} ${vehicle.model} | MM Prestige Motors`
             : pathname === "/stock"

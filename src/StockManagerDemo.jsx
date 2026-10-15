@@ -875,7 +875,7 @@ export default function StockManagerDemo() {
     <div className="stock-manager">
       <header className="sm-topbar">
         <Link to="/" className="sm-brand">
-          <b>MM PRESTIEGE</b>
+          <b>MM PRESTIGE</b>
           <small>M O T O R S</small>
         </Link>
         <div className="sm-top-actions">
@@ -955,7 +955,7 @@ export default function StockManagerDemo() {
                 </div>
                 <div className="sm-chat-title">
                   <b>MM Stock Assistant</b>
-                  <small>bot · MM Prestiege Motors</small>
+                  <small>bot · MM Prestige Motors</small>
                 </div>
                 <MoreVertical size={18} />
               </div>
@@ -1074,7 +1074,7 @@ export default function StockManagerDemo() {
               </div>
               <div className="sm-site-header">
                 <div>
-                  <b>MM PRESTIEGE</b>
+                  <b>MM PRESTIGE</b>
                   <small>M O T O R S</small>
                 </div>
                 <div className="sm-site-nav">
@@ -1238,7 +1238,7 @@ export default function StockManagerDemo() {
           </article>
         </section>
         <footer className="sm-demo-footer">
-          <span>MM PRESTIEGE MOTORS · STOCK MANAGEMENT CONCEPT</span>
+          <span>MM PRESTIGE MOTORS · STOCK MANAGEMENT CONCEPT</span>
           <p>
             Interactive demo. Registration lookups and website publishing are
             simulated; changes stay in this preview.

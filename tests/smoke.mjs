@@ -69,7 +69,7 @@ async function chooseSelect(control, value) {
 try {
   await page.goto(baseURL);
   await check('MM Prestige branding and Wingfield contact details', async () => {
-    await expect(page.locator('.header .brand')).toHaveAttribute('aria-label', /MM Prestiege Motors home/i);
+    await expect(page.locator('.header .brand')).toHaveAttribute('aria-label', /MM Prestige Motors home/i);
     await expect(page.locator('.footer')).toContainText('Grand Junction Road');
     await expect(page.locator('.footer')).toContainText('Wingfield SA 5013');
     const callLinks = page.locator('a[href^="tel:"]');

@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const publicRoot = resolve(root, 'public');
-const output = resolve(root, 'public/presentation/MM-Prestiege-Motors-Presentation.pdf');
+const output = resolve(root, 'public/presentation/MM-Prestige-Motors-Presentation.pdf');
 const types = { '.html': 'text/html; charset=utf-8', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.pdf': 'application/pdf' };
 const server = createServer(async (request, response) => {
   try {
@@ -50,9 +50,9 @@ try {
   const subject = draft.match(/^\*\*Subject:\*\* (.+)$/m);
   if (!subject) throw new Error('The email draft needs a Subject line.');
   const body = draft.slice(subject.index + subject[0].length).split(/\n---\s*\n/)[0].trim().replace(/\*\*/g, '');
-  const boundary = `mm-prestiege-${randomUUID()}`;
+  const boundary = `mm-prestige-${randomUUID()}`;
   const base64 = data => Buffer.from(data).toString('base64').match(/.{1,76}/g).join('\r\n');
-  const filename = 'MM-Prestiege-Motors-Presentation.pdf';
+  const filename = 'MM-Prestige-Motors-Presentation.pdf';
   const message = [
     'X-Unsent: 1',
     `Subject: =?UTF-8?B?${Buffer.from(subject[1]).toString('base64')}?=`,
@@ -73,7 +73,7 @@ try {
     `--${boundary}--`,
     '',
   ].join('\r\n');
-  const emailOutput = resolve(root, 'docs/presentation/MM-Prestiege-Motors-Email-Draft.eml');
+  const emailOutput = resolve(root, 'docs/presentation/MM-Prestige-Motors-Email-Draft.eml');
   await writeFile(emailOutput, message);
   console.log(`Created ${emailOutput} with the PDF attached. No recipient set and no email sent.`);
 } finally {

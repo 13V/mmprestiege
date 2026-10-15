@@ -547,7 +547,7 @@ export default function CrmDemo() {
       <div className="crm-shell">
         <aside className="crm-sidebar">
           <Link to="/" className="crm-sidebar-brand">
-            <b>MM PRESTIEGE</b>
+            <b>MM PRESTIGE</b>
             <small>M O T O R S</small>
           </Link>
           <div className="crm-workspace-name">
