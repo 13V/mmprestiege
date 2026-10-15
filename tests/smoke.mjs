@@ -223,6 +223,15 @@ try {
     const link = reviews.getByRole('link', { name: /Read our reviews on Google/ });
     expect(new URL(await link.getAttribute('href')).hostname).toBe('www.google.com');
   });
+  await check('Specialties strip shows the HSV and Holden badges', async () => {
+    await page.goto(baseURL);
+    const badges = page.locator('.marque-words img');
+    await expect(badges).toHaveCount(2);
+    await expect(page.locator('.marque-words li').nth(0)).toHaveText('HSV');
+    await expect(page.locator('.marque-words li').nth(1)).toHaveText('Holden');
+    await expect(badges.nth(0)).toHaveAttribute('alt', '');
+    await expect(page.locator('.footer-bottom')).toContainText('trademarks of their owners');
+  });
   await check('Sell-your-car form prepares a trade-in message with the car details', async () => {
     await page.locator('.header-actions').getByRole('button', { name: 'Sell your car', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Sell or trade your car with MM Prestige Motors' });
