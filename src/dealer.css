@@ -161,7 +161,7 @@ h2 em {
 .dealer-home .section-title {
   margin-bottom: 25px;
 }
-.featured {
+.card-grid.featured {
   gap: 24px;
 }
 .car-card {
@@ -573,7 +573,7 @@ h2 em {
   .stock-grid .card-variant {
     font-size: 13px;
   }
-  .featured {
+  .card-grid.featured {
     gap: 18px;
   }
   .card-specs,

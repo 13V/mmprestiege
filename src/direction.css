@@ -1,9 +1,4 @@
-@font-face {
-  font-family: Michroma;
-  src: url("/fonts/michroma-400.woff2") format("woff2");
-  font-weight: 400;
-  font-display: swap;
-}
+@import "@fontsource/michroma/latin-400.css";
 :root {
   --display: Michroma, Manrope, sans-serif;
   --ink: #f5f5f3;
@@ -63,9 +58,6 @@ textarea:focus-visible {
   max-width: none;
   padding: 0 4%;
   gap: 25px;
-}
-.brand::before {
-  display: none;
 }
 .brand b,
 .footer .brand b {
@@ -564,9 +556,18 @@ textarea:focus-visible {
   color: #ddd;
   border-color: #454547;
 }
-.carousel-controls button:disabled {
-  opacity: 0.45;
+/* aria-disabled keeps focus on the button at either end of the carousel;
+   colours rather than opacity keep its focus outline at full strength. */
+.carousel-controls button[aria-disabled="true"] {
   cursor: default;
+  color: #7b7a7a;
+  background: color-mix(in srgb, var(--accent-strong) 45%, #111);
+  border-color: color-mix(in srgb, var(--accent-strong) 45%, #111);
+}
+.carousel-controls button[aria-disabled="true"]:first-child {
+  color: #6d6d6d;
+  background: transparent;
+  border-color: color-mix(in srgb, #454547 45%, #111);
 }
 .reference-sell {
   position: relative;

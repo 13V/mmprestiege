@@ -206,7 +206,8 @@ function ScrollReset() {
 function Header({ onEnquire }) {
   const [open, setOpen] = useState(false);
   const menuButton = useRef(null);
-  const { pathname, search } = useLocation();
+  const navigation = useRef(null);
+  const { pathname, search, hash } = useLocation();
   const soldView =
     pathname === "/stock" &&
     new URLSearchParams(search).get("status") === "sold";
@@ -222,6 +223,16 @@ function Header({ onEnquire }) {
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [open]);
+  useEffect(() => {
+    if (open) navigation.current?.querySelector("a")?.focus();
+  }, [open]);
+  // A hash-only change doesn't close the menu, and re-selecting the current
+  // section doesn't change the location, so scroll to it directly.
+  const goToSection = (id) => () => {
+    setOpen(false);
+    if (pathname === "/" && hash === `#${id}`)
+      document.getElementById(id)?.scrollIntoView({ behavior: "instant" });
+  };
   return (
     <>
       <div className="utility">
@@ -233,10 +244,22 @@ function Header({ onEnquire }) {
           {business.phone}
         </a>
       </div>
-      <header className="header">
+      <header
+        className="header"
+        onBlur={(event) => {
+          // relatedTarget is null when a click doesn't move focus (Safari).
+          if (
+            open &&
+            event.relatedTarget &&
+            !event.currentTarget.contains(event.relatedTarget)
+          )
+            setOpen(false);
+        }}
+      >
         <div className="header-inner">
           <Logo />
           <nav
+            ref={navigation}
             id="main-navigation"
             className={open ? "nav open" : "nav"}
             aria-label="Main navigation"
@@ -244,9 +267,9 @@ function Header({ onEnquire }) {
             <Link className={pathname === "/" ? "active" : ""} to="/">
               Home
             </Link>
-            <a href="/#about" onClick={() => setOpen(false)}>
+            <Link to="/#about" onClick={goToSection("about")}>
               About us
-            </a>
+            </Link>
             <Link
               className={
                 pathname.startsWith("/stock") && !soldView ? "active" : ""
@@ -261,9 +284,9 @@ function Header({ onEnquire }) {
             >
               Sold cars
             </Link>
-            <a href="/#services" onClick={() => setOpen(false)}>
+            <Link to="/#services" onClick={goToSection("services")}>
               Services
-            </a>
+            </Link>
           </nav>
           <div className="header-actions">
             <button
@@ -494,7 +517,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
         className="marque-strip marque-words"
         aria-label="Our specialties — not a list of current inventory"
       >
-        {["HSV", "Holden", "Commodore", "Clubsport", "Maloo", "Ford"].map(
+        {["HSV", "Holden", "Commodore", "Clubsport", "Maloo", "Prestige"].map(
           (name) => (
             <li key={name}>{name}</li>
           ),
@@ -550,7 +573,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
       </section>
       <section className="section collection reference-collection">
         <div className="section-title">
-          <h2>The most searched cars</h2>
+          <h2>From our collection</h2>
         </div>
         <div className="home-collection-toolbar">
           <div
@@ -588,14 +611,14 @@ function Home({ saved, toggleSaved, onEnquire }) {
         <div className="carousel-controls">
           <button
             aria-label="Previous featured cars"
-            disabled={featuredStart === 0}
+            aria-disabled={featuredStart === 0}
             onClick={() => setFeaturedStart((start) => Math.max(0, start - 1))}
           >
             <ArrowLeft size={16} />
           </button>
           <button
             aria-label="Next featured cars"
-            disabled={featuredStart === maxFeaturedStart}
+            aria-disabled={featuredStart === maxFeaturedStart}
             onClick={() =>
               setFeaturedStart((start) => Math.min(maxFeaturedStart, start + 1))
             }
@@ -642,7 +665,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
           <div className="rating">
             <b>5.0</b>
             <span>
-              <span className="stars" aria-label="5 out of 5 stars">
+              <span className="stars" role="img" aria-label="5 out of 5 stars">
                 ★★★★★
               </span>
               <small>Google reviews</small>
