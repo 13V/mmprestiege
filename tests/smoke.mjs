@@ -19,7 +19,14 @@ const page = await context.newPage();
 page.setDefaultTimeout(5000);
 const runtimeErrors = [];
 page.on('pageerror', error => runtimeErrors.push(error.message));
-page.on('console', message => { if (message.type() === 'error') runtimeErrors.push(message.text()); });
+// The unknown-page check expects a real 404 where the host serves one (Vercel).
+const expected404 = new Set(['/nope']);
+page.on('console', message => {
+  if (message.type() !== 'error') return;
+  const { url } = message.location();
+  if (/status of 404/.test(message.text()) && url && expected404.has(new URL(url).pathname)) return;
+  runtimeErrors.push(message.text());
+});
 const mutationRequests = [];
 page.on('request', request => {
   if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method())) {
