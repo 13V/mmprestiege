@@ -632,19 +632,11 @@ function Home({ saved, toggleSaved, onEnquire }) {
         className="marque-strip marque-words"
         aria-label="Our specialties — not a list of current inventory"
       >
-        {[
-          ["HSV", "/marques/hsv.webp"],
-          ["Holden", "/marques/holden.webp"],
-          ["Commodore"],
-          ["Clubsport"],
-          ["Maloo"],
-          ["Prestige"],
-        ].map(([name, badge]) => (
-          <li key={name}>
-            {badge && <img src={badge} alt="" width="36" height="36" />}
-            {name}
-          </li>
-        ))}
+        {["HSV", "Holden", "Commodore", "Clubsport", "Maloo", "Prestige"].map(
+          (name) => (
+            <li key={name}>{name}</li>
+          ),
+        )}
       </ul>
       <section className="reference-offer offer-bento" id="services">
         <div className="offer-copy">
@@ -2240,10 +2232,7 @@ function Footer() {
       </div>
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} MM Prestige Motors.</span>
-        <span>
-          Website concept · Sample inventory and generic imagery · HSV and
-          Holden logos are trademarks of their owners.
-        </span>
+        <span>Website concept · Sample inventory and generic imagery.</span>
         <span>WINGFIELD / ADELAIDE</span>
       </div>
     </footer>

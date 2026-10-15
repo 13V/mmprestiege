@@ -1,6 +1,5 @@
-/* MM Prestige additions to the showroom design: specialty lettering, with
-   the HSV and Holden badges, and the supplied customer reviews on the dark
-   canvas. */
+/* MM Prestige additions to the showroom design: specialty lettering in place
+   of marque logos, and the supplied customer reviews on the dark canvas. */
 .marque-strip.marque-words {
   list-style: none;
   margin: 0;
@@ -15,20 +14,6 @@
   text-transform: uppercase;
   white-space: nowrap;
   color: #8d8c88;
-}
-.marque-words li {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45em;
-}
-/* Badges are toned to grey so they sit with the lettering. */
-.marque-words img {
-  flex-shrink: 0;
-  width: 1.45em;
-  height: 1.45em;
-  object-fit: contain;
-  filter: grayscale(1) brightness(0.9);
-  opacity: 0.8;
 }
 
 .dealer-home .mm-reviews {
@@ -675,13 +660,6 @@ h4) {
 .footer { background: var(--off-white); }
 .footer-bottom { max-width: none; border-top-color: #e0e0dc; font-size: var(--fs-caption); }
 .footer-bottom > span:last-child { font-size: var(--fs-label); letter-spacing: var(--track-label); }
-/* The copyright and place stay on one line; the notes in the middle wrap. */
-@media (min-width: 851px) {
-  .footer-bottom { gap: 24px; }
-  .footer-bottom > span:first-child,
-  .footer-bottom > span:last-child { flex-shrink: 0; white-space: nowrap; }
-  .footer-bottom > span:nth-child(2) { text-align: center; }
-}
 .footer-main a:not(.brand):not(.button),
 .footer-main p,
 .footer-main > div:first-child p { font-size: var(--fs-body); line-height: 1.75; }

@@ -342,6 +342,16 @@ textarea:focus-visible {
   padding: 42px 4%;
   overflow: hidden;
 }
+.marque-strip img {
+  height: 55px;
+  width: 66px;
+  object-fit: contain;
+  filter: invert(1);
+  opacity: 0.43;
+}
+.marque-strip img:first-child {
+  height: 48px;
+}
 .reference-offer {
   display: grid;
   grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr) minmax(0, 0.8fr);
@@ -968,6 +978,13 @@ textarea:focus-visible {
     padding: 35px 4%;
     gap: 25px;
   }
+  .marque-strip img {
+    width: 45px;
+    height: 40px;
+  }
+  .marque-strip img:first-child {
+    height: 35px;
+  }
   .reference-offer {
     grid-template-columns: 1.3fr 1fr 0.8fr;
     gap: 15px;
@@ -1146,6 +1163,14 @@ textarea:focus-visible {
   .marque-strip {
     gap: 20px;
     padding: 32px 4%;
+  }
+  .marque-strip img {
+    width: 34px;
+    height: 31px;
+    flex-shrink: 0;
+  }
+  .marque-strip img:first-child {
+    height: 28px;
   }
   .reference-offer {
     grid-template-columns: 1fr 1fr;

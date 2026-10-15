@@ -32,14 +32,3 @@ Paths without a named source above belong to Ridex. Those images can be inspecte
 Direct HTTPS access to `images.unsplash.com` and `upload.wikimedia.org` was rejected by this cloud environment's destination policy. The local files avoid runtime hotlinking and keep the preview usable without those hosts. No TLS checks were disabled. GitHub source requests used the environment's existing proxy and trust configuration.
 
 The three `.webp` campaign images are generated and were not sourced from the repositories above. They do not depict MM Prestige stock or premises; replace them before launch.
-
-## Marque badges
-
-The HSV and Holden badges in the home page's specialties strip are third-party trademarks. They were cropped from the copies English Wikipedia hosts, because the usual logo download sites block automated downloads. Wikipedia hosts both as non-free files under its own fair-use policy, which gives no licence for this site. They are shown, as many used-car dealers do, to identify the makes sold, and the footer states that they are trademarks of their owners. Replace them with files the dealer has permission to use before launch.
-
-| Local file | Source | Changes |
-| --- | --- | --- |
-| `public/marques/holden.webp` | [File:Holden (car brand) logo.png](https://en.wikipedia.org/wiki/File:Holden_(car_brand)_logo.png) | Cropped to the round lion emblem (171 × 171) |
-| `public/marques/hsv.webp` | [File:Holden Special Vehicles logo.png](https://en.wikipedia.org/wiki/File:Holden_Special_Vehicles_logo.png) | Cropped to the round lion-and-helmet badge (106 × 106) and toned grey, with the red ring lifted to silver |
-
-The site greys both badges with a CSS filter so they sit with the strip's lettering.
