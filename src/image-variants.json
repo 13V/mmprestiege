@@ -1,0 +1,86 @@
+{
+  "/images/about.jpg": {
+    "width": 640,
+    "height": 400,
+    "srcset": "/images/opt/about-480.webp 480w, /images/opt/about-640.webp 640w",
+    "share": "/images/opt/about-share.jpg"
+  },
+  "/images/car-1.jpg": {
+    "width": 3840,
+    "height": 2160,
+    "srcset": "/images/opt/car-1-480.webp 480w, /images/opt/car-1-960.webp 960w, /images/opt/car-1-1600.webp 1600w, /images/opt/car-1-2400.webp 2400w",
+    "share": "/images/opt/car-1-share.jpg"
+  },
+  "/images/car-2.jpg": {
+    "width": 440,
+    "height": 300,
+    "srcset": "/images/opt/car-2-440.webp 440w",
+    "share": "/images/opt/car-2-share.jpg"
+  },
+  "/images/car-3.jpg": {
+    "width": 440,
+    "height": 300,
+    "srcset": "/images/opt/car-3-440.webp 440w",
+    "share": "/images/opt/car-3-share.jpg"
+  },
+  "/images/car-4.jpg": {
+    "width": 440,
+    "height": 300,
+    "srcset": "/images/opt/car-4-440.webp 440w",
+    "share": "/images/opt/car-4-share.jpg"
+  },
+  "/images/car-5.jpg": {
+    "width": 640,
+    "height": 400,
+    "srcset": "/images/opt/car-5-480.webp 480w, /images/opt/car-5-640.webp 640w",
+    "share": "/images/opt/car-5-share.jpg"
+  },
+  "/images/car-6.jpg": {
+    "width": 440,
+    "height": 300,
+    "srcset": "/images/opt/car-6-440.webp 440w",
+    "share": "/images/opt/car-6-share.jpg"
+  },
+  "/images/car-7.jpg": {
+    "width": 440,
+    "height": 300,
+    "srcset": "/images/opt/car-7-440.webp 440w",
+    "share": "/images/opt/car-7-share.jpg"
+  },
+  "/images/car-8.jpg": {
+    "width": 3840,
+    "height": 2160,
+    "srcset": "/images/opt/car-8-480.webp 480w, /images/opt/car-8-960.webp 960w, /images/opt/car-8-1600.webp 1600w, /images/opt/car-8-2400.webp 2400w",
+    "share": "/images/opt/car-8-share.jpg"
+  },
+  "/images/detail-2.jpg": {
+    "width": 1176,
+    "height": 582,
+    "srcset": "/images/opt/detail-2-480.webp 480w, /images/opt/detail-2-960.webp 960w, /images/opt/detail-2-1176.webp 1176w",
+    "share": "/images/opt/detail-2-share.jpg"
+  },
+  "/images/detail-3.jpg": {
+    "width": 900,
+    "height": 596,
+    "srcset": "/images/opt/detail-3-480.webp 480w, /images/opt/detail-3-900.webp 900w",
+    "share": "/images/opt/detail-3-share.jpg"
+  },
+  "/images/sell-supercar.webp": {
+    "width": 1672,
+    "height": 941,
+    "srcset": "/images/opt/sell-supercar-480.webp 480w, /images/opt/sell-supercar-960.webp 960w, /images/opt/sell-supercar-1672.webp 1672w",
+    "share": "/images/opt/sell-supercar-share.jpg"
+  },
+  "/images/studio-hero.webp": {
+    "width": 1672,
+    "height": 941,
+    "srcset": "/images/opt/studio-hero-480.webp 480w, /images/opt/studio-hero-960.webp 960w, /images/opt/studio-hero-1672.webp 1672w",
+    "share": "/images/opt/studio-hero-share.jpg"
+  },
+  "/images/suv-cutout.webp": {
+    "width": 1536,
+    "height": 1024,
+    "srcset": "/images/opt/suv-cutout-480.webp 480w, /images/opt/suv-cutout-960.webp 960w, /images/opt/suv-cutout-1536.webp 1536w",
+    "share": "/images/opt/suv-cutout-share.jpg"
+  }
+}

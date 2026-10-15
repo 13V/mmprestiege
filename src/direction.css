@@ -178,14 +178,6 @@ textarea:focus-visible {
   letter-spacing: 1.5px;
   color: #aaa8a3;
 }
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
 .dealer-home h2,
 .section-title h2 {
   font-family: var(--display);
@@ -815,7 +807,7 @@ textarea:focus-visible {
   color: #666;
   font-size: 9px;
 }
-.footer-next-drive h3 {
+.footer-next-drive h2 {
   font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.5px;
@@ -862,19 +854,8 @@ textarea:focus-visible {
 .enquiry-dialog label textarea::placeholder {
   color: #aaa;
 }
-.enquiry-head p {
-  color: #aaa;
-}
-.enquiry-message {
-  background: #252527;
-  border-color: #444;
-}
 .enquiry-call {
   color: var(--accent-text);
-}
-.not-found {
-  background: #111;
-  color: #fff;
 }
 @media (min-width: 1900px) {
   .reference-hero {

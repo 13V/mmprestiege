@@ -216,13 +216,43 @@ try {
     const link = reviews.getByRole('link', { name: /Read our reviews on Google/ });
     expect(new URL(await link.getAttribute('href')).hostname).toBe('www.google.com');
   });
-  await check('Sell-your-car action prepares a selling enquiry', async () => {
+  await check('Sell-your-car form prepares a trade-in message with the car details', async () => {
     await page.locator('.header-actions').getByRole('button', { name: 'Sell your car', exact: true }).click();
-    const dialog = page.getByRole('dialog', { name: 'Enquire with MM Prestige Motors' });
+    const dialog = page.getByRole('dialog', { name: 'Sell or trade your car with MM Prestige Motors' });
     await expect(dialog).toBeVisible();
-    await expect(dialog.getByLabel('Your message')).toHaveValue(/selling or trading my car/);
+    await dialog.getByLabel('Year').fill('2015');
+    await dialog.getByLabel('Kilometres').fill('85,000');
+    await dialog.getByLabel('Make').fill('Holden');
+    await dialog.getByLabel('Model').fill('Commodore SS');
+    await dialog.getByLabel('Condition').selectOption('Good');
+    await dialog.getByLabel('What would you like to do?').selectOption('Trade it in');
+    await dialog.getByLabel('Your name').fill('Website QA');
+    await dialog.getByLabel('Phone number').fill('0400000000');
+    await dialog.getByRole('button', { name: 'Prepare enquiry' }).click();
+    const message = decodeURIComponent((await dialog.getByRole('link', { name: 'Send via SMS' }).getAttribute('href')).split('?body=')[1]);
+    expect(message).toContain("Hi Madi, I'd like to trade in my car.");
+    expect(message).toContain('Car: 2015 Holden Commodore SS');
+    expect(message).toContain('Kilometres: 85,000');
+    expect(message).toContain('Condition: Good');
+    expect(message).not.toContain('Rego:');
+    expect(message).toContain('Name: Website QA');
     await page.keyboard.press('Escape');
     await expect(dialog).toHaveCount(0);
+  });
+  await check('Header shows Madi\'s number and every link on desktop', async () => {
+    await expect(page.locator('.header-call')).toHaveAttribute('href', 'tel:+61411710409');
+    await expect(page.locator('.header-call')).toContainText('0411 710 409');
+    await expect(page.getByRole('button', { name: 'Open navigation' })).toBeHidden();
+    await expect(page.locator('.nav').getByRole('link', { name: 'Sold cars', exact: true })).toBeVisible();
+    await expect(page.locator('.header-saved')).toHaveCount(0);
+  });
+  await check('Home page carries link-preview tags and dealer details for search', async () => {
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og-image\.png$/);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/$/);
+    const dealer = JSON.parse(await page.locator('script[type="application/ld+json"]').textContent());
+    expect(dealer['@type']).toBe('AutoDealer');
+    expect(dealer.telephone).toBe('+61411710409');
+    expect(dealer.address.postalCode).toBe('5013');
   });
   await check('Home page and stock links', async () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('HSV & Holden specialists');
@@ -292,6 +322,37 @@ try {
     await page.locator('.saved-toggle').click();
     await expect(cards()).toHaveCount(6);
   });
+  await check('Header saved-cars link opens the saved view', async () => {
+    const link = page.locator('.header-saved');
+    await expect(link).toHaveAttribute('aria-label', 'Saved cars (1)');
+    await page.goto(`${baseURL}/stock/hsv-gts-2016`);
+    await link.click();
+    await expect(page).toHaveURL(/\/stock\?status=all$/);
+    await expect(page.locator('.saved-toggle')).toHaveAttribute('aria-pressed', 'true');
+    await expect(cards()).toHaveCount(1);
+    await expect(cards().first().locator('.card-variant')).toHaveText('2019 Fastback · V8 coupe');
+  });
+  await check('Stock car finder prepares a wanted-car message', async () => {
+    await goStock();
+    await page.getByRole('button', { name: /Find me a car/ }).click();
+    const dialog = page.getByRole('dialog', { name: 'Find a car with MM Prestige Motors' });
+    await dialog.getByLabel('Make and model').fill('HSV GTS');
+    await dialog.getByLabel(/^Budget/).selectOption('Over $100,000');
+    await dialog.getByLabel('Your name').fill('Website QA');
+    await dialog.getByLabel('Phone number').fill('0400000000');
+    await dialog.getByRole('button', { name: 'Prepare enquiry' }).click();
+    await expect(dialog.locator('.message-preview')).toContainText('Looking for: HSV GTS');
+    await expect(dialog.locator('.message-preview')).toContainText('Budget: Over $100,000');
+    await expect(dialog.locator('.message-preview')).not.toContainText('Years:');
+    await page.keyboard.press('Escape');
+  });
+  await check('Photos are served as resized WebP files', async () => {
+    const card = cards().first().locator('img');
+    await expect(card).toHaveAttribute('srcset', /\/images\/opt\/.+\.webp \d+w/);
+    await page.waitForFunction(() => document.querySelector('.collection-grid img')?.currentSrc?.endsWith('.webp'));
+    await page.goto(`${baseURL}${firstVehicleRoute}`);
+    await expect(page.locator('.vehicle-stage-image')).toHaveAttribute('srcset', /car-1-2400\.webp 2400w/);
+  });
   await check('Vehicle detail and carousel', async () => {
     await page.goto(`${baseURL}${firstVehicleRoute}`);
     const count = page.locator('.vehicle-hero-count');
@@ -349,6 +410,12 @@ try {
     await expect(page.locator('#specifications')).toContainText('MM101');
     await expect(page.locator('#specifications')).toContainText('Wingfield, SA');
   });
+  await check('Finance link prepares a finance enquiry for the car', async () => {
+    await page.getByRole('button', { name: /Ask Madi about finance/ }).click();
+    const dialog = page.getByRole('dialog', { name: 'Enquire with MM Prestige Motors' });
+    await expect(dialog.getByLabel('Your message')).toHaveValue(/finance for the 2016 HSV GTS/);
+    await page.keyboard.press('Escape');
+  });
   await check('Repayment calculator updates at zero interest', async () => {
     await page.locator('.finance-toggle').click();
     await page.getByLabel('Deposit', { exact: true }).fill('20000');
@@ -385,6 +452,10 @@ try {
     await expect(page.getByRole('button', { name: 'Next vehicle photo', exact: true })).toHaveCount(0);
     await expect(page.locator('.finance')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Find me something similar' })).toBeVisible();
+    await page.getByRole('button', { name: 'Find me something similar' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Find a car with MM Prestige Motors' });
+    await expect(dialog.getByLabel('Make and model')).toHaveValue('HSV Clubsport or similar');
+    await page.keyboard.press('Escape');
   });
   await check('Footer story link scrolls from stock to about', async () => {
     await goStock();
@@ -455,6 +526,14 @@ try {
     await page.locator('.nav').getByRole('link', { name: 'Inventory', exact: true }).click();
     await expect(page).toHaveURL(/\/stock$/);
     await expect(page.getByRole('button', { name: 'Open navigation' })).toHaveAttribute('aria-expanded', 'false');
+  });
+  await check('Phone header keeps a call button and lists saved cars in the menu', async () => {
+    await expect(page.locator('.header-call')).toBeVisible();
+    await expect(page.locator('.header-call')).toHaveAttribute('aria-label', 'Call Madi on 0411 710 409');
+    await expect(page.locator('.header-saved')).toBeHidden();
+    await page.getByRole('button', { name: 'Open navigation' }).click();
+    await expect(page.locator('.nav').getByRole('link', { name: /Saved cars/ })).toHaveAttribute('href', '/stock?status=all&saved=1');
+    await page.keyboard.press('Escape');
   });
   await check('Mobile navigation closes on sold query navigation', async () => {
     await page.getByRole('button', { name: 'Open navigation' }).click();

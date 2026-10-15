@@ -16,7 +16,7 @@
 .enquiry-dialog h2,
 .offer-performance h3,
 .offer-trade h3,
-.footer-next-drive h3,
+.footer-next-drive h2,
 .stock-help h3,
 .stock-empty h3,
 .mm-reviews .rating > b,
@@ -34,6 +34,13 @@
   font-size: 22px;
   line-height: 1;
   letter-spacing: 0.04em;
+}
+
+.brand small,
+.footer .brand small {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.32em;
 }
 
 /* Specialties strip */
@@ -78,7 +85,7 @@
   font-size: clamp(22px, 2vw, 28px);
   line-height: 1.05;
 }
-.footer-next-drive h3 {
+.footer-next-drive h2 {
   font-size: 26px;
   line-height: 1.05;
 }
@@ -141,6 +148,9 @@
 @media (max-width: 600px) {
   .brand b {
     font-size: 19px;
+  }
+  .brand small {
+    font-size: 8px;
   }
   .footer .brand b {
     font-size: 20px;

@@ -239,22 +239,9 @@ h4) {
   margin-top: 0;
 }
 /* The long street address wraps evenly instead of orphaning "Road". */
-.footer-main a[href*="maps"],
-.map-address span {
+.footer-main a[href*="maps"] {
   text-wrap: balance;
 }
-/* 404 and unknown-car headings use the display face, not the Georgia fallback. */
-.not-found h1 {
-  font-family: var(--display);
-  letter-spacing: 0;
-  line-height: 1.3;
-}
-@media (max-width: 650px) {
-  .not-found h1 {
-    font-size: 25px;
-  }
-}
-
 /* ==========================================================================
    Beauty pass: one type scale, one spacing rhythm, one surface/radius set,
    one easing, built on the showroom design rather than replacing it.
@@ -678,7 +665,7 @@ h4) {
 .footer-main > div:first-child p { font-size: var(--fs-body); line-height: 1.75; }
 .footer-label { font-size: var(--fs-label); font-weight: 700; letter-spacing: var(--track-label); text-transform: uppercase; }
 .footer-appointment { font-size: var(--fs-caption); }
-.footer-next-drive h3 { font-family: var(--display); font-size: 20px; font-weight: 400; line-height: 1.3; letter-spacing: 0; }
+.footer-next-drive h2 { font-family: var(--display); font-size: 20px; font-weight: 400; line-height: 1.3; letter-spacing: 0; }
 .footer-next-drive p { font-size: var(--fs-body); }
 .footer .footer-next-drive .button { font-size: var(--fs-small); }
 .footer .brand:hover { color: #111; opacity: 0.7; }
@@ -844,5 +831,219 @@ h4) {
   .offer-call-label {
     top: 18px;
     left: 20px;
+  }
+}
+
+/* Header: Madi's number, saved cars and the full menu on desktop */
+.header-call {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: #dcdce0;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  transition: color var(--mm-fast) var(--mm-ease), border-color var(--mm-fast) var(--mm-ease);
+}
+.header-call svg {
+  color: var(--accent-text);
+}
+.header-call:hover {
+  color: #fff;
+}
+.header-saved {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  color: #fff;
+  border-radius: 50%;
+  transition: background var(--mm-fast) var(--mm-ease);
+}
+.header-saved:hover {
+  background: #ffffff14;
+}
+.header-saved span,
+.nav-saved span {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  color: #fff;
+  background: var(--accent-strong);
+  border-radius: 9px;
+  font-variant-numeric: tabular-nums;
+}
+.header-saved span {
+  position: absolute;
+  top: 1px;
+  right: -1px;
+}
+.nav .nav-saved {
+  display: none;
+}
+.nav.open .nav-saved {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+@media (min-width: 851px) {
+  /* Every link fits in the bar, so the menu button isn't needed. */
+  .header .menu-button {
+    display: none;
+  }
+  .nav .nav-sold {
+    display: block;
+  }
+  .header-actions {
+    gap: 14px;
+  }
+}
+@media (min-width: 851px) and (max-width: 1180px) {
+  .nav {
+    gap: 24px;
+  }
+}
+@media (max-width: 1180px) {
+  /* Narrower bars keep the call button and drop the number. */
+  .header-call {
+    width: 40px;
+    height: 40px;
+    color: #fff;
+    border: 1px solid #ffffff38;
+    border-radius: 50%;
+  }
+  .header-call:hover {
+    border-color: #fff;
+  }
+  .header-call span {
+    display: none;
+  }
+}
+@media (max-width: 850px) {
+  .header-saved {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .header-call {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Enquiry dialog: readable sizes and the sell, finder and finance forms */
+.enquiry-dialog form > p,
+.enquiry-ready > p {
+  margin-bottom: 18px;
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: #aaa8a3;
+}
+.enquiry-fields {
+  min-width: 0;
+  margin: 0 0 6px;
+  padding: 0;
+  border: 0;
+}
+.enquiry-fields + .enquiry-fields {
+  margin-top: 8px;
+}
+.enquiry-fields legend {
+  margin-bottom: 12px;
+  padding: 0;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: #9a9a9e;
+}
+.enquiry-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 12px;
+}
+.enquiry-dialog form label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 14px;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: #dedee0;
+}
+.enquiry-dialog form label small {
+  font-size: inherit;
+  font-weight: 400;
+  color: #8d8c88;
+}
+.enquiry-dialog input,
+.enquiry-dialog textarea,
+.enquiry-dialog select {
+  width: 100%;
+  padding: 11px 12px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+.enquiry-dialog label select {
+  appearance: none;
+  padding-right: 38px;
+  border: 1px solid #454547;
+  border-radius: var(--radius-control);
+  background: #252527 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aaa8a3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center / 16px;
+  cursor: pointer;
+}
+.enquiry-dialog label select:focus-visible {
+  outline-offset: 0;
+  border-color: var(--accent);
+}
+.enquiry-dialog label input::placeholder,
+.enquiry-dialog label textarea::placeholder {
+  color: #7d7d82;
+}
+.enquiry-footnote {
+  margin-top: 12px;
+  font-size: var(--fs-caption);
+  color: #8d8c88;
+}
+.enquiry-call {
+  font-size: var(--fs-small);
+}
+.enquiry-car small {
+  font-size: var(--fs-caption);
+  color: #9a9a9e;
+}
+.enquiry-car b {
+  font-size: var(--fs-body);
+}
+.message-preview {
+  font-size: var(--fs-small);
+  line-height: 1.7;
+  color: #dedee0;
+  background: #111;
+  border-color: var(--hairline-strong);
+  border-radius: var(--radius-sm);
+}
+.enquiry-dialog .clear-link {
+  font-size: var(--fs-small);
+  color: var(--accent-text);
+}
+@media (max-width: 600px) {
+  /* 16px stops phones zooming in when a field is tapped. */
+  .enquiry-dialog input,
+  .enquiry-dialog textarea,
+  .enquiry-dialog select {
+    font-size: 16px;
+  }
+}
+@media (max-width: 380px) {
+  .enquiry-row {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

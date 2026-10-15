@@ -26,7 +26,6 @@ import {
   Phone,
   MapPin,
   Heart,
-  Bookmark,
   Search,
   SlidersHorizontal,
   X,
@@ -50,6 +49,7 @@ import {
 } from "lucide-react";
 import { vehicles, money, number, business } from "./data";
 import ThemedSelect from "./ThemedSelect";
+import { responsive } from "./images";
 import "./styles.css";
 import "./dealer.css";
 import "./foundation.css";
@@ -60,6 +60,19 @@ import "./mm-prestige.css";
 import "./inner-pages.css";
 import "./typeface.css";
 import "./motion.css";
+
+// How wide each photo is drawn, so the browser can pick the right size.
+const SIZES = {
+  card:
+    "(max-width: 600px) 92vw, (max-width: 900px) 46vw, " +
+    "(max-width: 1100px) 31vw, 24vw",
+  hero: "100vw",
+  offerPanel: "(max-width: 600px) 46vw, 30vw",
+  offerCutout: "(max-width: 600px) 40vw, 22vw",
+  banner: "(max-width: 850px) 100vw, 62vw",
+  stage: "(max-width: 960px) 92vw, 66vw",
+  thumb: "(max-width: 700px) 24vw, 11vw",
+};
 
 const StockManagerDemo = lazy(() => import("./StockManagerDemo"));
 const CrmDemo = lazy(() => import("./CrmDemo"));
@@ -107,7 +120,10 @@ function App() {
   return (
     <BrowserRouter>
       <ScrollReset />
-      <SiteLayout onEnquire={(details = {}) => setEnquiry(details)}>
+      <SiteLayout
+        onEnquire={(details = {}) => setEnquiry(details)}
+        savedCount={saved.length}
+      >
         <Suspense
           fallback={
             <div role="status" style={{ padding: "40px" }}>
@@ -130,7 +146,13 @@ function App() {
           />
           <Route
             path="/stock"
-            element={<Stock saved={saved} toggleSaved={toggleSaved} />}
+            element={
+              <Stock
+                saved={saved}
+                toggleSaved={toggleSaved}
+                onEnquire={setEnquiry}
+              />
+            }
           />
           <Route
             path="/stock/:id"
@@ -227,7 +249,7 @@ function useReveal(pathname) {
     };
   }, [pathname]);
 }
-function SiteLayout({ children, onEnquire }) {
+function SiteLayout({ children, onEnquire, savedCount }) {
   const { pathname } = useLocation();
   useReveal(pathname);
   if (["/stock-manager", "/crm"].includes(pathname.replace(/\/$/, "")))
@@ -236,7 +258,7 @@ function SiteLayout({ children, onEnquire }) {
     <div
       className="site-shell home-shell"
     >
-      <Header onEnquire={onEnquire} />
+      <Header onEnquire={onEnquire} savedCount={savedCount} />
       {children}
       <Footer />
     </div>
@@ -254,9 +276,11 @@ function ScrollReset() {
           ? "Stock management demo | MM Prestige Motors"
           : vehicle
             ? `${vehicle.year} ${vehicle.make} ${vehicle.model} | MM Prestige Motors`
-            : pathname === "/stock"
+            : route === "/stock"
               ? "Our collection | MM Prestige Motors"
-              : "MM Prestige Motors | HSV & Holden Specialists, Adelaide";
+              : route === ""
+                ? "MM Prestige Motors | HSV & Holden Specialists, Adelaide"
+                : "Page not found | MM Prestige Motors";
     if (hash) {
       requestAnimationFrame(() =>
         document
@@ -269,7 +293,7 @@ function ScrollReset() {
   }, [pathname, hash]);
   return null;
 }
-function Header({ onEnquire }) {
+function Header({ onEnquire, savedCount = 0 }) {
   const [open, setOpen] = useState(false);
   const menuButton = useRef(null);
   const navigation = useRef(null);
@@ -353,8 +377,31 @@ function Header({ onEnquire }) {
             <Link to="/#services" onClick={goToSection("services")}>
               Services
             </Link>
+            {savedCount > 0 && (
+              <Link className="nav-saved" to="/stock?status=all&saved=1">
+                Saved cars <span>{savedCount}</span>
+              </Link>
+            )}
           </nav>
           <div className="header-actions">
+            <a
+              className="header-call"
+              href={`tel:${business.tel}`}
+              aria-label={`Call Madi on ${business.phone}`}
+            >
+              <Phone size={16} />
+              <span>{business.phone}</span>
+            </a>
+            {savedCount > 0 && (
+              <Link
+                className="header-saved"
+                to="/stock?status=all&saved=1"
+                aria-label={`Saved cars (${savedCount})`}
+              >
+                <Heart size={18} />
+                <span>{savedCount}</span>
+              </Link>
+            )}
             <button
               className="button small header-enquire"
               onClick={() => {
@@ -389,7 +436,9 @@ function CarCard({ car, saved, toggleSaved }) {
         <Link className="card-title" to={`/stock/${car.id}`}>
           {car.make} {car.model}
         </Link>
-        <p className="card-variant">Wingfield, SA · {car.year}</p>
+        <p className="card-variant">
+          {car.year} {car.variant}
+        </p>
       </div>
       <Link
         className="card-photo"
@@ -397,7 +446,7 @@ function CarCard({ car, saved, toggleSaved }) {
         aria-label={`View ${car.year} ${car.make} ${car.model}`}
       >
         <img
-          src={car.image}
+          {...responsive(car.image, SIZES.card)}
           alt={`Illustrative vehicle photograph for ${car.make} ${car.model}`}
           loading="lazy"
         />
@@ -423,8 +472,8 @@ function CarCard({ car, saved, toggleSaved }) {
             aria-pressed={saved.includes(car.id)}
             onClick={() => toggleSaved(car.id)}
           >
-            <Bookmark
-              size={22}
+            <Heart
+              size={20}
               fill={saved.includes(car.id) ? "currentColor" : "none"}
             />
           </button>
@@ -544,7 +593,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
       <section className="reference-hero showroom-hero">
         <img
           className="reference-hero-image"
-          src="/images/studio-hero.webp"
+          {...responsive("/images/studio-hero.webp", SIZES.hero)}
           alt="Illustrative studio image of a silver Porsche convertible"
           fetchPriority="high"
         />
@@ -621,7 +670,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
             <p>For the drive you look forward to.</p>
           </div>
           <img
-            src="/images/detail-2.jpg"
+            {...responsive("/images/detail-2.jpg", SIZES.offerPanel)}
             alt="Illustrative sports car wheel and body detail"
             loading="lazy"
           />
@@ -632,7 +681,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
             <h3>Next up.</h3>
             <p>Buy. Sell. Trade.</p>
             <img
-              src="/images/suv-cutout.webp"
+              {...responsive("/images/suv-cutout.webp", SIZES.offerCutout)}
               alt="Illustrative white SUV"
               loading="lazy"
             />
@@ -708,7 +757,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
       </section>
       <section className="reference-sell">
         <img
-          src="/images/sell-supercar.webp"
+          {...responsive("/images/sell-supercar.webp", SIZES.banner)}
           alt="Illustrative silver supercar with its doors raised in a studio"
           loading="lazy"
         />
@@ -881,7 +930,7 @@ function NotFound({ title = "That road ends here." }) {
       <section className="reference-hero showroom-hero page-hero not-found-hero">
         <img
           className="reference-hero-image"
-          src="/images/studio-hero.webp"
+          {...responsive("/images/studio-hero.webp", SIZES.hero)}
           alt=""
           fetchPriority="high"
         />
@@ -918,7 +967,7 @@ function NotFound({ title = "That road ends here." }) {
     </main>
   );
 }
-function Stock({ saved, toggleSaved }) {
+function Stock({ saved, toggleSaved, onEnquire }) {
   const [params, setParams] = useSearchParams();
   const status = params.get("status") || "available";
   const [search, setSearch] = useState(params.get("model") || ""),
@@ -929,10 +978,22 @@ function Stock({ saved, toggleSaved }) {
     [transmission, setTransmission] = useState(""),
     [max, setMax] = useState(params.get("max") || ""),
     [sort, setSort] = useState("newest"),
-    [savedOnly, setSavedOnly] = useState(false),
+    [savedOnly, setSavedOnly] = useState(params.get("saved") === "1"),
     [filtersOpen, setFiltersOpen] = useState(false);
   const results = useRef(null);
   const filtersButton = useRef(null);
+  // The header's saved-cars link opens this view, even when already here.
+  useEffect(() => {
+    if (params.get("saved") !== "1") return;
+    setSavedOnly(true);
+    setParams(
+      (current) => {
+        current.delete("saved");
+        return current;
+      },
+      { replace: true },
+    );
+  }, [params]);
   const filtersClose = useRef(null);
   useEffect(() => {
     if (!filtersOpen) return;
@@ -996,7 +1057,7 @@ function Stock({ saved, toggleSaved }) {
       <section className="reference-hero showroom-hero page-hero stock-hero">
         <img
           className="reference-hero-image"
-          src="/images/car-1.jpg"
+          {...responsive("/images/car-1.jpg", SIZES.hero)}
           alt=""
           fetchPriority="high"
         />
@@ -1119,7 +1180,7 @@ function Stock({ saved, toggleSaved }) {
             </button>
           </div>
         </div>
-        <aside
+        <section
           id="stock-filters"
           className={`collection-filters ${filtersOpen ? "is-open" : ""}`}
           aria-label="Filters"
@@ -1233,7 +1294,7 @@ function Stock({ saved, toggleSaved }) {
           >
             Show {filtered.length} cars <ArrowRight size={17} />
           </button>
-        </aside>
+        </section>
         {filtered.length ? (
           <div className="card-grid collection-grid">
             {filtered.map((car) => (
@@ -1245,27 +1306,46 @@ function Stock({ saved, toggleSaved }) {
             <Search size={28} />
             <h3>No cars in this lane.</h3>
             <p>Try adjusting your filters or explore the full collection.</p>
-            <button
-              className="button primary"
-              onClick={() => {
-                clear();
-                changeStatus("all");
-              }}
-            >
-              Reset all filters <ArrowRight size={16} />
-            </button>
+            <div className="stock-empty-actions">
+              <button
+                className="button primary"
+                onClick={() => {
+                  clear();
+                  changeStatus("all");
+                }}
+              >
+                Reset all filters <ArrowRight size={16} />
+              </button>
+              <button
+                className="button outline"
+                onClick={() => onEnquire({ purpose: "find" })}
+              >
+                Ask Madi to find one
+              </button>
+            </div>
           </div>
         )}
-        <aside className="stock-help" aria-labelledby="stock-help-heading">
+        <section className="stock-help" aria-labelledby="stock-help-heading">
           <div>
             <h3 id="stock-help-heading">Something specific in mind?</h3>
-            <p>Talk cars with Madi. We're here to help you find your next drive.</p>
+            <p>
+              Tell Madi what you're after, and Madi will keep an eye out for
+              your next drive.
+            </p>
           </div>
-          <a className="button stock-help-call" href={`tel:${business.tel}`}>
-            <Phone size={16} />
-            Call {business.phone}
-          </a>
-        </aside>
+          <div className="stock-help-actions">
+            <button
+              className="button stock-help-find"
+              onClick={() => onEnquire({ purpose: "find" })}
+            >
+              Find me a car <ArrowRight size={16} />
+            </button>
+            <a className="button stock-help-call" href={`tel:${business.tel}`}>
+              <Phone size={16} />
+              Call {business.phone}
+            </a>
+          </div>
+        </section>
         <p className="sample-note">
           Preview collection · All vehicle imagery, stock, prices and
           specifications are illustrative.
@@ -1319,7 +1399,10 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
     const url = window.location.href;
     if (navigator.share) {
       try {
-        await navigator.share({ title: `${car.year} ${name} · MM Prestige Motors`, url });
+        await navigator.share({
+          title: `${car.year} ${name} · MM Prestige Motors`,
+          url,
+        });
       } catch {}
       return;
     }
@@ -1420,7 +1503,7 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
               <img
                 key={photos[index]}
                 className="vehicle-stage-image"
-                src={photos[index]}
+                {...responsive(photos[index], SIZES.stage)}
                 alt={photoLabel(index)}
                 fetchPriority="high"
                 onClick={() => setZoom(true)}
@@ -1470,7 +1553,7 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
                     aria-pressed={i === index}
                     onClick={() => setIndex(i)}
                   >
-                    <img src={photo} alt="" />
+                    <img {...responsive(photo, SIZES.thumb)} alt="" />
                   </button>
                 ))}
               </div>
@@ -1521,7 +1604,7 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
             </a>
           </section>
         </div>
-        <aside className="vehicle-aside" aria-label="Price, specifications and contact">
+        <div className="vehicle-aside">
           <div className="vehicle-price-card">
             <span className="vehicle-price-label">
               {sold ? "Status" : "Asking price"}
@@ -1536,6 +1619,12 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
                 <strong>{money(car.price)}</strong>
                 <p>Excludes government charges · Sample price</p>
                 <Finance price={car.price} />
+                <button
+                  className="vehicle-finance-ask"
+                  onClick={() => onEnquire({ ...car, purpose: "finance" })}
+                >
+                  Ask Madi about finance <ArrowRight size={15} />
+                </button>
               </>
             )}
           </div>
@@ -1580,23 +1669,25 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
             <button
               className="vehicle-call-message"
               aria-label={sold ? "Find me something similar" : "Enquire about this car"}
-              onClick={() => onEnquire(car)}
+              onClick={() => onEnquire(sold ? { ...car, purpose: "find" } : car)}
             >
               <MessageSquare size={17} />
               {sold ? "Find something similar" : "Send a message"}
             </button>
           </section>
-        </aside>
+        </div>
       </section>
       <div className="vehicle-actionbar">
         <div>
           <strong>{sold ? "Sold" : money(car.price)}</strong>
-          <small>{sold ? "Ask Madi about similar cars" : "Excl. government charges"}</small>
+          <small>
+            {sold ? "Ask Madi about similar cars" : "Excl. government charges"}
+          </small>
         </div>
         <button
           className="vehicle-actionbar-message"
           aria-label="Message Madi"
-          onClick={() => onEnquire(car)}
+          onClick={() => onEnquire(sold ? { ...car, purpose: "find" } : car)}
         >
           <MessageSquare size={19} />
         </button>
@@ -1628,7 +1719,10 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
           onClose={() => setZoom(false)}
           className="lightbox"
         >
-          <img src={photos[index] || photos[0]} alt={photoLabel(index)} />
+          <img
+            {...responsive(photos[index] || photos[0], SIZES.hero)}
+            alt={photoLabel(index)}
+          />
           <div className="lightbox-controls">
             {photos.length > 1 && (
               <button
@@ -1784,32 +1878,118 @@ function Dialog({ title, onClose, className = "", children }) {
     </div>
   );
 }
+// What each kind of enquiry asks for, and how it opens.
+const ENQUIRY = {
+  talk: {
+    title: "Enquire with MM Prestige Motors",
+    heading: (
+      <>
+        Let's talk <em>cars.</em>
+      </>
+    ),
+    intro: "Tell Madi what you have in mind.",
+  },
+  sell: {
+    title: "Sell or trade your car with MM Prestige Motors",
+    heading: (
+      <>
+        Sell or trade <em>your car.</em>
+      </>
+    ),
+    intro: "Tell Madi about your car and what you'd like to do.",
+  },
+  find: {
+    title: "Find a car with MM Prestige Motors",
+    heading: (
+      <>
+        Find your <em>next car.</em>
+      </>
+    ),
+    intro: "Tell Madi what you're looking for, and Madi will keep an eye out.",
+  },
+};
+function enquiryText(purpose, form) {
+  const details = (pairs) =>
+    pairs
+      .filter(([, value]) => value.trim())
+      .map(([label, value]) => `${label}: ${value.trim()}`)
+      .join("\n");
+  const notes = form.notes.trim() ? `\n\n${form.notes.trim()}` : "";
+  const contact = `\n\nName: ${form.name}\nPhone: ${form.phone}`;
+  if (purpose === "sell") {
+    const opening =
+      {
+        "Sell it": "Hi Madi, I'd like to sell my car.",
+        "Trade it in": "Hi Madi, I'd like to trade in my car.",
+      }[form.plan] ||
+      "Hi Madi, I'd like to talk about selling or trading my car.";
+    const car = [form.year, form.make, form.model]
+      .map((value) => value.trim())
+      .filter(Boolean)
+      .join(" ");
+    return `${opening}\n\n${details([
+      ["Car", car],
+      ["Kilometres", form.kms],
+      ["Rego", form.rego],
+      ["Condition", form.condition],
+    ])}${notes}${contact}`;
+  }
+  if (purpose === "find")
+    return `Hi Madi, I'm looking for a car. Could you keep an eye out for me?\n\n${details(
+      [
+        ["Looking for", form.wanted],
+        ["Years", form.years],
+        ["Budget", form.budget],
+      ],
+    )}${notes}${contact}`;
+  return `${form.message}${contact}`;
+}
 function Enquiry({ vehicle, purpose, onClose }) {
+  const kind = purpose === "sell" || purpose === "find" ? purpose : "talk";
+  const copy = ENQUIRY[kind];
+  const carName = vehicle && `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
   const [ready, setReady] = useState(false),
     [copied, setCopied] = useState(false),
     [form, setForm] = useState({
       name: "",
       phone: "",
-      message: vehicle
-        ? `Hi Madi, I'm interested in the ${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.status === "sold" ? " or something similar" : ""}. Could we arrange a time to chat?`
-        : purpose === "sell"
-          ? "Hi Madi, I’d like to discuss selling or trading my car."
-          : "Hi Madi, I’d like to chat about your performance car collection.",
+      message:
+        purpose === "finance"
+          ? `Hi Madi, I'd like to ask about finance for the ${carName}. ` +
+            "Could you call me to talk through the options?"
+          : vehicle
+            ? `Hi Madi, I'm interested in the ${carName}` +
+              `${vehicle.status === "sold" ? " or something similar" : ""}. ` +
+              "Could we arrange a time to chat?"
+            : "Hi Madi, I’d like to chat about your performance car collection.",
+      year: "",
+      make: "",
+      model: "",
+      kms: "",
+      rego: "",
+      condition: "",
+      plan: "",
+      wanted: vehicle ? `${vehicle.make} ${vehicle.model} or similar` : "",
+      years: "",
+      budget: "",
+      notes: "",
     });
-  const text = `${form.message}\n\nName: ${form.name}\nPhone: ${form.phone}`;
+  const text = enquiryText(kind, form);
+  const field = (key) => ({
+    value: form[key],
+    onChange: (e) => setForm({ ...form, [key]: e.target.value }),
+  });
+  const optional = <small> (optional)</small>;
   return (
-    <Dialog
-      title="Enquire with MM Prestige Motors"
-      onClose={onClose}
-      className="enquiry-dialog"
-    >
+    <Dialog title={copy.title} onClose={onClose} className="enquiry-dialog">
       <div className="eyebrow">MM PRESTIGE MOTORS</div>
-      <h2>
-        Let's talk <em>cars.</em>
-      </h2>
+      <h2>{copy.heading}</h2>
       {vehicle && (
         <div className="enquiry-car">
-          <img src={vehicle.image} alt="Generic vehicle preview" />
+          <img
+            {...responsive(vehicle.image, "96px")}
+            alt="Generic vehicle preview"
+          />
           <span>
             <small>
               {vehicle.year} · {vehicle.make}
@@ -1826,37 +2006,137 @@ function Enquiry({ vehicle, purpose, onClose }) {
           }}
         >
           <p>
-            Tell Madi what you have in mind. Prepare your message, then send it
-            with your messaging app.
+            {copy.intro} Prepare your message, then send it with your messaging
+            app.
           </p>
-          <label>
-            Your name
-            <input
-              required
-              value={form.name}
-              autoComplete="name"
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-            />
-          </label>
-          <label>
-            Phone number
-            <input
-              required
-              type="tel"
-              value={form.phone}
-              autoComplete="tel"
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            />
-          </label>
-          <label>
-            Your message
-            <textarea
-              required
-              rows="4"
-              value={form.message}
-              onChange={(e) => setForm({ ...form, message: e.target.value })}
-            />
-          </label>
+          {kind === "sell" && (
+            <fieldset className="enquiry-fields">
+              <legend>Your car</legend>
+              <div className="enquiry-row">
+                <label>
+                  Year
+                  <input
+                    required
+                    inputMode="numeric"
+                    maxLength={4}
+                    {...field("year")}
+                  />
+                </label>
+                <label>
+                  Kilometres
+                  <input required inputMode="numeric" {...field("kms")} />
+                </label>
+              </div>
+              <div className="enquiry-row">
+                <label>
+                  Make
+                  <input required {...field("make")} />
+                </label>
+                <label>
+                  Model
+                  <input required {...field("model")} />
+                </label>
+              </div>
+              <div className="enquiry-row">
+                <label>
+                  <span>Rego{optional}</span>
+                  <input autoCapitalize="characters" {...field("rego")} />
+                </label>
+                <label>
+                  Condition
+                  <select required {...field("condition")}>
+                    <option value="" disabled>
+                      Choose
+                    </option>
+                    <option>Excellent</option>
+                    <option>Good</option>
+                    <option>Fair</option>
+                    <option>Needs work</option>
+                  </select>
+                </label>
+              </div>
+              <label>
+                What would you like to do?
+                <select required {...field("plan")}>
+                  <option value="" disabled>
+                    Choose
+                  </option>
+                  <option>Sell it</option>
+                  <option>Trade it in</option>
+                  <option>Not sure yet</option>
+                </select>
+              </label>
+              <label>
+                <span>Anything else Madi should know?{optional}</span>
+                <textarea
+                  rows="3"
+                  placeholder="Service history, modifications, finance owing…"
+                  {...field("notes")}
+                />
+              </label>
+            </fieldset>
+          )}
+          {kind === "find" && (
+            <fieldset className="enquiry-fields">
+              <legend>The car you want</legend>
+              <label>
+                Make and model
+                <input
+                  required
+                  placeholder="e.g. HSV GTS or Clubsport R8"
+                  {...field("wanted")}
+                />
+              </label>
+              <div className="enquiry-row">
+                <label>
+                  <span>Years{optional}</span>
+                  <input placeholder="e.g. 2014 on" {...field("years")} />
+                </label>
+                <label>
+                  <span>Budget{optional}</span>
+                  <select {...field("budget")}>
+                    <option value="">Flexible</option>
+                    <option>Up to $50,000</option>
+                    <option>$50,000 – $75,000</option>
+                    <option>$75,000 – $100,000</option>
+                    <option>Over $100,000</option>
+                  </select>
+                </label>
+              </div>
+              <label>
+                <span>Must-haves{optional}</span>
+                <textarea
+                  rows="3"
+                  placeholder="Colour, transmission, kilometres…"
+                  {...field("notes")}
+                />
+              </label>
+            </fieldset>
+          )}
+          <fieldset className="enquiry-fields">
+            {kind !== "talk" && <legend>Your details</legend>}
+            <div className={kind === "talk" ? "" : "enquiry-row"}>
+              <label>
+                Your name
+                <input required autoComplete="name" {...field("name")} />
+              </label>
+              <label>
+                Phone number
+                <input
+                  required
+                  type="tel"
+                  autoComplete="tel"
+                  {...field("phone")}
+                />
+              </label>
+            </div>
+            {kind === "talk" && (
+              <label>
+                Your message
+                <textarea required rows="4" {...field("message")} />
+              </label>
+            )}
+          </fieldset>
           <button className="button primary full" type="submit">
             Prepare enquiry <ArrowRight size={18} />
           </button>
@@ -1939,7 +2219,7 @@ function Footer() {
           <span className="footer-appointment">Call to arrange a viewing.</span>
         </div>
         <div className="footer-next-drive">
-          <h3>Your next drive starts here.</h3>
+          <h2>Your next drive starts here.</h2>
           <p>
             Something caught your eye?
             <br />

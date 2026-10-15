@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { cleanUrls, sitePages } from "./scripts/site-pages.mjs";
 
 function presentationPage() {
   const servePresentation = (request, response, next) => {
@@ -16,8 +17,11 @@ function presentationPage() {
     },
     configurePreviewServer(server) {
       server.middlewares.use(servePresentation);
+      server.middlewares.use(cleanUrls(server.config.build.outDir));
     },
   };
 }
 
-export default defineConfig({ plugins: [react(), presentationPage()] });
+export default defineConfig({
+  plugins: [react(), presentationPage(), sitePages()],
+});

@@ -10,10 +10,12 @@
     "test": "node tests/smoke.mjs",
     "test:stock-manager": "node tests/stock-manager.mjs",
     "test:crm": "node tests/crm-demo.mjs",
-    "presentation:build": "node scripts/build-presentation.mjs"
+    "presentation:build": "node scripts/build-presentation.mjs",
+    "images": "node scripts/optimize-images.mjs",
+    "share-image": "node scripts/share-image.mjs",
+    "test:pages": "vite build && node tests/build-pages.mjs"
   },
   "dependencies": {
-    "@fontsource/barlow-condensed": "^5.3.0",
     "@fontsource/big-shoulders-display": "^5.3.0",
     "@fontsource/manrope": "^5.3.0",
     "lucide-react": "^0.468.0",
@@ -24,6 +26,7 @@
   "devDependencies": {
     "@playwright/test": "^1.51.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "sharp": "^0.33.5",
     "vite": "^6.1.0"
   },
   "engines": {

@@ -1,5 +1,9 @@
 // Preview records, not verified MM Prestige stock. Photographs are generic and
 // do not depict the listed HSV/Holden models; prices and specifications are samples.
+// While sampleStock is true, link previews say "sample listing" and search
+// engines aren't given the listings as structured data. Set it to false once
+// the stock, prices and photos are real.
+export const sampleStock = true;
 export const vehicles = [
   {
     id: "hsv-gts-2016",
@@ -190,5 +194,8 @@ export const business = {
   tel: "+61411710409",
   address: "Unit 4/405A Grand Junction Road",
   suburb: "Wingfield SA 5013",
+  locality: "Wingfield",
+  region: "SA",
+  postcode: "5013",
   maps: "https://www.google.com/maps/search/?api=1&query=MM+Prestige+Motors+Unit+4+405A+Grand+Junction+Road+Wingfield+SA+5013",
 };
