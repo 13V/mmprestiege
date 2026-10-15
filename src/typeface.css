@@ -10,6 +10,7 @@
 .footer .brand b,
 .marque-words li,
 .reference-hero h1,
+.vehicle-head h1,
 .dealer-home h2,
 .section-title h2,
 .enquiry-dialog h2,
@@ -46,8 +47,9 @@
   font-size: var(--fs-display);
   line-height: 1;
 }
-.reference-hero.vehicle-hero h1 {
-  font-size: clamp(40px, 4.2vw, 62px);
+.vehicle-head h1 {
+  font-size: clamp(40px, 4vw, 62px);
+  line-height: 1;
 }
 
 /* Section titles */
@@ -59,6 +61,13 @@
 .enquiry-dialog h2 {
   font-size: 36px;
   line-height: 1;
+}
+.vehicle-aside h2 {
+  font-size: 28px;
+  line-height: 1;
+}
+.vehicle-call h2 {
+  font-size: 38px;
 }
 
 /* Panel titles */
@@ -115,6 +124,9 @@
   .dealer-home .page-hero h1 {
     font-size: clamp(38px, 11vw, 52px);
     line-height: 1;
+  }
+  .vehicle-head h1 {
+    font-size: clamp(36px, 10vw, 48px);
   }
   .collection-filters-head h3 {
     font-size: 26px;

@@ -44,6 +44,8 @@ import {
   Copy,
   Send,
   Quote,
+  Camera,
+  Zap,
 } from "lucide-react";
 import { vehicles, money, number, business } from "./data";
 import ThemedSelect from "./ThemedSelect";
@@ -168,8 +170,7 @@ const REVEAL_TARGETS = [
   ".review-grid > .review",
   ".contact-copy",
   ".contact-location",
-  ".vehicle-gallery-bar",
-  ".spec-rows > div",
+  ".vehicle-about",
   ".stock-toolbar",
   ".stock-empty",
   ".stock-help",
@@ -1275,10 +1276,10 @@ function Stock({ saved, toggleSaved }) {
 function Vehicle({ saved, toggleSaved, onEnquire }) {
   const { id } = useParams();
   const car = vehicles.find((c) => c.id === id);
-  const specsSection = useRef(null);
+  const thumbStrip = useRef(null);
+  const swipeStart = useRef(null);
   const [index, setIndex] = useState(0),
-    [zoom, setZoom] = useState(false),
-    [loaded, setLoaded] = useState({ src: null, lowRes: false });
+    [zoom, setZoom] = useState(false);
   useEffect(() => {
     setIndex(0);
     setZoom(false);
@@ -1295,30 +1296,47 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
     window.addEventListener("keydown", fn);
     return () => window.removeEventListener("keydown", fn);
   }, [zoom, photos.length]);
+  // Keep the current thumbnail in view when the strip overflows.
+  useEffect(() => {
+    const strip = thumbStrip.current;
+    const thumb = strip?.children[index];
+    if (!thumb) return;
+    const { offsetLeft: left, offsetWidth: width } = thumb;
+    if (left < strip.scrollLeft || left + width > strip.scrollLeft + strip.clientWidth)
+      strip.scrollTo({ left: left - (strip.clientWidth - width) / 2 });
+  }, [index]);
   if (!car) return <NotFound title="We couldn't find that car." />;
   const sold = car.status === "sold";
-  const photoState =
-    loaded.src !== photos[index]
-      ? "is-loading"
-      : loaded.lowRes
-        ? "is-contained"
-        : "";
   const isSaved = saved.includes(car.id);
   const name = `${car.make} ${car.model}`;
   const photoLabel = (i) =>
     `Illustrative ${name} photo ${i + 1} of ${photos.length}`;
   const counter = `${String(index + 1).padStart(2, "0")} / ${String(photos.length).padStart(2, "0")}`;
+  const swipe = (e) => {
+    const start = swipeStart.current;
+    swipeStart.current = null;
+    if (start === null || photos.length < 2) return;
+    const dx = e.changedTouches[0].clientX - start;
+    if (Math.abs(dx) > 40) move(dx < 0 ? 1 : -1);
+  };
+  const facts = [
+    [Gauge, "Odometer", `${number(car.kms)} km`],
+    [Zap, "Engine", car.engine],
+    [Cog, "Transmission", car.transmission],
+    [CarFront, "Body type", car.body],
+  ];
   const specs = [
     ["Year", car.year],
     ["Make", car.make],
     ["Model", car.model],
+    ["Variant", car.variant],
+    ["Body style", car.body],
     ["Kilometres", `${number(car.kms)} km`],
     ["Transmission", car.transmission],
     ["Engine", car.engine],
-    ["Body style", car.body],
-    ["Exterior colour", car.colour],
-    ["Fuel type", car.fuel],
     ["Power", car.power],
+    ["Fuel type", car.fuel],
+    ["Exterior colour", car.colour],
     ["Stock number", car.stock],
     ["Location", "Wingfield, SA"],
   ];
@@ -1333,269 +1351,198 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
     .slice(0, 4);
   return (
     <main className="dealer-home inner-page vehicle-detail">
-      <section
-        className={`reference-hero showroom-hero page-hero vehicle-hero ${photoState}`}
-        aria-label="Vehicle photo gallery"
-      >
-        <div
-          className="vehicle-hero-ambient"
-          style={{ backgroundImage: `url(${photos[index]})` }}
-          aria-hidden="true"
-        />
-        <img
-          className="reference-hero-image"
-          src={photos[index]}
-          alt={photoLabel(index)}
-          fetchPriority="high"
-          // Small placeholder photos are shown whole over a blurred backdrop
-          // instead of being stretched across the slab.
-          onLoad={(e) =>
-            setLoaded({
-              src: photos[index],
-              lowRes: e.currentTarget.naturalWidth < 1200,
-            })
-          }
-        />
-        <div className="hero-footnote">
-          <p>
-            Stock no. {car.stock}
-            <br />
-            Wingfield, South Australia
-            <br />
-            {sold ? "Sold" : "Available now"}
-          </p>
-          <small className="vehicle-photo-note">
-            Generic preview photography · Images do not depict this vehicle.
-          </small>
-        </div>
-        <aside className="hero-map vehicle-price-card" aria-label="Price">
-          <div className="vehicle-price-top">
-            <span className="vehicle-price-label">{sold ? "Status" : "Asking price"}</span>
-            <button
-              className={`vehicle-save ${isSaved ? "is-saved" : ""}`}
-              aria-label={isSaved ? "Unsave vehicle" : "Save vehicle"}
-              aria-pressed={isSaved}
-              onClick={() => toggleSaved(car.id)}
+      <section className="vehicle-listing" aria-labelledby="vehicle-title">
+        <div className="vehicle-main">
+          <Link className="vehicle-back" to="/stock">
+            <ChevronLeft size={16} /> Back to stock
+          </Link>
+          <header className="vehicle-head">
+            <p className="vehicle-kicker">
+              {car.year} · {car.make}
+              {sold && <span className="vehicle-status">Sold</span>}
+            </p>
+            <h1 id="vehicle-title">{name}</h1>
+            <p className="vehicle-sub">
+              <span>{car.variant}</span>
+              <span>
+                <MapPin size={14} /> Wingfield, SA
+              </span>
+              <span>Stock no. {car.stock}</span>
+            </p>
+          </header>
+          <section className="vehicle-gallery" aria-label="Vehicle photos">
+            <div
+              className="vehicle-stage"
+              onTouchStart={(e) => (swipeStart.current = e.touches[0].clientX)}
+              onTouchEnd={swipe}
             >
-              <Heart size={17} fill={isSaved ? "currentColor" : "none"} />
-            </button>
-          </div>
-          {sold ? (
-            <>
-              <strong className="vehicle-sold">SOLD</strong>
-              <p>This one has found its next driver.</p>
-            </>
-          ) : (
-            <>
-              <strong>{money(car.price)}</strong>
-              <p>Excludes government charges · Sample price</p>
-            </>
-          )}
-        </aside>
-        {photos.length > 1 && (
-          <>
-            <button
-              className="vehicle-hero-nav prev"
-              aria-label="Previous vehicle photo"
-              onClick={() => move(-1)}
-            >
-              <ChevronLeft size={22} />
-            </button>
-            <button
-              className="vehicle-hero-nav next"
-              aria-label="Next vehicle photo"
-              onClick={() => move(1)}
-            >
-              <ChevronRight size={22} />
-            </button>
-          </>
-        )}
-        <div className="reference-hero-content vehicle-hero-content">
-          <p className="vehicle-kicker">
-            {car.year} · {car.make}
-            {sold && <span className="vehicle-status">Sold</span>}
-          </p>
-          <h1>{name}</h1>
-          <div className="hero-search vehicle-facts">
-            <dl>
-              <div>
-                <dt>Kilometres</dt>
-                <dd>{number(car.kms)} km</dd>
-              </div>
-              <div>
-                <dt>Transmission</dt>
-                <dd>{car.transmission}</dd>
-              </div>
-              <div>
-                <dt>Engine</dt>
-                <dd>{car.engine}</dd>
-              </div>
-              <div>
-                <dt>Year</dt>
-                <dd>{car.year}</dd>
-              </div>
-            </dl>
-            <button
-              type="button"
-              aria-label={sold ? "Find me something similar" : "Enquire about this car"}
-              onClick={() => onEnquire(car)}
-            >
-              {sold ? "Find similar" : "Enquire"} <ArrowUpRight size={16} />
-            </button>
-          </div>
-        </div>
-      </section>
-      <div className="vehicle-gallery-bar">
-        {photos.length > 1 ? (
-          <div className="vehicle-thumbs" role="group" aria-label="Choose a photo">
-            {photos.map((photo, i) => (
+              <img
+                key={photos[index]}
+                className="vehicle-stage-image"
+                src={photos[index]}
+                alt={photoLabel(index)}
+                fetchPriority="high"
+                onClick={() => setZoom(true)}
+              />
+              {sold && <span className="vehicle-stage-badge">Sold</span>}
+              <span className="vehicle-hero-count" aria-live="polite">
+                <Camera size={15} /> {counter}
+              </span>
+              {photos.length > 1 && (
+                <>
+                  <button
+                    className="vehicle-stage-nav prev"
+                    aria-label="Previous vehicle photo"
+                    onClick={() => move(-1)}
+                  >
+                    <ChevronLeft size={22} />
+                  </button>
+                  <button
+                    className="vehicle-stage-nav next"
+                    aria-label="Next vehicle photo"
+                    onClick={() => move(1)}
+                  >
+                    <ChevronRight size={22} />
+                  </button>
+                </>
+              )}
               <button
-                key={photo + i}
-                className={i === index ? "current" : ""}
-                aria-label={`Show vehicle photo ${i + 1}`}
-                aria-pressed={i === index}
-                onClick={() => setIndex(i)}
+                className="vehicle-hero-expand"
+                aria-label="Expand vehicle photos"
+                onClick={() => setZoom(true)}
               >
-                <img src={photo} alt="" />
+                <Expand size={17} />
               </button>
-            ))}
-          </div>
-        ) : (
-          <span />
-        )}
-        <div className="vehicle-gallery-tools">
-          <span className="vehicle-hero-count" aria-live="polite">
-            {counter}
-          </span>
-          <button
-            className="vehicle-hero-expand"
-            aria-label="Expand vehicle photos"
-            onClick={() => setZoom(true)}
-          >
-            <Expand size={17} />
-          </button>
-        </div>
-      </div>
-      <section
-        className="reference-offer offer-bento vehicle-overview"
-        aria-labelledby="overview-heading"
-      >
-        <div className="offer-copy">
-          <h2 id="overview-heading">
-            {car.make === "HSV"
-              ? "Australian muscle."
-              : car.make === "Holden"
-                ? "An Australian icon."
-                : "Built for the enthusiast."}
-          </h2>
-          <p>{car.description}</p>
-          <ol>
-            {highlights.map((text, i) => (
-              <li key={text}>
-                <span>{String(i + 1).padStart(2, "0")}</span>
-                {text}
+            </div>
+            {photos.length > 1 && (
+              <div
+                className="vehicle-thumbs"
+                ref={thumbStrip}
+                role="group"
+                aria-label="Choose a photo"
+              >
+                {photos.map((photo, i) => (
+                  <button
+                    key={photo + i}
+                    className={i === index ? "current" : ""}
+                    aria-label={`Show vehicle photo ${i + 1}`}
+                    aria-pressed={i === index}
+                    onClick={() => setIndex(i)}
+                  >
+                    <img src={photo} alt="" />
+                  </button>
+                ))}
+              </div>
+            )}
+            <small className="vehicle-photo-note">
+              Generic preview photography · Images do not depict this vehicle.
+            </small>
+          </section>
+          <ul className="vehicle-facts" aria-label="Key details">
+            {facts.map(([Icon, label, value]) => (
+              <li key={label}>
+                <span className="vehicle-fact-icon" aria-hidden="true">
+                  <Icon size={20} />
+                </span>
+                <span>
+                  <small>{label}</small>
+                  <b>{value}</b>
+                </span>
               </li>
             ))}
-          </ol>
-          <button
-            className="button primary"
-            onClick={() => scrollToSection(specsSection.current)}
+          </ul>
+          <section
+            className="vehicle-about"
+            aria-labelledby="overview-heading"
           >
-            Full specifications <ArrowRight size={16} />
-          </button>
+            <span className="eyebrow">About this car</span>
+            <h2 id="overview-heading">
+              {car.make === "HSV"
+                ? "Australian muscle."
+                : car.make === "Holden"
+                  ? "An Australian icon."
+                  : "Built for the enthusiast."}
+            </h2>
+            <p>{car.description}</p>
+            <ol>
+              {highlights.map((text, i) => (
+                <li key={text}>
+                  <span>{String(i + 1).padStart(2, "0")}</span>
+                  {text}
+                </li>
+              ))}
+            </ol>
+          </section>
         </div>
-        <button
-          className="offer-performance vehicle-gallery-panel"
-          onClick={() => setZoom(true)}
-        >
-          <div>
-            <h3>Gallery</h3>
-            <p>
-              {photos.length} {photos.length === 1 ? "photo" : "photos"}
-            </p>
+        <aside className="vehicle-aside" aria-label="Price, specifications and contact">
+          <div className="vehicle-price-card">
+            <div className="vehicle-price-top">
+              <span className="vehicle-price-label">
+                {sold ? "Status" : "Asking price"}
+              </span>
+              <button
+                className={`vehicle-save ${isSaved ? "is-saved" : ""}`}
+                aria-label={isSaved ? "Unsave vehicle" : "Save vehicle"}
+                aria-pressed={isSaved}
+                onClick={() => toggleSaved(car.id)}
+              >
+                <Heart size={17} fill={isSaved ? "currentColor" : "none"} />
+              </button>
+            </div>
+            {sold ? (
+              <>
+                <strong className="vehicle-sold">SOLD</strong>
+                <p>This one has found its next driver.</p>
+              </>
+            ) : (
+              <>
+                <strong>{money(car.price)}</strong>
+                <p>Excludes government charges · Sample price</p>
+                <Finance price={car.price} />
+              </>
+            )}
           </div>
-          <img src={photos[photos.length > 1 ? 1 : 0]} alt="" loading="lazy" />
-          <Expand className="offer-arrow" size={21} />
-        </button>
-        <div className="offer-stack">
-          <button
-            className="offer-trade vehicle-enquire-panel"
-            onClick={() => onEnquire(car)}
+          <section
+            className="vehicle-specs"
+            id="specifications"
+            aria-labelledby="specs-heading"
           >
-            <h3>{sold ? "Just missed out?" : "Make it yours."}</h3>
+            <h2 id="specs-heading">Specifications</h2>
+            <dl className="spec-rows">
+              {specs.map(([label, value]) => (
+                <div key={label}>
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="detail-note">
+              This listing is a design preview. Vehicle details and pricing are
+              sample data. Contact the dealer to confirm actual stock,
+              condition and specifications.
+            </p>
+          </section>
+          <section className="vehicle-call" aria-labelledby="call-heading">
+            <span className="vehicle-call-label">Talk directly with Madi</span>
+            <h2 id="call-heading">{sold ? "Just missed out?" : "Call Madi"}</h2>
             <p>
               {sold
                 ? "Madi can help you find something similar."
-                : `Talk to Madi about this ${name}.`}
+                : "Arrange a viewing in Wingfield, or ask about finance and trade-ins."}
             </p>
-            <span>
-              {sold ? "Talk to Madi" : "Start an enquiry"}{" "}
-              <ArrowUpRight size={18} />
-            </span>
-          </button>
-          <CallTile />
-        </div>
-      </section>
-      <section
-        className="vehicle-specs"
-        id="specifications"
-        ref={specsSection}
-        aria-labelledby="specs-heading"
-      >
-        <div className="section-title">
-          <h2 id="specs-heading">Specifications</h2>
-        </div>
-        <dl className="spec-rows">
-          {specs.map(([label, value]) => (
-            <div key={label}>
-              <dt>{label}</dt>
-              <dd>{value}</dd>
-            </div>
-          ))}
-        </dl>
-        <p className="detail-note">
-          This listing is a design preview. Vehicle details and pricing are
-          sample data. Contact the dealer to confirm actual stock, condition and
-          specifications.
-        </p>
-      </section>
-      <section
-        className="reference-contact dealer-about vehicle-contact"
-        aria-labelledby="vehicle-contact-heading"
-      >
-        <div className="contact-copy">
-          <h2 id="vehicle-contact-heading">
-            See it in
-            <br />
-            Wingfield
-          </h2>
-          <p>
-            Arrange a viewing at our showroom, ask about finance or discuss a
-            trade-in. Madi will take you through the car.
-          </p>
-          <button className="button primary" onClick={() => onEnquire(car)}>
-            Contact Madi <ArrowRight size={15} />
-          </button>
-          <div className="contact-hours vehicle-pricing">
-            <h3>{sold ? "This car has sold" : "Pricing"}</h3>
-            <div>
-              <span>{sold ? "STATUS" : "ASKING PRICE"}</span>
-              <span>{sold ? "Sold" : money(car.price)}</span>
-            </div>
-            {!sold && (
-              <div>
-                <span>GOVERNMENT CHARGES</span>
-                <span>Excluded</span>
-              </div>
-            )}
-            <div>
-              <span>STOCK NO.</span>
-              <span>{car.stock}</span>
-            </div>
-            {!sold && <Finance price={car.price} />}
-          </div>
-        </div>
-        <ShowroomLocation />
+            <a className="vehicle-call-number" href={`tel:${business.tel}`}>
+              <Phone size={19} /> {business.phone}
+            </a>
+            <button
+              className="vehicle-call-message"
+              aria-label={sold ? "Find me something similar" : "Enquire about this car"}
+              onClick={() => onEnquire(car)}
+            >
+              <MessageSquare size={17} />
+              {sold ? "Find something similar" : "Send Madi a message"}
+            </button>
+          </section>
+        </aside>
       </section>
       {related.length > 0 && (
         <section

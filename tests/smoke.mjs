@@ -295,7 +295,7 @@ try {
   await check('Vehicle detail and carousel', async () => {
     await page.goto(`${baseURL}${firstVehicleRoute}`);
     const count = page.locator('.vehicle-hero-count');
-    const photo = page.locator('.vehicle-hero .reference-hero-image');
+    const photo = page.locator('.vehicle-stage-image');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('HSV GTS');
     await expect(page.locator('.vehicle-price-card')).toContainText('$94,990');
     await expect(count).toHaveText('01 / 02');
@@ -324,11 +324,11 @@ try {
     await page.keyboard.press('Escape');
     await expect(page.getByRole('dialog')).toHaveCount(0);
   });
-  await check('Overview highlights and full specifications', async () => {
+  await check('Overview highlights and specifications beside the photos', async () => {
     await expect(page.getByRole('heading', { level: 2, name: 'Australian muscle.' })).toBeVisible();
-    await expect(page.locator('.vehicle-overview li')).toHaveCount(4);
-    await page.getByRole('button', { name: 'Full specifications' }).click();
-    await expect(page.locator('#specifications')).toBeInViewport();
+    await expect(page.locator('.vehicle-about li')).toHaveCount(4);
+    await expect(page.locator('.vehicle-facts li')).toHaveCount(4);
+    await expect(page.locator('#specifications')).toBeVisible();
     await expect(page.locator('#specifications')).toContainText('430 kW');
     await expect(page.locator('#specifications')).toContainText('MM101');
     await expect(page.locator('#specifications')).toContainText('Wingfield, SA');
@@ -484,21 +484,33 @@ try {
     expect(fourth.y).toBe(first.y);
     expect(fourth.x + fourth.width).toBeGreaterThanOrEqual(2493 * 0.95);
   });
-  await check('Vehicle page follows the home layout on a wide screen', async () => {
+  await check('Vehicle listing puts a large photo beside price, specifications and Madi', async () => {
     await page.setViewportSize({ width: 2493, height: 1265 });
     await page.goto(`${baseURL}/stock/holden-ss-v-redline-2017`);
-    const hero = await page.locator('.vehicle-hero').boundingBox();
+    const stage = await page.locator('.vehicle-stage').boundingBox();
+    const thumbs = await page.locator('.vehicle-thumbs').boundingBox();
     const price = await page.locator('.vehicle-price-card').boundingBox();
-    expect(hero.x).toBeLessThanOrEqual(20);
-    expect(hero.width).toBeGreaterThan(2493 - 40);
-    expect(price.x + price.width).toBeLessThanOrEqual(hero.x + hero.width);
-    expect(price.y).toBeGreaterThan(hero.y);
-    const copy = await page.locator('.vehicle-overview .offer-copy').boundingBox();
-    const gallery = await page.locator('.vehicle-gallery-panel').boundingBox();
-    const enquire = await page.locator('.vehicle-enquire-panel').boundingBox();
-    expect(gallery.x).toBeGreaterThan(copy.x + copy.width - 1);
-    expect(enquire.x).toBeGreaterThan(gallery.x + gallery.width - 1);
-    expect(Math.abs(enquire.y - copy.y)).toBeLessThan(80);
+    const specs = await page.locator('#specifications').boundingBox();
+    const call = await page.locator('.vehicle-call').boundingBox();
+    expect(stage.width).toBeGreaterThan(2493 * 0.6);
+    expect(stage.x).toBeLessThanOrEqual(2493 * 0.05);
+    expect(thumbs.y).toBeGreaterThan(stage.y + stage.height - 1);
+    expect(price.x).toBeGreaterThan(stage.x + stage.width);
+    expect(specs.x).toBe(price.x);
+    expect(call.x).toBe(price.x);
+    expect(specs.y).toBeGreaterThan(price.y + price.height - 1);
+    expect(call.y).toBeGreaterThan(specs.y + specs.height - 1);
+    await expect(page.locator('.vehicle-call').getByRole('link', { name: /0411 710 409/ })).toHaveAttribute('href', 'tel:+61411710409');
+  });
+  await check('Vehicle listing stacks photos, title, price, specifications then Madi on a phone', async () => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`${baseURL}/stock/holden-ss-v-redline-2017`);
+    const order = ['.vehicle-stage', '.vehicle-head h1', '.vehicle-price-card', '.vehicle-facts', '#specifications', '.vehicle-call'];
+    const tops = [];
+    for (const selector of order) tops.push((await page.locator(selector).boundingBox()).y);
+    expect(tops).toEqual([...tops].sort((a, b) => a - b));
+    const stage = await page.locator('.vehicle-stage').boundingBox();
+    expect(stage.width).toBeGreaterThan(390 * 0.85);
   });
   await check('Unknown pages use the hero slab and lead back to stock', async () => {
     await page.setViewportSize({ width: 1440, height: 900 });

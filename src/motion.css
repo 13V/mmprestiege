@@ -61,12 +61,37 @@
     animation-delay: 220ms;
   }
   .reference-hero .hero-footnote,
-  .reference-hero .hero-map,
-  .vehicle-hero-nav {
+  .reference-hero .hero-map {
     animation: mm-fade-in 1100ms var(--mm-ease-out) 380ms backwards;
   }
-  .showroom-hero:not(.vehicle-hero) .reference-hero-image {
+  .showroom-hero .reference-hero-image {
     animation: mm-hero-settle 2400ms var(--mm-ease-out) backwards;
+  }
+  /* Vehicle listing: the title, photo stage and right-hand cards rise in
+     turn, and each new photo fades in. */
+  .vehicle-head > *,
+  .vehicle-gallery,
+  .vehicle-aside > * {
+    animation: mm-hero-rise 1000ms var(--mm-ease-out) backwards;
+  }
+  .vehicle-head > :nth-child(2) {
+    animation-delay: 80ms;
+  }
+  .vehicle-head > :nth-child(3),
+  .vehicle-gallery {
+    animation-delay: 160ms;
+  }
+  .vehicle-aside > :nth-child(1) {
+    animation-delay: 240ms;
+  }
+  .vehicle-aside > :nth-child(2) {
+    animation-delay: 320ms;
+  }
+  .vehicle-aside > :nth-child(3) {
+    animation-delay: 400ms;
+  }
+  .vehicle-stage-image {
+    animation: mm-fade-in 600ms var(--mm-ease-out) backwards;
   }
 
   /* Scroll reveal (classes are added by useReveal in main.jsx). */
