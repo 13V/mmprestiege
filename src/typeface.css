@@ -1,0 +1,150 @@
+/* Display typeface: Big Shoulders Display, a condensed heavy grotesque
+   with a motorsport feel. Everything set in var(--display) shares one
+   voice here: uppercase, heavy and tightly led. A condensed face needs
+   more height than Michroma's wide letters did, so the display sizes
+   step up. This file comes last in the type cascade, so each size below
+   is the final one for its breakpoint. Admin screens keep Manrope. */
+
+/* Voice */
+.brand b,
+.footer .brand b,
+.marque-words li,
+.reference-hero h1,
+.dealer-home h2,
+.section-title h2,
+.enquiry-dialog h2,
+.offer-performance h3,
+.offer-trade h3,
+.footer-next-drive h3,
+.stock-help h3,
+.stock-empty h3,
+.mm-reviews .rating > b,
+.results-count b,
+.vehicle-price-card .vehicle-sold {
+  font-family: var(--display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: var(--track-display);
+}
+
+/* Wordmark */
+.brand b,
+.footer .brand b {
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+/* Specialties strip */
+.marque-words li {
+  font-size: clamp(18px, 1.7vw, 26px);
+  letter-spacing: 0.1em;
+}
+
+/* Page titles */
+.reference-hero h1 {
+  font-size: var(--fs-display);
+  line-height: 1;
+}
+.reference-hero.vehicle-hero h1 {
+  font-size: clamp(40px, 4.2vw, 62px);
+}
+
+/* Section titles */
+.dealer-home h2,
+.section-title h2 {
+  font-size: var(--fs-h2);
+  line-height: 1.02;
+}
+.enquiry-dialog h2 {
+  font-size: 36px;
+  line-height: 1;
+}
+
+/* Panel titles */
+.offer-performance h3,
+.offer-trade h3 {
+  font-size: clamp(22px, 2vw, 28px);
+  line-height: 1.05;
+}
+.footer-next-drive h3 {
+  font-size: 26px;
+  line-height: 1.05;
+}
+.stock-help h3 {
+  font-size: clamp(28px, 2.6vw, 38px);
+  line-height: 1.05;
+}
+.stock-empty h3 {
+  font-size: 28px;
+  line-height: 1.05;
+}
+
+/* Numerals */
+.mm-reviews .rating > b {
+  font-size: clamp(40px, 3.6vw, 54px);
+  line-height: 1;
+}
+.results-count b {
+  font-size: clamp(36px, 3.4vw, 50px);
+  line-height: 1;
+}
+.vehicle-price-card .vehicle-sold {
+  font-size: 34px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 1100px) {
+  .marque-words li {
+    font-size: 17px;
+    letter-spacing: 0.08em;
+  }
+}
+@media (max-width: 850px) {
+  .brand b {
+    font-size: 20px;
+  }
+  .offer-performance h3,
+  .offer-trade h3 {
+    font-size: 22px;
+  }
+}
+@media (max-width: 700px) {
+  .reference-hero h1,
+  .dealer-home .page-hero h1 {
+    font-size: clamp(38px, 11vw, 52px);
+    line-height: 1;
+  }
+  .collection-filters-head h3 {
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: var(--track-display);
+  }
+}
+@media (max-width: 600px) {
+  .brand b {
+    font-size: 19px;
+  }
+  .footer .brand b {
+    font-size: 20px;
+  }
+  .enquiry-dialog h2 {
+    font-size: 32px;
+  }
+  .offer-performance h3,
+  .offer-trade h3 {
+    font-size: 20px;
+  }
+}
+@media (max-width: 374px) {
+  .header .brand b {
+    font-size: 17px;
+  }
+  .offer-performance h3,
+  .offer-trade h3 {
+    font-size: 18px;
+  }
+}

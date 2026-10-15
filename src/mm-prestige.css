@@ -262,14 +262,14 @@ h4) {
 
 /* B02 Tokens + text rendering */
 :root {
-  --fs-display: clamp(34px, 3.6vw, 54px);
-  --fs-h2: clamp(26px, 2.7vw, 40px);
+  --fs-display: clamp(46px, 5vw, 76px);
+  --fs-h2: clamp(36px, 3.6vw, 54px);
   --fs-lead: clamp(15px, 1.1vw, 16px);
   --fs-body: 14px;
   --fs-small: 13px;
   --fs-caption: 12px;
   --fs-label: 11px;
-  --track-display: -0.01em;
+  --track-display: 0.01em;
   --track-label: 0.14em;
   --surface-1: #1c1c1e;
   --surface-2: #232325;

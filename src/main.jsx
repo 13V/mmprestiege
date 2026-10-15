@@ -55,6 +55,7 @@ import "./direction.css";
 import "./showroom-hero.css";
 import "./mm-prestige.css";
 import "./inner-pages.css";
+import "./typeface.css";
 import "./motion.css";
 
 const StockManagerDemo = lazy(() => import("./StockManagerDemo"));
