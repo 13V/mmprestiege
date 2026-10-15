@@ -46,6 +46,7 @@ import {
   Quote,
   Camera,
   Zap,
+  Share2,
 } from "lucide-react";
 import { vehicles, money, number, business } from "./data";
 import ThemedSelect from "./ThemedSelect";
@@ -1279,10 +1280,12 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
   const thumbStrip = useRef(null);
   const swipeStart = useRef(null);
   const [index, setIndex] = useState(0),
-    [zoom, setZoom] = useState(false);
+    [zoom, setZoom] = useState(false),
+    [copied, setCopied] = useState(false);
   useEffect(() => {
     setIndex(0);
     setZoom(false);
+    setCopied(false);
   }, [id]);
   const photos = car ? (car.gallery?.length ? car.gallery : [car.image]) : [];
   const move = (n) => setIndex((i) => (i + n + photos.length) % photos.length);
@@ -1312,6 +1315,20 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
   const photoLabel = (i) =>
     `Illustrative ${name} photo ${i + 1} of ${photos.length}`;
   const counter = `${String(index + 1).padStart(2, "0")} / ${String(photos.length).padStart(2, "0")}`;
+  const share = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: `${car.year} ${name} · MM Prestige Motors`, url });
+      } catch {}
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2400);
+    } catch {}
+  };
   const swipe = (e) => {
     const start = swipeStart.current;
     swipeStart.current = null;
@@ -1340,36 +1357,56 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
     ["Stock number", car.stock],
     ["Location", "Wingfield, SA"],
   ];
-  const highlights = [
-    `${number(car.kms)} km on the clock`,
-    `${car.transmission} transmission`,
-    car.engine,
-    `${car.power} · ${car.fuel}`,
-  ];
   const related = vehicles
     .filter((c) => c.id !== id && c.status === "available")
     .slice(0, 4);
   return (
     <main className="dealer-home inner-page vehicle-detail">
       <section className="vehicle-listing" aria-labelledby="vehicle-title">
+        <div className="vehicle-topbar">
+          <nav className="vehicle-crumbs" aria-label="Breadcrumb">
+            <ol>
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+              <li>
+                <Link to="/stock">Stock</Link>
+              </li>
+              <li aria-current="page">{name}</li>
+            </ol>
+          </nav>
+          <div className="vehicle-actions">
+            <button
+              className={`vehicle-save ${isSaved ? "is-saved" : ""}`}
+              aria-label={isSaved ? "Unsave vehicle" : "Save vehicle"}
+              aria-pressed={isSaved}
+              onClick={() => toggleSaved(car.id)}
+            >
+              <Heart size={16} fill={isSaved ? "currentColor" : "none"} />
+              <span>{isSaved ? "Saved" : "Save"}</span>
+            </button>
+            <button className="vehicle-share" onClick={share}>
+              {copied ? <Check size={16} /> : <Share2 size={16} />}
+              <span aria-live="polite">{copied ? "Link copied" : "Share"}</span>
+            </button>
+          </div>
+        </div>
+        <header className="vehicle-head">
+          <div className="vehicle-title-row">
+            <h1 id="vehicle-title">
+              {car.year} {name}
+            </h1>
+            {sold && <span className="vehicle-status">Sold</span>}
+          </div>
+          <p className="vehicle-sub">
+            <span>{car.variant}</span>
+            <span>
+              <MapPin size={15} /> Wingfield, SA
+            </span>
+            <span>Stock no. {car.stock}</span>
+          </p>
+        </header>
         <div className="vehicle-main">
-          <Link className="vehicle-back" to="/stock">
-            <ChevronLeft size={16} /> Back to stock
-          </Link>
-          <header className="vehicle-head">
-            <p className="vehicle-kicker">
-              {car.year} · {car.make}
-              {sold && <span className="vehicle-status">Sold</span>}
-            </p>
-            <h1 id="vehicle-title">{name}</h1>
-            <p className="vehicle-sub">
-              <span>{car.variant}</span>
-              <span>
-                <MapPin size={14} /> Wingfield, SA
-              </span>
-              <span>Stock no. {car.stock}</span>
-            </p>
-          </header>
           <section className="vehicle-gallery" aria-label="Vehicle photos">
             <div
               className="vehicle-stage"
@@ -1442,7 +1479,7 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
             {facts.map(([Icon, label, value]) => (
               <li key={label}>
                 <span className="vehicle-fact-icon" aria-hidden="true">
-                  <Icon size={20} />
+                  <Icon size={19} />
                 </span>
                 <span>
                   <small>{label}</small>
@@ -1455,7 +1492,7 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
             className="vehicle-about"
             aria-labelledby="overview-heading"
           >
-            <span className="eyebrow">About this car</span>
+            <span className="eyebrow">Dealer comments</span>
             <h2 id="overview-heading">
               {car.make === "HSV"
                 ? "Australian muscle."
@@ -1464,31 +1501,27 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
                   : "Built for the enthusiast."}
             </h2>
             <p>{car.description}</p>
-            <ol>
-              {highlights.map((text, i) => (
-                <li key={text}>
-                  <span>{String(i + 1).padStart(2, "0")}</span>
-                  {text}
-                </li>
-              ))}
-            </ol>
+          </section>
+          <section className="vehicle-visit" aria-labelledby="visit-heading">
+            <span className="vehicle-visit-icon" aria-hidden="true">
+              <MapPin size={20} />
+            </span>
+            <div>
+              <h2 id="visit-heading">See it in Wingfield</h2>
+              <p>
+                {business.address}, {business.suburb}. Viewings by arrangement.
+              </p>
+            </div>
+            <a href={business.maps} target="_blank" rel="noreferrer">
+              Get directions <ArrowUpRight size={16} />
+            </a>
           </section>
         </div>
         <aside className="vehicle-aside" aria-label="Price, specifications and contact">
           <div className="vehicle-price-card">
-            <div className="vehicle-price-top">
-              <span className="vehicle-price-label">
-                {sold ? "Status" : "Asking price"}
-              </span>
-              <button
-                className={`vehicle-save ${isSaved ? "is-saved" : ""}`}
-                aria-label={isSaved ? "Unsave vehicle" : "Save vehicle"}
-                aria-pressed={isSaved}
-                onClick={() => toggleSaved(car.id)}
-              >
-                <Heart size={17} fill={isSaved ? "currentColor" : "none"} />
-              </button>
-            </div>
+            <span className="vehicle-price-label">
+              {sold ? "Status" : "Asking price"}
+            </span>
             {sold ? (
               <>
                 <strong className="vehicle-sold">SOLD</strong>
@@ -1523,15 +1556,22 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
             </p>
           </section>
           <section className="vehicle-call" aria-labelledby="call-heading">
-            <span className="vehicle-call-label">Talk directly with Madi</span>
-            <h2 id="call-heading">{sold ? "Just missed out?" : "Call Madi"}</h2>
+            <div className="vehicle-contact-person">
+              <span className="vehicle-avatar" aria-hidden="true">
+                M
+              </span>
+              <div>
+                <h2 id="call-heading">{sold ? "Talk to Madi" : "Call Madi"}</h2>
+                <p>MM Prestige Motors · Wingfield</p>
+              </div>
+            </div>
             <p>
               {sold
-                ? "Madi can help you find something similar."
-                : "Arrange a viewing in Wingfield, or ask about finance and trade-ins."}
+                ? "This car has sold, but Madi can help you find something similar."
+                : "Arrange a viewing, or ask about finance and trade-ins."}
             </p>
             <a className="vehicle-call-number" href={`tel:${business.tel}`}>
-              <Phone size={19} /> {business.phone}
+              <Phone size={18} /> {business.phone}
             </a>
             <button
               className="vehicle-call-message"
@@ -1539,11 +1579,27 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
               onClick={() => onEnquire(car)}
             >
               <MessageSquare size={17} />
-              {sold ? "Find something similar" : "Send Madi a message"}
+              {sold ? "Find something similar" : "Send a message"}
             </button>
           </section>
         </aside>
       </section>
+      <div className="vehicle-actionbar">
+        <div>
+          <strong>{sold ? "Sold" : money(car.price)}</strong>
+          <small>{sold ? "Ask Madi about similar cars" : "Excl. government charges"}</small>
+        </div>
+        <button
+          className="vehicle-actionbar-message"
+          aria-label="Message Madi"
+          onClick={() => onEnquire(car)}
+        >
+          <MessageSquare size={19} />
+        </button>
+        <a className="vehicle-actionbar-call" href={`tel:${business.tel}`}>
+          <Phone size={17} /> Call Madi
+        </a>
+      </div>
       {related.length > 0 && (
         <section
           className="reference-collection vehicle-related"

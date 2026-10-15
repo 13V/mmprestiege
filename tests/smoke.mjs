@@ -296,7 +296,7 @@ try {
     await page.goto(`${baseURL}${firstVehicleRoute}`);
     const count = page.locator('.vehicle-hero-count');
     const photo = page.locator('.vehicle-stage-image');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('HSV GTS');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('2016 HSV GTS');
     await expect(page.locator('.vehicle-price-card')).toContainText('$94,990');
     await expect(count).toHaveText('01 / 02');
     await expect(photo).toHaveAttribute('src', '/images/car-1.jpg');
@@ -312,6 +312,22 @@ try {
     await expect(page.getByRole('button', { name: 'Show vehicle photo 1', exact: true })).toHaveAttribute('aria-pressed', 'true');
     await expect(page.getByRole('button', { name: 'Show vehicle photo 2', exact: true })).toHaveAttribute('aria-pressed', 'false');
   });
+  await check('Vehicle breadcrumb, save and share', async () => {
+    const crumbs = page.getByRole('navigation', { name: 'Breadcrumb' });
+    await expect(crumbs.getByRole('link', { name: 'Stock' })).toHaveAttribute('href', '/stock');
+    await expect(crumbs.locator('[aria-current="page"]')).toHaveText('HSV GTS');
+    const save = page.locator('.vehicle-actions').getByRole('button', { name: 'Save vehicle' });
+    await save.click();
+    const unsave = page.locator('.vehicle-actions').getByRole('button', { name: 'Unsave vehicle' });
+    await expect(unsave).toHaveAttribute('aria-pressed', 'true');
+    await expect(unsave).toContainText('Saved');
+    await unsave.click();
+    await expect(save).toHaveAttribute('aria-pressed', 'false');
+    await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: baseURL });
+    await page.locator('.vehicle-share').click();
+    await expect(page.locator('.vehicle-share')).toContainText('Link copied');
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(`${baseURL}${firstVehicleRoute}`);
+  });
   await check('Expanded gallery, keyboard arrows and Escape', async () => {
     await page.getByRole('button', { name: 'Expand vehicle photos', exact: true }).click();
     await expect(page.getByRole('dialog', { name: 'Vehicle photo gallery' })).toBeVisible();
@@ -326,7 +342,7 @@ try {
   });
   await check('Overview highlights and specifications beside the photos', async () => {
     await expect(page.getByRole('heading', { level: 2, name: 'Australian muscle.' })).toBeVisible();
-    await expect(page.locator('.vehicle-about li')).toHaveCount(4);
+    await expect(page.locator('.vehicle-about p')).toContainText('supercharged V8');
     await expect(page.locator('.vehicle-facts li')).toHaveCount(4);
     await expect(page.locator('#specifications')).toBeVisible();
     await expect(page.locator('#specifications')).toContainText('430 kW');
@@ -511,6 +527,10 @@ try {
     expect(tops).toEqual([...tops].sort((a, b) => a - b));
     const stage = await page.locator('.vehicle-stage').boundingBox();
     expect(stage.width).toBeGreaterThan(390 * 0.85);
+    const bar = page.locator('.vehicle-actionbar');
+    await expect(bar).toBeVisible();
+    expect(Math.round((await bar.boundingBox()).y + (await bar.boundingBox()).height)).toBe(844);
+    await expect(bar.getByRole('link', { name: /Call Madi/ })).toHaveAttribute('href', 'tel:+61411710409');
   });
   await check('Unknown pages use the hero slab and lead back to stock', async () => {
     await page.setViewportSize({ width: 1440, height: 900 });

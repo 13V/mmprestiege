@@ -69,6 +69,7 @@
   }
   /* Vehicle listing: the title, photo stage and right-hand cards rise in
      turn, and each new photo fades in. */
+  .vehicle-topbar,
   .vehicle-head > *,
   .vehicle-gallery,
   .vehicle-aside > * {

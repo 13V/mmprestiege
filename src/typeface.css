@@ -48,7 +48,7 @@
   line-height: 1;
 }
 .vehicle-head h1 {
-  font-size: clamp(40px, 4vw, 62px);
+  font-size: clamp(38px, 3.6vw, 56px);
   line-height: 1;
 }
 
@@ -62,12 +62,14 @@
   font-size: 36px;
   line-height: 1;
 }
-.vehicle-aside h2 {
-  font-size: 28px;
-  line-height: 1;
+.vehicle-main h2 {
+  font-size: clamp(30px, 2.6vw, 38px);
+  line-height: 1.05;
 }
-.vehicle-call h2 {
-  font-size: 38px;
+.vehicle-aside h2,
+.vehicle-main .vehicle-visit h2 {
+  font-size: 24px;
+  line-height: 1;
 }
 
 /* Panel titles */
@@ -126,7 +128,7 @@
     line-height: 1;
   }
   .vehicle-head h1 {
-    font-size: clamp(36px, 10vw, 48px);
+    font-size: clamp(30px, 8.4vw, 44px);
   }
   .collection-filters-head h3 {
     font-size: 26px;
