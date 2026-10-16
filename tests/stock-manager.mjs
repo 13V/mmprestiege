@@ -81,38 +81,38 @@ try {
     await expect(button('Add new vehicle')).toBeVisible();
     await expect(button('Update listing')).toBeVisible();
     await expect(button('Mark vehicle sold')).toBeVisible();
-    await counts(6, 2);
-    await expect(preview().getByTestId('preview-card')).toHaveCount(6);
+    await counts(5, 1);
+    await expect(preview().getByTestId('preview-card')).toHaveCount(5);
     await screenshot('stock-manager-desktop.png');
   });
 
   await check('Photos, rego, state and details stay a draft until publishing', async () => {
     await reset();
     await exampleDraft();
-    await counts(6, 2);
+    await counts(5, 1);
     await expect(vehicleCard('demo-vehicle-1')).toHaveCount(0);
     await screenshot('stock-manager-review-desktop.png');
     await button('Publish listing').click();
-    await counts(7, 2);
-    await expect(vehicleCard('demo-vehicle-1')).toContainText('Holden');
+    await counts(6, 1);
+    await expect(vehicleCard('demo-vehicle-1')).toContainText('HSV Maloo');
     await expect(vehicleCard('demo-vehicle-1')).toContainText('72,850');
     await expect(vehicleCard('demo-vehicle-1')).toContainText('$64,990');
     await expect(vehicleCard('demo-vehicle-1')).toHaveAttribute('data-status', 'available');
     await button('Back to menu').click();
     await expect(button('Add new vehicle')).toBeVisible();
-    await counts(7, 2);
+    await counts(6, 1);
   });
 
   await check('A local photo can be attached without publishing inventory', async () => {
     await reset();
     await button('Add new vehicle').click();
     await page.getByLabel('Upload vehicle photos', { exact: true }).setInputFiles(
-      fileURLToPath(new URL('../public/images/car-2.jpg', import.meta.url)),
+      fileURLToPath(new URL('../public/images/hsv-maloo-green-side.jpg', import.meta.url)),
     );
     await expect(button('Done with photos')).toBeEnabled();
     await button('Done with photos').click();
     await expect(button('Use example rego')).toBeVisible();
-    await counts(6, 2);
+    await counts(5, 1);
     await expect(vehicleCard('demo-vehicle-1')).toHaveCount(0);
   });
 
@@ -128,7 +128,7 @@ try {
     await expect(page.getByLabel('Make', { exact: true })).toBeVisible();
     await expect(page.getByLabel('Model', { exact: true })).toBeVisible();
     await expect(button('Use these details')).toBeVisible();
-    await counts(6, 2);
+    await counts(5, 1);
     await expect(vehicleCard('demo-vehicle-1')).toHaveCount(0);
   });
 
@@ -147,10 +147,10 @@ try {
     await button('Send message').click();
     await page.getByLabel('Asking price', { exact: true }).fill('57900');
     await button('Send message').click();
-    await counts(6, 2);
+    await counts(5, 1);
     await expect(vehicleCard('demo-vehicle-1')).toHaveCount(0);
     await button('Publish listing').click();
-    await counts(7, 2);
+    await counts(6, 1);
     await expect(vehicleCard('demo-vehicle-1')).toContainText('Ford');
     await expect(vehicleCard('demo-vehicle-1')).toContainText('Mustang GT');
     await expect(vehicleCard('demo-vehicle-1')).toContainText('2018');
@@ -166,11 +166,11 @@ try {
     await button('Send message').click();
     await expect(vehicleCard('hsv-gts-2016')).toContainText('$94,990');
     await expect(vehicleCard('hsv-gts-2016')).not.toContainText('$88,000');
-    await counts(6, 2);
+    await counts(5, 1);
     await button('Save changes').click();
     await expect(vehicleCard('hsv-gts-2016')).toContainText('$88,000');
     await expect(vehicleCard('hsv-gts-2016')).not.toContainText('$94,990');
-    await counts(6, 2);
+    await counts(5, 1);
     await button('Back to menu').click();
     await expect(vehicleCard('hsv-gts-2016')).toContainText('$88,000');
   });
@@ -181,29 +181,29 @@ try {
     await button('Replace photos').click();
     await button('Use example photos').click();
     await button('Done with photos').click();
-    await expect(preview().getByTestId('draft-card').locator('.sm-listing-photo img')).toHaveAttribute('src', '/images/car-4.jpg');
-    await expect(vehicleCard('hsv-gts-2016').locator('.sm-listing-photo img')).toHaveAttribute('src', '/images/car-1.jpg');
-    await counts(6, 2);
+    await expect(preview().getByTestId('draft-card').locator('.sm-listing-photo img')).toHaveAttribute('src', '/images/hsv-maloo-green-front.jpg');
+    await expect(vehicleCard('hsv-gts-2016').locator('.sm-listing-photo img')).toHaveAttribute('src', '/images/hsv-gts-genf-front.jpg');
+    await counts(5, 1);
     await button('Save changes').click();
     await expect(preview().getByTestId('draft-card')).toHaveCount(0);
-    await expect(vehicleCard('hsv-gts-2016').locator('.sm-listing-photo img')).toHaveAttribute('src', '/images/car-4.jpg');
-    await counts(6, 2);
+    await expect(vehicleCard('hsv-gts-2016').locator('.sm-listing-photo img')).toHaveAttribute('src', '/images/hsv-maloo-green-front.jpg');
+    await counts(5, 1);
   });
 
   await check('Marking sold requires confirmation and moves the car between stock tabs', async () => {
     await reset();
     await chooseVehicle('Mark vehicle sold');
-    await counts(6, 2);
+    await counts(5, 1);
     await expect(vehicleCard('hsv-gts-2016')).toHaveAttribute('data-status', 'available');
     await button('Confirm sold').click();
-    await counts(5, 3);
+    await counts(4, 2);
     await expect(vehicleCard('hsv-gts-2016')).toHaveAttribute('data-status', 'sold');
     await expect(vehicleCard('hsv-gts-2016')).not.toContainText('$94,990');
-    await expect(preview().getByTestId('preview-card')).toHaveCount(3);
+    await expect(preview().getByTestId('preview-card')).toHaveCount(2);
     await screenshot('stock-manager-sold-desktop.png');
     await preview().getByRole('button', { name: 'Available', exact: true }).click();
     await expect(vehicleCard('hsv-gts-2016')).toHaveCount(0);
-    await expect(preview().getByTestId('preview-card')).toHaveCount(5);
+    await expect(preview().getByTestId('preview-card')).toHaveCount(4);
     await preview().getByRole('button', { name: 'Sold', exact: true }).click();
     await expect(vehicleCard('hsv-gts-2016')).toHaveAttribute('data-status', 'sold');
   });
@@ -212,7 +212,7 @@ try {
     await reset();
     await exampleDraft();
     await button('Cancel listing').click();
-    await counts(6, 2);
+    await counts(5, 1);
     await expect(vehicleCard('demo-vehicle-1')).toHaveCount(0);
     await chooseVehicle('Update listing');
     await button('Change price').click();
@@ -222,7 +222,7 @@ try {
     await expect(vehicleCard('hsv-gts-2016')).toContainText('$94,990');
     await chooseVehicle('Mark vehicle sold');
     await button('Keep available').click();
-    await counts(6, 2);
+    await counts(5, 1);
     await expect(vehicleCard('hsv-gts-2016')).toHaveAttribute('data-status', 'available');
     await expect(button('Add new vehicle')).toBeVisible();
   });
@@ -231,7 +231,7 @@ try {
     await reset();
     await exampleDraft();
     await button('Publish listing').click();
-    await counts(7, 2);
+    await counts(6, 1);
     await button('Back to menu').click();
     await chooseVehicle('Update listing');
     await button('Change price').click();
@@ -241,9 +241,9 @@ try {
     await button('Back to menu').click();
     await chooseVehicle('Mark vehicle sold');
     await button('Confirm sold').click();
-    await counts(6, 3);
+    await counts(5, 2);
     await reset();
-    await counts(6, 2);
+    await counts(5, 1);
     await expect(vehicleCard('demo-vehicle-1')).toHaveCount(0);
     await expect(vehicleCard('hsv-gts-2016')).toHaveAttribute('data-status', 'available');
     await expect(vehicleCard('hsv-gts-2016')).toContainText('$94,990');
@@ -253,11 +253,11 @@ try {
   await check('The public website inventory stays unchanged by the concept', async () => {
     await exampleDraft();
     await button('Publish listing').click();
-    await counts(7, 2);
+    await counts(6, 1);
     await page.goto(`${baseURL}/stock`);
-    await expect(page.locator('.collection-grid .car-card')).toHaveCount(6);
+    await expect(page.locator('.collection-grid .car-card')).toHaveCount(5);
     await page.locator('.collection-tabs button').filter({ hasText: /^Sold/ }).click();
-    await expect(page.locator('.collection-grid .car-card')).toHaveCount(2);
+    await expect(page.locator('.collection-grid .car-card')).toHaveCount(1);
     await page.goto(`${baseURL}/stock-manager`);
     await reset();
   });
@@ -272,7 +272,7 @@ try {
       await noOverflow();
       await screenshot(`stock-manager-review-${width}.png`);
       await button('Publish listing').click();
-      await counts(7, 2);
+      await counts(6, 1);
       await noOverflow();
     });
   }

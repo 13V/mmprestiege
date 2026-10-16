@@ -1,34 +1,48 @@
-# Prototype photo sources
+# Photo sources
 
-All imagery is generic preview imagery. It does **not** show MM Prestige Motors' actual vehicles, premises or current stock. Replace these files with dealer-owned vehicle photography before publishing a real inventory.
+Every photo on the site comes from MM Prestige Motors' own showroom photoshoot: 29 photos supplied by the dealership in October 2026 (original files `MMMOTOR.CWATSON.jpg` and `MMMOTOR.CWATSON-2.jpg` to `-29.jpg`, about 5,800 × 3,900 px). They show the Wingfield showroom, the shopfront on Grand Junction Road and the cars on site that day.
 
-Photos were obtained over verified HTTPS from these public example repositories:
+The sample listings are mapped to the photographed cars, so each listing shows its own car. Each listing's year, price, kilometres and specifications are still samples (see `sampleStock` in `src/data.js`).
 
-- [Ridex by codewithsadee](https://github.com/codewithsadee/ridex), commit `473d9444c36dd45066d737a2eb14252713f6a38b` (most stock photos and the unused about image).
-- [Car-Dealership-Website by syedfahadali399](https://github.com/syedfahadali399/Car-Dealership-Website), commit `0081ef00961e79f298ce4b25c0bf2d3dda6404b7` (high-resolution red BMW, engine and interior previews). This source provides no licence or photo credits; these assets must be replaced or their original rights established before publishing.
-- [Axom car dealership by MDJAmin](https://github.com/MDJAmin/axom-car-dealership-website-html-css-js), commit `c3534e9f8d8817b308b70af071dcc1adb68132a8` (wheel detail). The repository has an MIT licence but does not identify original photography sources.
+## Processing
 
-Ridex’s README states: “This project is **free to use** and does not contains any license.” It does not include individual photographers' names or original photo-provider references. This records the immediate source and upstream reuse statement, without claiming that its statement establishes rights for every photograph. For a public dealership launch, use dealer-owned photos or verify each original photo's licence and any required attribution.
+- Crops were cut from the full-size originals, resized to at most 2,400 px wide and saved as JPEG (quality 84). Camera metadata, including any location data, was removed.
+- `npm run images` makes the WebP sizes in `public/images/opt` and the 1,200 × 630 link-preview crops from these files.
+- `clubsport-cutout.webp` was cut out of shot 20 on this machine with the open-source BiRefNet background-removal model (through `rembg`). No photo was uploaded to an outside service.
+- `public/og-image.png` places the wordmark over `showroom-lineup.jpg` (`npm run share-image`).
 
-| Local file | Source / upstream path | Dimensions | Content |
-| --- | --- | --- | --- |
-| `car-1.jpg` | Car-Dealership-Website: `pics/7.jpg.jpg` | 3840 × 2160 | Red BMW performance coupe at night |
-| `car-2.jpg` | `assets/images/car-2.jpg` | 440 × 300 | Black BMW performance sedan |
-| `car-3.jpg` | `assets/images/car-3.jpg` | 440 × 300 | White Volkswagen Golf R |
-| `car-4.jpg` | `assets/images/car-6.jpg` | 440 × 300 | Grey BMW sedan, studio setting |
-| `car-5.jpg` | `assets/images/blog-3.jpg` | 640 × 400 | Classic American muscle car collection |
-| `car-6.jpg` | `assets/images/car-2.jpg` | 440 × 300 | Second preview use of the black BMW sedan |
-| `car-7.jpg` | `assets/images/car-3.jpg` | 440 × 300 | Second preview use of the white Golf R |
-| `car-8.jpg` | Car-Dealership-Website: `pics/7.jpg.jpg` | 3840 × 2160 | Second preview use of the red BMW coupe |
-| `detail-2.jpg` | Axom: `Assets/Product/Page 1/Section-4/Image (9).jpeg` | 1176 × 582 | Red sports-car wheel detail |
-| `detail-3.jpg` | Car-Dealership-Website: `pics/26.jpg` | 900 × 596 | Mercedes driver cabin detail |
-| `about.jpg` | `assets/images/blog-3.jpg` | 640 × 400 | Classic American muscle car collection |
-| `studio-hero.webp` | Generated campaign image carried over from the Impulse Automotive concept | 1672 × 941 | Silver Porsche convertible in a studio (home hero) |
-| `suv-cutout.webp` | Generated campaign image carried over from the Impulse Automotive concept; its ground shadow was converted to transparent black for the red panel | 1536 × 1024 | White BMW X5-style SUV cutout (home "Next up." panel) |
-| `sell-supercar.webp` | Generated campaign image carried over from the Impulse Automotive concept | 1672 × 941 | Silver supercar with doors raised in a studio (sell-your-car banner) |
+## Files
 
-Paths without a named source above belong to Ridex. Those images can be inspected at `https://raw.githubusercontent.com/codewithsadee/ridex/473d9444c36dd45066d737a2eb14252713f6a38b/<upstream-path>`.
+Crops are given as fractions of the upright original frame (left, top, right, bottom).
 
-Direct HTTPS access to `images.unsplash.com` and `upload.wikimedia.org` was rejected by this cloud environment's destination policy. The local files avoid runtime hotlinking and keep the preview usable without those hosts. No TLS checks were disabled. GitHub source requests used the environment's existing proxy and trust configuration.
+| Local file | Original shot | Crop | Content | Used for |
+| --- | --- | --- | --- | --- |
+| `showroom-lineup.jpg` | 2 | Full frame | Gold E3 Maloo and red E3 GTS head-on under the wall sign | Home hero, link-preview image |
+| `showroom-collection.jpg` | 21 | Full frame | Green Maloo, gold Maloo and red HSVs, with the Gen-F GTS's rear in front | Stock page hero |
+| `showroom-doorway.jpg` | 9 | Full frame | Gen-F GTS and black Clubsport inside the open roller door | 404 page hero |
+| `showroom-street.jpg` | 13 | Full frame | Shopfront with the MM Prestige sign and address, Maloo R8 and Ferrari 360 outside | Location card |
+| `sell-roller-door.jpg` | 15 | Full frame | Maloo R8 and Ferrari 360 outside the open roller door | Sell-your-car banner |
+| `performance-gts-rear.jpg` | 21 | 0.519, 0.375, 0.956, 1 | Gen-F GTS rear quarter, wheel and yellow brake caliper | "Performance" panel |
+| `clubsport-cutout.webp` | 20 | 0.53, 0.47, 0.95, 0.985, then background removed | Black E3 Clubsport, front | "Next up." panel |
+| `hsv-gts-genf-front.jpg` | 22 | Full frame | Gen-F GTS front three-quarter in the showroom | 2016 HSV GTS listing (main) |
+| `hsv-gts-genf-rear.jpg` | 21 | 0.4, 0.4, 1, 1 | Gen-F GTS rear three-quarter | 2016 HSV GTS listing |
+| `hsv-gts-genf-showroom.jpg` | 7 | 0.2, 0.497, 0.506, 0.806 | Gen-F GTS front with the line-up behind | 2016 HSV GTS listing |
+| `hsv-clubsport-r8-front.jpg` | 20 | 0.506, 0.487, 0.994, 0.975 | Black E3 Clubsport front three-quarter | 2012 HSV Clubsport R8 listing (main) |
+| `hsv-clubsport-r8-showroom.jpg` | 20 | Full frame | Black Clubsport and Gen-F GTS in the showroom | 2012 HSV Clubsport R8 listing |
+| `ferrari-360-front.jpg` | 24 | 0.025, 0.075, 0.95, 1 | Ferrari 360 Modena front three-quarter outside | 2002 Ferrari 360 Modena listing (main) |
+| `ferrari-360-street.jpg` | 13 | 0.625, 0.562, 1, 0.937 | Ferrari 360 Modena at the shopfront | 2002 Ferrari 360 Modena listing |
+| `ferrari-360-doorway.jpg` | 18 | 0.4, 0.4, 1, 1 | Ferrari 360 Modena beside the open roller door | 2002 Ferrari 360 Modena listing |
+| `hsv-maloo-r8-side.jpg` | 13 | 0, 0.384, 0.525, 0.909 | Gen-F Maloo R8 side profile at the shopfront | 2014 HSV Maloo R8 listing (main) |
+| `hsv-maloo-r8-rear.jpg` | 15 | 0, 0.394, 0.475, 0.869 | Gen-F Maloo R8 rear three-quarter | 2014 HSV Maloo R8 listing |
+| `hsv-gts-e3-front.jpg` | 3 | 0.063, 0.075, 0.988, 1 | Red E3 GTS front three-quarter | 2012 HSV GTS listing (main) |
+| `hsv-gts-e3-nose.jpg` | 4 | 0, 0.388, 1, 0.832 | Red E3 GTS nose, bonnet vents and GTS badge | 2012 HSV GTS listing |
+| `hsv-gts-e3-lineup.jpg` | 2 | 0.513, 0.441, 1, 0.928 | Red E3 GTS head-on in the line-up | 2012 HSV GTS listing |
+| `hsv-maloo-e3-front.jpg` | 2 | 0.113, 0.441, 0.506, 0.834 | Gold E3 Maloo head-on | 2012 HSV Maloo listing (sold) |
+| `hsv-maloo-green-front.jpg` | 21 | 0, 0.436, 0.234, 0.670 | Green Gen-F Maloo front | Stock manager demo's example photos |
+| `hsv-maloo-green-side.jpg` | 2 | 0, 0.469, 0.206, 0.675 | Green Gen-F Maloo side | Stock manager demo's example photos |
 
-The three `.webp` campaign images are generated and were not sourced from the repositories above. They do not depict MM Prestige stock or premises; replace them before launch.
+## Before launch
+
+- Number plates are readable in several photos (the gold Maloo, the E3 GTS and the Ferrari). Confirm the owners are happy for them to be shown, or blur them.
+- The black Clubsport's bumper reflects the photographer. It is too small to see at the panel's display size.
+- The shoot also includes portraits of a team member in an MM Prestige vest (shots 26 to 29). They aren't used yet; they could go on the Call Madi card once it's confirmed who is pictured.

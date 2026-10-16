@@ -6,7 +6,7 @@ import { existsSync } from 'node:fs';
 const baseURL = process.env.MM_BASE_URL || 'http://localhost:5173';
 const firstVehicleRoute = '/stock/hsv-gts-2016';
 const firstVehicleName = '2016 HSV GTS';
-const soldVehicleRoute = '/stock/hsv-clubsport-2012';
+const soldVehicleRoute = '/stock/hsv-maloo-2012';
 const screenshotDir = resolve(process.env.MM_SCREENSHOT_DIR || '.screenshots');
 await mkdir(screenshotDir, { recursive: true });
 const browser = await chromium.launch({
@@ -107,11 +107,12 @@ try {
     expect(button).toEqual({ background: 'rgb(212, 37, 54)', color: 'rgb(255, 255, 255)' });
     await expect(page.locator('.palette-control')).toHaveCount(0);
   });
-  await check('Sample stock and generic photographs are clearly disclosed', async () => {
-    await expect(page.locator('.sample-note')).toContainText('Sample stock and generic photos');
+  await check('Sample listing details are clearly disclosed', async () => {
+    await expect(page.locator('.sample-note')).toContainText('Sample listings');
+    await expect(page.locator('.sample-note')).toContainText('prices and details are examples');
     await page.goto(`${baseURL}${firstVehicleRoute}`);
-    await expect(page.locator('.vehicle-photo-note')).toContainText('Generic preview photography');
-    await expect(page.locator('.vehicle-photo-note')).toContainText('do not depict this vehicle');
+    await expect(page.locator('.vehicle-photo-note')).toContainText('Photographed at our Wingfield showroom');
+    await expect(page.locator('.vehicle-photo-note')).toContainText('Price and details are samples');
     await expect(page.locator('.detail-note')).toContainText('sample data');
     await expect(page.locator('.vehicle-price-card')).toContainText('Sample price');
     await expect(page.locator('.finance p')).toContainText('not a finance offer');
@@ -151,17 +152,16 @@ try {
     await model.click();
     const models = await controlledListbox(model);
     await expect(models.getByRole('option', { name: 'GTS', exact: true })).toBeVisible();
-    await expect(models.getByRole('option', { name: 'Mustang GT', exact: true })).toHaveCount(0);
-    await expect(models.getByRole('option', { name: 'Commodore SS V Redline', exact: true })).toHaveCount(0);
+    await expect(models.getByRole('option', { name: '360 Modena', exact: true })).toHaveCount(0);
     await page.keyboard.press('Escape');
     await expect(models).toBeHidden();
     await expect(model).toHaveAttribute('aria-expanded', 'false');
     await expect(model).toBeFocused();
     await chooseSelect(model, 'GTS');
-    await chooseSelect(make, 'Holden');
+    await chooseSelect(make, 'Ferrari');
     await expectSelectValue(model, '', 'Any models');
     await model.click();
-    await expect(models.getByRole('option', { name: 'Commodore SS V Redline', exact: true })).toBeVisible();
+    await expect(models.getByRole('option', { name: '360 Modena', exact: true })).toBeVisible();
     await expect(models.getByRole('option', { name: 'GTS', exact: true })).toHaveCount(0);
     await page.getByRole('heading', { level: 1 }).click();
     await expect(models).toBeHidden();
@@ -179,7 +179,7 @@ try {
     expect(query.get('make')).toBe('HSV');
     expect(query.get('model')).toBe('GTS');
     expect(query.get('max')).toBe('100000');
-    await expect(cards()).toHaveCount(1);
+    await expect(cards()).toHaveCount(2);
     await expect(cards().first().locator('.card-title')).toHaveText('HSV GTS');
     await expect(cards().first().locator('.card-title')).toHaveAttribute('href', firstVehicleRoute);
     await expect(page.getByRole('textbox', { name: 'Search stock' })).toHaveValue('GTS');
@@ -197,15 +197,15 @@ try {
     await expect(featuredCards.first().locator('.card-title')).toHaveText('HSV GTS');
     await next.click();
     await expect(featuredCards).toHaveCount(4);
-    await expect(featuredCards.first().locator('.card-title')).toHaveText('Holden Commodore SS V Redline');
+    await expect(featuredCards.first().locator('.card-title')).toHaveText('HSV Clubsport R8');
     await expect(previous).toBeEnabled();
     await previous.click();
     await expect(featuredCards.first().locator('.card-title')).toHaveText('HSV GTS');
     await expect(previous).toBeDisabled();
     await tabs.getByRole('button', { name: 'Sold cars', exact: true }).click();
     await expect(tabs.getByRole('button', { name: 'Sold cars', exact: true })).toHaveAttribute('aria-pressed', 'true');
-    await expect(featuredCards).toHaveCount(2);
-    await expect(page.locator('.featured .sold-tag')).toHaveCount(2);
+    await expect(featuredCards).toHaveCount(1);
+    await expect(page.locator('.featured .sold-tag')).toHaveCount(1);
     await expect(previous).toBeDisabled();
     await expect(next).toBeDisabled();
     await tabs.getByRole('button', { name: 'All cars', exact: true }).click();
@@ -267,16 +267,16 @@ try {
     await expect(page.locator('.featured .car-card')).toHaveCount(4);
     await page.getByRole('link', { name: 'Explore our stock', exact: true }).click();
     await expect(page).toHaveURL(/\/stock$/);
-    await expect(cards()).toHaveCount(6);
+    await expect(cards()).toHaveCount(5);
   });
   await check('Available, sold and all stock', async () => {
     await status('Sold').click();
-    await expect(cards()).toHaveCount(2);
-    await expect(page.locator('.collection-grid .sold-tag')).toHaveCount(2);
+    await expect(cards()).toHaveCount(1);
+    await expect(page.locator('.collection-grid .sold-tag')).toHaveCount(1);
     await status('All cars').click();
-    await expect(cards()).toHaveCount(8);
-    await status('In stock').click();
     await expect(cards()).toHaveCount(6);
+    await status('In stock').click();
+    await expect(cards()).toHaveCount(5);
   });
   await check('Search and reset', async () => {
     await page.getByRole('textbox', { name: 'Search stock' }).fill('Clubsport');
@@ -286,11 +286,11 @@ try {
     await expect(cards()).toHaveCount(0);
     await expect(page.getByText('No cars in this lane.')).toBeVisible();
     await reset();
-    await expect(cards()).toHaveCount(6);
+    await expect(cards()).toHaveCount(5);
   });
   await check('Make filter', async () => {
     await page.getByRole('checkbox', { name: /^HSV/ }).check();
-    await expect(cards()).toHaveCount(3);
+    await expect(cards()).toHaveCount(4);
     for (const text of await cards().allTextContents()) expect(text).toContain('HSV');
     await reset();
   });
@@ -304,30 +304,30 @@ try {
   });
   await check('Body style filter', async () => {
     await page.getByLabel('Ute', { exact: true }).check();
-    await expect(cards()).toHaveCount(2);
+    await expect(cards()).toHaveCount(1);
     await page.getByRole('button', { name: 'All body styles', exact: true }).click();
-    await expect(cards()).toHaveCount(6);
+    await expect(cards()).toHaveCount(5);
   });
   await check('Sorting by price and kilometres', async () => {
     await chooseSelect(page.getByRole('combobox', { name: 'Sort stock', exact: true }), 'price-low');
     const prices = await page.locator('.collection-grid .card-bottom strong').allTextContents();
-    expect(prices.map(s => +s.replace(/\D/g, ''))).toEqual([57990, 59990, 64990, 67990, 69990, 94990]);
+    expect(prices.map(s => +s.replace(/\D/g, ''))).toEqual([49990, 54990, 67990, 94990, 149990]);
     await chooseSelect(page.getByRole('combobox', { name: 'Sort stock', exact: true }), 'price-high');
-    await expect(cards().first()).toContainText('GTS');
+    await expect(cards().first()).toContainText('Ferrari');
     await chooseSelect(page.getByRole('combobox', { name: 'Sort stock', exact: true }), 'kms');
-    await expect(cards().first().locator('.card-title')).toHaveText('Ford Mustang GT');
+    await expect(cards().first().locator('.card-title')).toHaveText('Ferrari 360 Modena');
     await chooseSelect(page.getByRole('combobox', { name: 'Sort stock', exact: true }), 'newest');
   });
   await check('Save a car and persist saved state', async () => {
-    const firstSave = cards().first().getByRole('button', { name: /^Save / });
-    await firstSave.click();
-    await expect(cards().first().getByRole('button', { name: /^Unsave / })).toHaveAttribute('aria-pressed', 'true');
+    // Save the second car, so the first car's listing starts unsaved later on.
+    await cards().nth(1).getByRole('button', { name: /^Save / }).click();
+    await expect(cards().nth(1).getByRole('button', { name: /^Unsave / })).toHaveAttribute('aria-pressed', 'true');
     await page.reload();
     await page.locator('.saved-toggle').click();
     await expect(cards()).toHaveCount(1);
-    await expect(cards().first().locator('.card-title')).toHaveText('Ford Mustang GT');
+    await expect(cards().first().locator('.card-title')).toHaveText('HSV Maloo R8');
     await page.locator('.saved-toggle').click();
-    await expect(cards()).toHaveCount(6);
+    await expect(cards()).toHaveCount(5);
   });
   await check('Header saved-cars link opens the saved view', async () => {
     const link = page.locator('.header-saved');
@@ -337,7 +337,7 @@ try {
     await expect(page).toHaveURL(/\/stock\?status=all$/);
     await expect(page.locator('.saved-toggle')).toHaveAttribute('aria-pressed', 'true');
     await expect(cards()).toHaveCount(1);
-    await expect(cards().first().locator('.card-variant')).toHaveText('2019 Fastback · V8 coupe');
+    await expect(cards().first().locator('.card-variant')).toHaveText('2014 Gen-F · V8 ute');
   });
   await check('Stock car finder prepares a wanted-car message', async () => {
     await goStock();
@@ -358,7 +358,7 @@ try {
     await expect(card).toHaveAttribute('srcset', /\/images\/opt\/.+\.webp \d+w/);
     await page.waitForFunction(() => document.querySelector('.collection-grid img')?.currentSrc?.endsWith('.webp'));
     await page.goto(`${baseURL}${firstVehicleRoute}`);
-    await expect(page.locator('.vehicle-stage-image')).toHaveAttribute('srcset', /car-1-2400\.webp 2400w/);
+    await expect(page.locator('.vehicle-stage-image')).toHaveAttribute('srcset', /hsv-gts-genf-front-2400\.webp 2400w/);
   });
   await check('Vehicle detail and carousel', async () => {
     await page.goto(`${baseURL}${firstVehicleRoute}`);
@@ -366,17 +366,18 @@ try {
     const photo = page.locator('.vehicle-stage-image');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('2016 HSV GTS');
     await expect(page.locator('.vehicle-price-card')).toContainText('$94,990');
-    await expect(count).toHaveText('01 / 02');
-    await expect(photo).toHaveAttribute('src', '/images/car-1.jpg');
+    await expect(count).toHaveText('01 / 03');
+    await expect(photo).toHaveAttribute('src', '/images/hsv-gts-genf-front.jpg');
+    await expect(photo).toHaveAttribute('alt', 'HSV GTS photo 1 of 3');
     await page.getByRole('button', { name: 'Next vehicle photo', exact: true }).click();
-    await expect(count).toHaveText('02 / 02');
-    await expect(photo).toHaveAttribute('src', '/images/detail-2.jpg');
+    await expect(count).toHaveText('02 / 03');
+    await expect(photo).toHaveAttribute('src', '/images/hsv-gts-genf-rear.jpg');
     await page.getByRole('button', { name: 'Previous vehicle photo', exact: true }).click();
-    await expect(count).toHaveText('01 / 02');
+    await expect(count).toHaveText('01 / 03');
     await page.getByRole('button', { name: 'Previous vehicle photo', exact: true }).click();
-    await expect(count).toHaveText('02 / 02');
+    await expect(count).toHaveText('03 / 03');
     await page.getByRole('button', { name: 'Show vehicle photo 1', exact: true }).click();
-    await expect(count).toHaveText('01 / 02');
+    await expect(count).toHaveText('01 / 03');
     await expect(page.getByRole('button', { name: 'Show vehicle photo 1', exact: true })).toHaveAttribute('aria-pressed', 'true');
     await expect(page.getByRole('button', { name: 'Show vehicle photo 2', exact: true })).toHaveAttribute('aria-pressed', 'false');
   });
@@ -400,11 +401,11 @@ try {
     await page.getByRole('button', { name: 'Expand vehicle photos', exact: true }).click();
     await expect(page.getByRole('dialog', { name: 'Vehicle photo gallery' })).toBeVisible();
     await page.keyboard.press('ArrowRight');
-    await expect(page.locator('.lightbox-controls span')).toHaveText('2 / 2');
+    await expect(page.locator('.lightbox-controls span')).toHaveText('2 / 3');
     await page.getByRole('button', { name: 'Previous expanded photo' }).click();
-    await expect(page.locator('.lightbox-controls span')).toHaveText('1 / 2');
+    await expect(page.locator('.lightbox-controls span')).toHaveText('1 / 3');
     await page.keyboard.press('ArrowLeft');
-    await expect(page.locator('.lightbox-controls span')).toHaveText('2 / 2');
+    await expect(page.locator('.lightbox-controls span')).toHaveText('3 / 3');
     await page.keyboard.press('Escape');
     await expect(page.getByRole('dialog')).toHaveCount(0);
   });
@@ -461,7 +462,7 @@ try {
     await expect(page.getByRole('button', { name: 'Find me something similar' })).toBeVisible();
     await page.getByRole('button', { name: 'Find me something similar' }).click();
     const dialog = page.getByRole('dialog', { name: 'Find a car with MM Prestige Motors' });
-    await expect(dialog.getByLabel('Make and model')).toHaveValue('HSV Clubsport or similar');
+    await expect(dialog.getByLabel('Make and model')).toHaveValue('HSV Maloo or similar');
     await page.keyboard.press('Escape');
   });
   await check('Footer story link scrolls from stock to about', async () => {
@@ -552,14 +553,14 @@ try {
   await check('Mobile filters show results and reset', async () => {
     await page.getByRole('button', { name: /^Filters/ }).click();
     await expect(page.locator('.collection-filters')).toHaveClass(/is-open/);
-    await page.getByRole('checkbox', { name: /^Ford/ }).check();
+    await page.getByRole('checkbox', { name: /^Ferrari/ }).check();
     await page.getByRole('button', { name: 'Show 1 cars', exact: true }).click();
     await expect(page.locator('.collection-filters')).not.toHaveClass(/is-open/);
     await expect(cards()).toHaveCount(1);
     await page.getByRole('button', { name: /^Filters/ }).click();
     await reset();
-    await page.getByRole('button', { name: 'Show 6 cars', exact: true }).click();
-    await expect(cards()).toHaveCount(6);
+    await page.getByRole('button', { name: 'Show 5 cars', exact: true }).click();
+    await expect(cards()).toHaveCount(5);
   });
   for (const width of [360, 390, 768]) {
     await page.setViewportSize({ width, height: width === 768 ? 1024 : 844 });
@@ -588,7 +589,7 @@ try {
   });
   await check('Vehicle listing puts a large photo beside price, specifications and Madi', async () => {
     await page.setViewportSize({ width: 2493, height: 1265 });
-    await page.goto(`${baseURL}/stock/holden-ss-v-redline-2017`);
+    await page.goto(`${baseURL}/stock/hsv-gts-2012`);
     const stage = await page.locator('.vehicle-stage').boundingBox();
     const thumbs = await page.locator('.vehicle-thumbs').boundingBox();
     const price = await page.locator('.vehicle-price-card').boundingBox();
@@ -606,7 +607,7 @@ try {
   });
   await check('Vehicle listing stacks photos, title, price, specifications then Madi on a phone', async () => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto(`${baseURL}/stock/holden-ss-v-redline-2017`);
+    await page.goto(`${baseURL}/stock/hsv-gts-2012`);
     const order = ['.vehicle-stage', '.vehicle-head h1', '.vehicle-price-card', '.vehicle-facts', '#specifications', '.vehicle-call'];
     const tops = [];
     for (const selector of order) tops.push((await page.locator(selector).boundingBox()).y);

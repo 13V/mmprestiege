@@ -104,7 +104,7 @@ try {
     await expect(detail().getByLabel('Customer stage', { exact: true })).toHaveValue('new');
     await open('Michael Chen');
     await expect(detail()).toContainText('Michael Chen');
-    await expect(detail()).toContainText('Mustang');
+    await expect(detail()).toContainText('Ferrari');
     await expect(detail().getByLabel('Customer stage', { exact: true })).toHaveValue('negotiating');
   });
 
@@ -249,9 +249,9 @@ try {
   await check('CRM edits do not change the public website inventory', async () => {
     await addExampleLead();
     await page.goto(`${baseURL}/stock`);
-    await expect(page.locator('.collection-grid .car-card')).toHaveCount(6);
+    await expect(page.locator('.collection-grid .car-card')).toHaveCount(5);
     await page.locator('.collection-tabs button').filter({ hasText: /^Sold/ }).click();
-    await expect(page.locator('.collection-grid .car-card')).toHaveCount(2);
+    await expect(page.locator('.collection-grid .car-card')).toHaveCount(1);
     await page.goto(`${baseURL}/crm`);
     await total(8);
   });

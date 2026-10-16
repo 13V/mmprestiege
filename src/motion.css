@@ -29,14 +29,6 @@
     transform: translateY(26px);
   }
 }
-@keyframes mm-pin-pulse {
-  0% {
-    box-shadow: 0 0 0 0 #d4253680, 0 0 0 0 #d4253633;
-  }
-  100% {
-    box-shadow: 0 0 0 16px #d4253600, 0 0 0 32px #d4253600;
-  }
-}
 @keyframes mm-drift {
   from {
     transform: scale(1.1) translateY(-3%);
@@ -122,11 +114,6 @@
   .button.primary:hover::after,
   .hero-search > button:hover::after {
     transform: translateX(120%);
-  }
-
-  /* The showroom pin breathes. */
-  .location-pin {
-    animation: mm-pin-pulse 3200ms var(--mm-ease-out) infinite;
   }
 }
 

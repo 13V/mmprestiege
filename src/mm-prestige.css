@@ -227,10 +227,6 @@ h4) {
     font-size: clamp(34px, 3.6vw, 52px);
   }
 }
-/* Contact map: the road label clears the pin. */
-.location-roads span {
-  top: 22%;
-}
 /* Spec rows line up across cards when a long model name wraps. */
 .collection-card .card-specs {
   margin-top: auto;
@@ -456,6 +452,17 @@ h4) {
 
 /* B14 Hero: composition + radius */
 .reference-hero { border-radius: var(--radius-lg); }
+/* The showroom photo sits low so the wall sign stays clear above the title.
+   Wide screens cap the hero's height, so the photo moves back up there. */
+@media (min-width: 601px) {
+  .reference-home .reference-hero-image { object-position: center 83%; }
+}
+@media (min-width: 1900px) {
+  .reference-home .reference-hero-image { object-position: center 62%; }
+}
+@media (min-width: 2200px) {
+  .reference-home .reference-hero-image { object-position: center 50%; }
+}
 @media (min-width: 1101px) {
   .showroom-hero .reference-hero-content { width: min(1000px, 84%); }
   .showroom-hero .hero-search { width: min(880px, 100%); margin-inline: auto; }
@@ -585,7 +592,7 @@ h4) {
 
 /* B23 Sell banner */
 .reference-sell { width: 100%; margin: 0; display: flex; align-items: center; background: var(--surface-1); border-radius: var(--radius-lg); }
-.reference-sell > img { filter: saturate(0.3) brightness(0.92); }
+.reference-sell > img { filter: saturate(0.85) brightness(0.8); }
 .reference-sell::after {
   content: "";
   position: absolute;
@@ -637,23 +644,31 @@ h4) {
   .contact-pills > a { min-height: 44px; padding: 10px 16px; }
 }
 
-/* B26 Contact: schematic map */
+/* B26 Contact: showroom photo */
 .contact-map { background-color: var(--surface-1); border: 1px solid var(--hairline); border-radius: var(--radius-md); }
-.location-roads i { background: #ffffff1f; }
-.location-roads i:nth-child(3) { width: 5px; background: #ffffff3d; }
-.location-roads span { left: 24%; color: #8d8c88; }
-.location-roads b { color: #8d8c88; }
-.location-pin {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  box-shadow: 0 0 0 8px #d4253633, 0 0 0 18px #d425361a;
+.contact-map > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
   transition: transform var(--mm-slow) var(--mm-ease);
 }
-.location-address { background: #f5f5f3eb; border-radius: var(--radius-sm); font-size: var(--fs-small); }
+@media (max-width: 600px) {
+  .contact-map > img { object-position: 16% top; }
+}
+.contact-map::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(0deg, #111111a6 0%, #11111100 42%);
+}
+.location-address { z-index: 1; background: #f5f5f3eb; border-radius: var(--radius-sm); font-size: var(--fs-small); }
 .location-address small { font-size: var(--fs-label); }
 @media (hover: hover) {
-  .contact-map:hover .location-pin { transform: translateY(-4px); }
+  .contact-map:hover > img { transform: scale(1.03); }
 }
 
 /* B27 Footer */

@@ -26,19 +26,18 @@ import { vehicles, money, number } from "./data";
 import "./stock-manager.css";
 
 const examplePhotos = [
-  "/images/car-4.jpg",
-  "/images/detail-2.jpg",
-  "/images/detail-3.jpg",
+  "/images/hsv-maloo-green-front.jpg",
+  "/images/hsv-maloo-green-side.jpg",
 ];
 const exampleVehicle = {
-  year: 2017,
-  make: "Holden",
-  model: "Commodore SS V Redline",
-  variant: "VF Series II · V8 sedan",
+  year: 2015,
+  make: "HSV",
+  model: "Maloo",
+  variant: "Gen-F · V8 ute",
   transmission: "Automatic",
   engine: "6.2L V8",
-  body: "Sedan",
-  colour: "Heron White",
+  body: "Ute",
+  colour: "Green",
   fuel: "Petrol",
 };
 const title = (car) => `${car.year} ${car.make} ${car.model}`;
@@ -164,7 +163,7 @@ function reducer(state, action) {
           message(
             "bot",
             matched
-              ? "Example rego match found.\n2017 Holden Commodore SS V Redline\nAutomatic · 6.2L V8 · Heron White\n\nDoes that look right?"
+              ? "Example rego match found.\n2015 HSV Maloo\nAutomatic · 6.2L V8 · Green\n\nDoes that look right?"
               : "There’s no example match for that rego. Enter the vehicle details below and we’ll keep going.",
           ),
         ],

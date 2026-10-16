@@ -72,6 +72,7 @@ const SIZES = {
   banner: "(max-width: 850px) 100vw, 62vw",
   stage: "(max-width: 960px) 92vw, 66vw",
   thumb: "(max-width: 700px) 24vw, 11vw",
+  location: "(max-width: 850px) 92vw, 50vw",
 };
 
 const StockManagerDemo = lazy(() => import("./StockManagerDemo"));
@@ -447,7 +448,7 @@ function CarCard({ car, saved, toggleSaved }) {
       >
         <img
           {...responsive(car.image, SIZES.card)}
-          alt={`Illustrative vehicle photograph for ${car.make} ${car.model}`}
+          alt={`${car.colour} ${car.make} ${car.model}`}
           loading="lazy"
         />
         {car.status === "sold" && (
@@ -593,8 +594,8 @@ function Home({ saved, toggleSaved, onEnquire }) {
       <section className="reference-hero showroom-hero">
         <img
           className="reference-hero-image"
-          {...responsive("/images/studio-hero.webp", SIZES.hero)}
-          alt="Illustrative studio image of a silver Porsche convertible"
+          {...responsive("/images/showroom-lineup.jpg", SIZES.hero)}
+          alt="HSVs lined up under the MM Prestige Motors sign in the Wingfield showroom"
           fetchPriority="high"
         />
         <div className="reference-hero-content">
@@ -609,7 +610,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
             <br />
             Wingfield, South Australia.
           </p>
-          <small>Illustrative campaign imagery</small>
+          <small>Pictured: our Wingfield showroom</small>
         </div>
         <a
           className="hero-map"
@@ -670,8 +671,8 @@ function Home({ saved, toggleSaved, onEnquire }) {
             <p>For the drive you look forward to.</p>
           </div>
           <img
-            {...responsive("/images/detail-2.jpg", SIZES.offerPanel)}
-            alt="Illustrative sports car wheel and body detail"
+            {...responsive("/images/performance-gts-rear.jpg", SIZES.offerPanel)}
+            alt="Rear wheel and brake caliper of a red HSV GTS"
             loading="lazy"
           />
           <ArrowUpRight className="offer-arrow" size={23} />
@@ -681,8 +682,8 @@ function Home({ saved, toggleSaved, onEnquire }) {
             <h3>Next up.</h3>
             <p>Buy. Sell. Trade.</p>
             <img
-              {...responsive("/images/suv-cutout.webp", SIZES.offerCutout)}
-              alt="Illustrative white SUV"
+              {...responsive("/images/clubsport-cutout.webp", SIZES.offerCutout)}
+              alt=""
               loading="lazy"
             />
             <span>
@@ -748,8 +749,9 @@ function Home({ saved, toggleSaved, onEnquire }) {
           </button>
         </div>
         <p className="sample-note">
-          Sample stock and generic photos shown while the website is being
-          prepared. Call Madi for current availability.
+          Sample listings shown while the website is being prepared. Photos
+          are from our Wingfield showroom; prices and details are examples.
+          Call Madi for current availability.
         </p>
         <Link className="text-link collection-explore" to="/stock">
           Explore our stock <ArrowRight size={18} />
@@ -757,8 +759,8 @@ function Home({ saved, toggleSaved, onEnquire }) {
       </section>
       <section className="reference-sell">
         <img
-          {...responsive("/images/sell-supercar.webp", SIZES.banner)}
-          alt="Illustrative silver supercar with its doors raised in a studio"
+          {...responsive("/images/sell-roller-door.jpg", SIZES.banner)}
+          alt="An HSV Maloo and a Ferrari 360 outside the open showroom door"
           loading="lazy"
         />
         <div>
@@ -778,7 +780,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
             Talk to Madi <ArrowRight size={15} />
           </button>
         </div>
-        <small>Illustrative campaign imagery</small>
+        <small>Pictured: outside our Wingfield showroom</small>
       </section>
       <section className="section reviews mm-reviews" id="reviews">
         <div className="section-title">
@@ -891,18 +893,11 @@ function ShowroomLocation() {
         rel="noreferrer"
         aria-label="View MM Prestige Motors on Google Maps"
       >
-        <div className="location-roads" aria-hidden="true">
-          <i />
-          <i />
-          <i />
-          <i />
-          <i />
-          <span>GRAND JUNCTION ROAD</span>
-          <b>WINGFIELD</b>
-        </div>
-        <span className="location-pin">
-          <MapPin size={25} fill="currentColor" />
-        </span>
+        <img
+          {...responsive("/images/showroom-street.jpg", SIZES.location)}
+          alt="The MM Prestige Motors showroom on Grand Junction Road"
+          loading="lazy"
+        />
         <div className="location-address">
           {business.address}
           <br />
@@ -930,7 +925,7 @@ function NotFound({ title = "That road ends here." }) {
       <section className="reference-hero showroom-hero page-hero not-found-hero">
         <img
           className="reference-hero-image"
-          {...responsive("/images/studio-hero.webp", SIZES.hero)}
+          {...responsive("/images/showroom-doorway.jpg", SIZES.hero)}
           alt=""
           fetchPriority="high"
         />
@@ -950,7 +945,7 @@ function NotFound({ title = "That road ends here." }) {
             <br />
             Wingfield, South Australia.
           </p>
-          <small>Illustrative campaign imagery</small>
+          <small>Pictured: our Wingfield showroom</small>
         </div>
         <a className="hero-map" href={business.maps} target="_blank" rel="noreferrer">
           <span>
@@ -1057,7 +1052,7 @@ function Stock({ saved, toggleSaved, onEnquire }) {
       <section className="reference-hero showroom-hero page-hero stock-hero">
         <img
           className="reference-hero-image"
-          {...responsive("/images/car-1.jpg", SIZES.hero)}
+          {...responsive("/images/showroom-collection.jpg", SIZES.hero)}
           alt=""
           fetchPriority="high"
         />
@@ -1103,7 +1098,7 @@ function Stock({ saved, toggleSaved, onEnquire }) {
             <br />
             Wingfield, South Australia.
           </p>
-          <small>Sample stock and generic photos</small>
+          <small>Sample prices and details</small>
         </div>
         <button
           className="hero-map stock-count-card"
@@ -1347,8 +1342,8 @@ function Stock({ saved, toggleSaved, onEnquire }) {
           </div>
         </section>
         <p className="sample-note">
-          Preview collection · All vehicle imagery, stock, prices and
-          specifications are illustrative.
+          Preview collection · Photos are from our Wingfield showroom; stock,
+          prices and specifications are examples.
         </p>
       </section>
     </main>
@@ -1393,7 +1388,7 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
   const isSaved = saved.includes(car.id);
   const name = `${car.make} ${car.model}`;
   const photoLabel = (i) =>
-    `Illustrative ${name} photo ${i + 1} of ${photos.length}`;
+    `${name} photo ${i + 1} of ${photos.length}`;
   const counter = `${String(index + 1).padStart(2, "0")} / ${String(photos.length).padStart(2, "0")}`;
   const share = async () => {
     const url = window.location.href;
@@ -1559,7 +1554,8 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
               </div>
             )}
             <small className="vehicle-photo-note">
-              Generic preview photography · Images do not depict this vehicle.
+              Photographed at our Wingfield showroom · Price and details are
+              samples.
             </small>
           </section>
           <ul className="vehicle-facts" aria-label="Key details">
@@ -1741,7 +1737,7 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
               </button>
             )}
           </div>
-          <p>Generic preview photography</p>
+          <p>Photographed at our Wingfield showroom</p>
         </Dialog>
       )}
     </main>
@@ -1988,7 +1984,7 @@ function Enquiry({ vehicle, purpose, onClose }) {
         <div className="enquiry-car">
           <img
             {...responsive(vehicle.image, "96px")}
-            alt="Generic vehicle preview"
+            alt=""
           />
           <span>
             <small>
@@ -2232,7 +2228,7 @@ function Footer() {
       </div>
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} MM Prestige Motors.</span>
-        <span>Website concept · Sample inventory and generic imagery.</span>
+        <span>Website preview · Sample listing details.</span>
         <span>WINGFIELD / ADELAIDE</span>
       </div>
     </footer>
