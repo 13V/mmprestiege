@@ -949,16 +949,19 @@
   gap: 14px;
 }
 .vehicle-avatar {
-  display: grid;
   flex-shrink: 0;
-  place-items: center;
-  width: 52px;
-  height: 52px;
-  font: 800 26px / 1 var(--display);
-  color: #fff;
-  background: var(--accent-strong);
+  width: 56px;
+  height: 56px;
+  overflow: hidden;
+  background: var(--surface-2);
   border-radius: 50%;
-  box-shadow: 0 0 0 4px #d4253626;
+  box-shadow: 0 0 0 2px var(--accent-strong), 0 0 0 6px #d4253626;
+}
+.vehicle-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .vehicle-contact-person p {
   margin-top: 4px;

@@ -40,9 +40,10 @@ Crops are given as fractions of the upright original frame (left, top, right, bo
 | `hsv-maloo-e3-front.jpg` | 2 | 0.113, 0.441, 0.506, 0.834 | Gold E3 Maloo head-on | 2012 HSV Maloo listing (sold) |
 | `hsv-maloo-green-front.jpg` | 21 | 0, 0.436, 0.234, 0.670 | Green Gen-F Maloo front | Stock manager demo's example photos |
 | `hsv-maloo-green-side.jpg` | 2 | 0, 0.469, 0.206, 0.675 | Green Gen-F Maloo side | Stock manager demo's example photos |
+| `madi-portrait.jpg` | 28 | 0.337, 0.241, 0.647, 0.447 (320 px square) | Madi in an MM Prestige vest in the showroom | Call Madi card on each listing, home "Talk directly with Madi" tile |
 
-## Before launch
+## Notes
 
-- Number plates are readable in several photos (the gold Maloo, the E3 GTS and the Ferrari). Confirm the owners are happy for them to be shown, or blur them.
+- Number plates are readable in several photos (the gold Maloo, the E3 GTS and the Ferrari). The dealership asked for them to stay readable, so they are not blurred.
 - The black Clubsport's bumper reflects the photographer. It is too small to see at the panel's display size.
-- The shoot also includes portraits of a team member in an MM Prestige vest (shots 26 to 29). They aren't used yet; they could go on the Call Madi card once it's confirmed who is pictured.
+- The dealership confirmed the portraits (shots 26 to 29) show Madi. Shot 28 is used for the round portrait; the others aren't used.

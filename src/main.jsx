@@ -73,6 +73,7 @@ const SIZES = {
   stage: "(max-width: 960px) 92vw, 66vw",
   thumb: "(max-width: 700px) 24vw, 11vw",
   location: "(max-width: 850px) 92vw, 50vw",
+  avatar: "56px",
 };
 
 const StockManagerDemo = lazy(() => import("./StockManagerDemo"));
@@ -876,7 +877,14 @@ function scrollToSection(element) {
 function CallTile() {
   return (
     <a className="offer-call" href={`tel:${business.tel}`}>
-      <span className="offer-call-label">Talk directly with Madi</span>
+      <span className="offer-call-person">
+        <img
+          {...responsive("/images/madi-portrait.jpg", SIZES.avatar)}
+          alt=""
+          loading="lazy"
+        />
+        <span className="offer-call-label">Talk directly with Madi</span>
+      </span>
       <b>{business.phone}</b>
       <small>Call to arrange a viewing.</small>
       <Phone className="offer-arrow" size={20} />
@@ -1647,7 +1655,11 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
           <section className="vehicle-call" aria-labelledby="call-heading">
             <div className="vehicle-contact-person">
               <span className="vehicle-avatar" aria-hidden="true">
-                M
+                <img
+                  {...responsive("/images/madi-portrait.jpg", SIZES.avatar)}
+                  alt=""
+                  loading="lazy"
+                />
               </span>
               <div>
                 <h2 id="call-heading">{sold ? "Talk to Madi" : "Call Madi"}</h2>
