@@ -223,6 +223,13 @@ try {
     const link = reviews.getByRole('link', { name: /Read our reviews on Google/ });
     expect(new URL(await link.getAttribute('href')).hostname).toBe('www.google.com');
   });
+  await check('Meet Madi introduces the dealer with a portrait and a call link', async () => {
+    const about = page.locator('#about');
+    await expect(about.getByRole('heading', { level: 2 })).toHaveText(/Driven by trust\. Defined by quality\./);
+    await expect(about.getByRole('img', { name: /Madi/ })).toHaveAttribute('src', '/images/madi-showroom.jpg');
+    await expect(about.getByRole('link', { name: 'Call Madi', exact: true })).toHaveAttribute('href', 'tel:+61411710409');
+    await expect(page.locator('.featured .stock-tag').first()).toHaveText('THE ICON');
+  });
   await check('Sell-your-car form prepares a trade-in message with the car details', async () => {
     await page.locator('.header-actions').getByRole('button', { name: 'Sell your car', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Sell or trade your car with MM Prestige Motors' });
@@ -576,16 +583,22 @@ try {
   }
   await check('Stock follows the home layout with four generous columns on a wide screen', async () => {
     await page.setViewportSize({ width: 2493, height: 1265 });
-    await goStock();
-    const hero = await page.locator('.stock-hero').boundingBox();
-    expect(hero.x).toBeLessThanOrEqual(20);
-    expect(hero.width).toBeGreaterThan(2493 - 40);
-    const first = await cards().nth(0).boundingBox();
-    const fourth = await cards().nth(3).boundingBox();
-    expect(first.width).toBeGreaterThan(350);
-    expect(first.x).toBeLessThanOrEqual(2493 * 0.05);
-    expect(fourth.y).toBe(first.y);
-    expect(fourth.x + fourth.width).toBeGreaterThanOrEqual(2493 * 0.95);
+    // Measure the settled layout: with reduced motion the cards don't slide in.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    try {
+      await goStock();
+      const hero = await page.locator('.stock-hero').boundingBox();
+      expect(hero.x).toBeLessThanOrEqual(20);
+      expect(hero.width).toBeGreaterThan(2493 - 40);
+      const first = await cards().nth(0).boundingBox();
+      const fourth = await cards().nth(3).boundingBox();
+      expect(first.width).toBeGreaterThan(350);
+      expect(first.x).toBeLessThanOrEqual(2493 * 0.05);
+      expect(fourth.y).toBe(first.y);
+      expect(fourth.x + fourth.width).toBeGreaterThanOrEqual(2493 * 0.95);
+    } finally {
+      await page.emulateMedia({ reducedMotion: null });
+    }
   });
   await check('Vehicle listing puts a large photo beside price, specifications and Madi', async () => {
     await page.setViewportSize({ width: 2493, height: 1265 });
@@ -629,8 +642,15 @@ try {
   await check('All local images load', async () => {
     for (const route of ['/', '/stock?status=all', firstVehicleRoute, soldVehicleRoute]) {
       await page.goto(`${baseURL}${route}`);
+      // Scroll through the page like a visitor so every lazy photo starts loading.
+      await page.evaluate(async () => {
+        for (let y = 0; y < document.body.scrollHeight; y += innerHeight / 2) {
+          window.scrollTo(0, y);
+          await new Promise(resolve => setTimeout(resolve, 50));
+        }
+      });
       await page.locator('footer').scrollIntoViewIfNeeded();
-      await page.waitForTimeout(250);
+      await page.waitForFunction(() => [...document.images].every(image => image.complete), null, { timeout: 10000 }).catch(() => {});
       const missing = await page.locator('img').evaluateAll(images => images.filter(i => !i.complete || !i.naturalWidth).map(i => i.src));
       expect(missing).toEqual([]);
       const imageURLs = await page.locator('img').evaluateAll(images => images.map(image => image.src));

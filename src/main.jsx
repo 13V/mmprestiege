@@ -74,6 +74,7 @@ const SIZES = {
   thumb: "(max-width: 700px) 24vw, 11vw",
   location: "(max-width: 850px) 92vw, 50vw",
   avatar: "56px",
+  portrait: "(max-width: 850px) 92vw, 42vw",
 };
 
 const StockManagerDemo = lazy(() => import("./StockManagerDemo"));
@@ -192,6 +193,8 @@ const REVEAL_TARGETS = [
   ".card-grid > .car-card",
   ".carousel-controls",
   ".reference-sell > div",
+  ".meet-madi-photo",
+  ".meet-madi-copy",
   ".review-grid > .review",
   ".contact-copy",
   ".contact-location",
@@ -452,8 +455,10 @@ function CarCard({ car, saved, toggleSaved }) {
           alt={`${car.colour} ${car.make} ${car.model}`}
           loading="lazy"
         />
-        {car.status === "sold" && (
+        {car.status === "sold" ? (
           <span className="car-tag sold-tag">SOLD</span>
+        ) : (
+          car.tag && <span className="car-tag stock-tag">{car.tag}</span>
         )}
       </Link>
       <div className="card-body">
@@ -783,6 +788,43 @@ function Home({ saved, toggleSaved, onEnquire }) {
         </div>
         <small>Pictured: outside our Wingfield showroom</small>
       </section>
+      <section
+        className="meet-madi"
+        id="about"
+        aria-labelledby="meet-madi-heading"
+      >
+        <figure className="meet-madi-photo">
+          <img
+            {...responsive("/images/madi-showroom.jpg", SIZES.portrait)}
+            alt="Madi in an MM Prestige Motors vest in the Wingfield showroom"
+            loading="lazy"
+          />
+          <figcaption>Madi · MM Prestige Motors, Wingfield</figcaption>
+        </figure>
+        <div className="meet-madi-copy">
+          <p className="meet-madi-eyebrow">Meet Madi</p>
+          <h2 id="meet-madi-heading">
+            Driven by trust. <br />
+            Defined by quality.
+          </h2>
+          <p>
+            At MM Prestige Motors you deal with Madi directly, from the first
+            call to the day you drive away.
+          </p>
+          <p>
+            Buying, selling or trading, Madi will talk you through the car and
+            arrange a viewing at the Wingfield showroom when it suits you.
+          </p>
+          <div className="meet-madi-actions">
+            <a className="button primary" href={`tel:${business.tel}`}>
+              <Phone size={16} /> Call Madi
+            </a>
+            <button className="button" onClick={() => onEnquire({})}>
+              Send a message <ArrowRight size={15} />
+            </button>
+          </div>
+        </div>
+      </section>
       <section className="section reviews mm-reviews" id="reviews">
         <div className="section-title">
           <h2>Customer reviews</h2>
@@ -822,7 +864,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
           Read our reviews on Google <ArrowUpRight size={18} />
         </a>
       </section>
-      <section className="reference-contact dealer-about" id="about">
+      <section className="reference-contact dealer-about" id="visit">
         <div className="contact-copy">
           <h2>
             Start your journey

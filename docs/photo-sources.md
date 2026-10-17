@@ -41,9 +41,11 @@ Crops are given as fractions of the upright original frame (left, top, right, bo
 | `hsv-maloo-green-front.jpg` | 21 | 0, 0.436, 0.234, 0.670 | Green Gen-F Maloo front | Stock manager demo's example photos |
 | `hsv-maloo-green-side.jpg` | 2 | 0, 0.469, 0.206, 0.675 | Green Gen-F Maloo side | Stock manager demo's example photos |
 | `madi-portrait.jpg` | 28 | 0.337, 0.241, 0.647, 0.447 (320 px square) | Madi in an MM Prestige vest in the showroom | Call Madi card on each listing, home "Talk directly with Madi" tile |
+| `madi-showroom.jpg` | 28 | 0.1, 0.17, 0.9, 0.837 (4:5) | Madi in an MM Prestige vest, red HSVs and the wall sign behind | Home "Meet Madi" section |
 
 ## Notes
 
 - Number plates are readable in several photos (the gold Maloo, the E3 GTS and the Ferrari). The dealership asked for them to stay readable, so they are not blurred.
 - The black Clubsport's bumper reflects the photographer. It is too small to see at the panel's display size.
-- The dealership confirmed the portraits (shots 26 to 29) show Madi. Shot 28 is used for the round portrait; the others aren't used.
+- The dealership confirmed the portraits (shots 26 to 29) show Madi. Shot 28 is used for the round portrait and the Meet Madi photo; the others aren't used.
+- The home hero, sell banner and location photos get a deeper grade in CSS (`src/mm-prestige.css`) so the bright shoot edit sits well on the dark page. Listing photos are shown as supplied.
