@@ -244,8 +244,18 @@ try {
     await page.goto(baseURL);
     const film = page.locator('.reference-hero video.hero-film');
     await expect(film).toHaveCount(1, { timeout: 10000 });
-    await expect(film.locator('source')).toHaveCount(2);
+    // AV1, then HEVC, then H.264 for older browsers. Desktops get the 1920 px cut.
+    await expect(film.locator('source')).toHaveCount(3);
+    const sources = await film.locator('source').evaluateAll(list => list.map(source => source.getAttribute('src')));
+    expect(sources).toEqual(['/video/showroom-walk-1920.av1.mp4', '/video/showroom-walk-1920.hevc.mp4', '/video/showroom-walk-1280.mp4']);
+    for (const src of sources) {
+      const response = await page.request.head(`${baseURL}${src}`);
+      expect(response.ok(), src).toBe(true);
+    }
     expect(await film.evaluate(video => video.muted && video.loop && video.playsInline)).toBe(true);
+    // The film has the photo's grade built in, so CSS must not grade it again.
+    expect(await film.evaluate(video => getComputedStyle(video).filter)).toBe('none');
+    expect(await page.locator('.reference-hero img.reference-hero-image').evaluate(image => getComputedStyle(image).filter)).toContain('brightness(0.84)');
     // The hero photo stays underneath as the fallback.
     await expect(page.locator('.reference-hero img.reference-hero-image')).toHaveAttribute('src', '/images/showroom-lineup.jpg');
     const playable = await film.evaluate(video => [...video.querySelectorAll('source')].some(source => video.canPlayType(source.type)));
@@ -651,6 +661,14 @@ try {
     await goStock();
     await page.waitForTimeout(1200);
     await expect(page.locator('video.hero-film')).toHaveCount(0);
+  });
+  await check('Phones get the 1280 px home film', async () => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(baseURL);
+    const film = page.locator('.reference-hero video.hero-film');
+    await expect(film).toHaveCount(1, { timeout: 10000 });
+    const sources = await film.locator('source').evaluateAll(list => list.map(source => source.getAttribute('src')));
+    expect(sources).toEqual(['/video/showroom-walk-1280.av1.mp4', '/video/showroom-walk-1280.hevc.mp4', '/video/showroom-walk-1280.mp4']);
   });
   await check('Stock follows the home layout with four generous columns on a wide screen', async () => {
     await page.setViewportSize({ width: 2493, height: 1265 });

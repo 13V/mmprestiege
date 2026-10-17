@@ -389,14 +389,33 @@
 }
 
 /* Showroom films behind the home and stock heroes (HeroFilm in main.jsx).
-   The film shares the hero photo's position, grade and zoom, and fades in
-   over it only while it plays. */
+   The film shares the hero photo's position and zoom, and fades in over it
+   only while it plays. */
 .reference-hero .hero-film {
   opacity: 0;
-  transition: opacity 1400ms var(--mm-ease-out);
+  transition: opacity 1800ms cubic-bezier(0.33, 0, 0.2, 1);
+}
+/* The home film has the photo's colour grade built in (scripts/films/
+   encode.sh), so the browser doesn't have to filter every frame. */
+.reference-home .hero-film {
+  filter: none;
 }
 .reference-hero .hero-film.is-playing {
   opacity: 1;
+}
+/* The film arrives after the photo has settled, so it skips the settle and
+   only follows the home hero's scroll zoom, staying locked to the photo. */
+.showroom-hero .hero-film {
+  animation: none;
+}
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reference-home .hero-film {
+      animation: mm-hero-zoom linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 90vh;
+    }
+  }
 }
 .stock-hero .hero-film {
   object-position: center 30%;

@@ -648,13 +648,15 @@ function HomeSearch() {
   );
 }
 const SPECIALTIES = ["HSV", "Holden", "Commodore", "Clubsport", "Maloo", "Prestige"];
-// Showroom films (public/video, made by scripts/showroom-films.sh): AV1 where
-// the browser plays it, H.264 otherwise; the smaller cut on phones.
+// Showroom films (public/video, made by scripts/films): AV1 for Chrome, Edge
+// and Firefox, HEVC for Safari and H.264 for anything else; 1920 px on
+// larger screens and 1280 px on phones.
 function filmSources(name) {
-  const size = window.matchMedia("(max-width: 700px)").matches ? 848 : 1280;
+  const size = window.matchMedia("(max-width: 700px)").matches ? 1280 : 1920;
   return [
-    [`/video/showroom-${name}-${size}.av1.mp4`, 'video/mp4; codecs="av01.0.05M.08"'],
-    [`/video/showroom-${name}-${size}.mp4`, 'video/mp4; codecs="avc1.640028"'],
+    [`/video/showroom-${name}-${size}.av1.mp4`, 'video/mp4; codecs="av01.0.08M.08"'],
+    [`/video/showroom-${name}-${size}.hevc.mp4`, 'video/mp4; codecs="hvc1.1.6.L120.90"'],
+    [`/video/showroom-${name}-1280.mp4`, 'video/mp4; codecs="avc1.640028"'],
   ];
 }
 function filmPausedByVisitor() {

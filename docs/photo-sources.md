@@ -54,14 +54,22 @@ The dealership supplied five walkthrough clips in October 2026, filmed on a gimb
 | 3 | 3.2 s | Pan from the red Gen-F GTS to the black Clubsport |
 | 5 | 3.8 s | Pan from the black Clubsport back to the red GTS |
 
-`scripts/showroom-films.sh` turns them into the two hero films in `public/video`. The clips run at 0.8× speed (24 fps). They are lightly denoised and the sound is dropped. For desktops they are upscaled to 1,280 px with Lanczos and contrast-adaptive sharpening; phones get an 848 px cut. Each film is saved as AV1, with H.264 for browsers that can't play AV1. The colour grade is applied in CSS, the same as the hero photos.
+`scripts/films/build.sh` turns clips 1 to 3 into the two hero films in `public/video`. Everything runs locally; no footage is uploaded anywhere.
+
+1. **Steadying** (`stabilise_upscale.py`). The camera's path is tracked frame to frame. The up-and-down bounce of walking is smoothed out, measured mostly on the far wall and the sign, so the room reads as still. Side-to-side movement is only lightly smoothed, so the pans keep their shape. A constant zoom of 3 to 4.5% hides the moving edges.
+2. **Upscaling**. Each frame is upscaled 4× with the open-source Real-ESRGAN general model (an even blend of its standard and denoising weights, converted to run in ONNX Runtime by `esrgan_onnx.py`), then resized to 1,920 px wide. The model weights come from the Real-ESRGAN releases on GitHub.
+3. **Slow motion** (`edit.sh`). The clips run at 0.8× speed. Motion-interpolated in-between frames keep them at a true 30 fps.
+4. **Loops**. Eased dissolves join the clips into loops with no visible jump.
+5. **Encoding** (`encode.sh`). Each film is saved at 1,920 px for tablets and desktops and 1,280 px for phones, as AV1, as HEVC for Safari, and as H.264 for older browsers, with BT.709 colour like the source clips. The sound is dropped.
+
+The home film has the home hero photo's colour grade built into the file, so the browser doesn't have to filter every frame; it matches the CSS grade on the photo underneath. Clip 5 isn't used: it pans back the way clip 3 came, and the camera operator shows in the Clubsport's paint. Clip 1 stops at 18.3 s, before the camera nears the Clubsport's bonnet.
 
 | Film | Made from | Length | Used for |
 | --- | --- | --- | --- |
-| `showroom-walk-*` | Clip 1. The end dissolves into the start so it loops without a jump, and the loop opens as the camera enters the showroom | 23.1 s | Home hero |
-| `showroom-pans-*` | Clips 2, 3 and 5, dissolving into each other and back round to the start | 11.5 s | Stock page hero (tablets and desktops) |
+| `showroom-walk-*` | Clip 1. The end dissolves into the start, and the loop opens as the camera enters the showroom | 21.3 s | Home hero |
+| `showroom-pans-*` | Clips 2 and 3, dissolving into each other and back round to the start | 7.0 s | Stock page hero (tablets and desktops) |
 
-Each film is 0.7 to 3.9 MB, depending on size and codec. They load only after the rest of the page has loaded. Visitors who ask for reduced motion or data saving keep the still photo instead.
+Each film is 1.2 to 5.3 MB, depending on size and codec: a desktop downloads about 4.5 MB for the home film and 1.9 MB for the stock film, and a phone about 2.9 MB for the home film. They load only after the rest of the page has loaded, and a button on the hero pauses them. Visitors who ask for reduced motion or data saving keep the still photo instead.
 
 ## Notes
 
