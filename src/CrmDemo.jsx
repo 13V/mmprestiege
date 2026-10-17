@@ -21,7 +21,8 @@ import {
   Wallet,
   X,
 } from "lucide-react";
-import { vehicles, money } from "./data";
+import { money } from "./data";
+import { sampleVehicles as vehicles } from "./sample-stock";
 import "./crm-demo.css";
 
 const stages = [

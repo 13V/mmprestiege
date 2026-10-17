@@ -533,6 +533,10 @@ textarea:focus-visible {
   gap: 7px;
   margin-top: 20px;
 }
+/* Hidden when there are no cars to page through. */
+.carousel-controls[hidden] {
+  display: none;
+}
 .carousel-controls button {
   display: grid;
   place-items: center;

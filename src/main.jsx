@@ -53,7 +53,8 @@ import {
   Pause,
   Play,
 } from "lucide-react";
-import { vehicles, money, number, business } from "./data";
+import { money, number, business } from "./data";
+import { sampleStock, vehicles } from "./stock";
 import ThemedSelect from "./ThemedSelect";
 import { prefetch, responsive, smallest } from "./images";
 import "./styles.css";
@@ -85,6 +86,7 @@ const SIZES = {
 
 const StockManagerDemo = lazy(() => import("./StockManagerDemo"));
 const CrmDemo = lazy(() => import("./CrmDemo"));
+const StockAdmin = lazy(() => import("./admin/StockAdmin.jsx"));
 
 function Logo() {
   return (
@@ -234,7 +236,7 @@ function useReveal(pathname) {
 function SiteLayout({ children, onEnquire, savedCount }) {
   const { pathname } = useLocation();
   useReveal(pathname);
-  if (["/stock-manager", "/crm"].includes(pathname.replace(/\/$/, "")))
+  if (["/stock-manager", "/crm", "/stock/manage"].includes(pathname.replace(/\/$/, "")))
     return children;
   return (
     <div
@@ -258,13 +260,15 @@ function DocumentTitle() {
         ? "Sales CRM mockup | MM Prestige Motors"
         : route === "/stock-manager"
           ? "Stock management demo | MM Prestige Motors"
-          : vehicle
-            ? `${vehicle.year} ${vehicle.make} ${vehicle.model} | MM Prestige Motors`
-            : route === "/stock"
-              ? "Our collection | MM Prestige Motors"
-              : route === ""
-                ? "MM Prestige Motors | HSV & Holden Specialists, Adelaide"
-                : "Page not found | MM Prestige Motors";
+          : route === "/stock/manage"
+            ? "Stock manager | MM Prestige Motors"
+            : vehicle
+              ? `${vehicle.year} ${vehicle.make} ${vehicle.model} | MM Prestige Motors`
+              : route === "/stock"
+                ? "Our collection | MM Prestige Motors"
+                : route === ""
+                  ? "MM Prestige Motors | HSV & Holden Specialists, Adelaide"
+                  : "Page not found | MM Prestige Motors";
   }, [pathname]);
   return null;
 }
@@ -926,12 +930,32 @@ function Home({ saved, toggleSaved, onEnquire }) {
             View all <ArrowRight size={14} />
           </Link>
         </div>
-        <div className="card-grid featured">
-          {featured.map((car) => (
-            <CarCard key={car.id} {...{ car, saved, toggleSaved }} />
-          ))}
-        </div>
-        <div className="carousel-controls">
+        {featured.length ? (
+          <div className="card-grid featured">
+            {featured.map((car) => (
+              <CarCard key={car.id} {...{ car, saved, toggleSaved }} />
+            ))}
+          </div>
+        ) : (
+          <div className="stock-empty">
+            <Search size={28} />
+            <h3>
+              {collectionTab === "sold"
+                ? "No sold cars to show yet."
+                : "New arrivals are on the way."}
+            </h3>
+            <p>Tell Madi what you're after.</p>
+            <div className="stock-empty-actions">
+              <button
+                className="button primary"
+                onClick={() => onEnquire({ purpose: "find" })}
+              >
+                Ask Madi to find one <ArrowRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
+        <div className="carousel-controls" hidden={!collection.length}>
           <button
             aria-label="Previous featured cars"
             aria-disabled={featuredStart === 0}
@@ -949,11 +973,13 @@ function Home({ saved, toggleSaved, onEnquire }) {
             <ArrowRight size={16} />
           </button>
         </div>
-        <p className="sample-note">
-          Sample listings shown while the website is being prepared. Photos
-          are from our Wingfield showroom; prices and details are examples.
-          Call Madi for current availability.
-        </p>
+        {sampleStock && (
+          <p className="sample-note">
+            Sample listings shown while the website is being prepared. Photos
+            are from our Wingfield showroom; prices and details are examples.
+            Call Madi for current availability.
+          </p>
+        )}
         <Link
           className="text-link collection-explore"
           to="/stock"
@@ -1354,7 +1380,7 @@ function Stock({ saved, toggleSaved, onEnquire }) {
             <br />
             Wingfield, South Australia.
           </p>
-          <small>Sample prices and details</small>
+          {sampleStock && <small>Sample prices and details</small>}
         </div>
         <button
           className="hero-map stock-count-card"
@@ -1597,10 +1623,12 @@ function Stock({ saved, toggleSaved, onEnquire }) {
             </a>
           </div>
         </section>
-        <p className="sample-note">
-          Preview collection · Photos are from our Wingfield showroom; stock,
-          prices and specifications are examples.
-        </p>
+        {sampleStock && (
+          <p className="sample-note">
+            Preview collection · Photos are from our Wingfield showroom; stock,
+            prices and specifications are examples.
+          </p>
+        )}
       </section>
     </main>
   );
@@ -1685,7 +1713,7 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
     [Zap, "Engine", car.engine],
     [Cog, "Transmission", car.transmission],
     [CarFront, "Body type", car.body],
-  ];
+  ].filter(([, , value]) => value);
   const specs = [
     ["Year", car.year],
     ["Make", car.make],
@@ -1700,7 +1728,7 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
     ["Exterior colour", car.colour],
     ["Stock number", car.stock],
     ["Location", "Wingfield, SA"],
-  ];
+  ].filter(([, value]) => value !== "" && value != null);
   const related = vehicles
     .filter((c) => c.id !== id && c.status === "available")
     .slice(0, 4);
@@ -1753,7 +1781,7 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
             {sold && <span className="vehicle-status">Sold</span>}
           </div>
           <p className="vehicle-sub">
-            <span>{car.variant}</span>
+            {car.variant && <span>{car.variant}</span>}
             <span>
               <MapPin size={15} /> Wingfield, SA
             </span>
@@ -1829,10 +1857,12 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
                 ))}
               </div>
             )}
-            <small className="vehicle-photo-note">
-              Photographed at our Wingfield showroom · Price and details are
-              samples.
-            </small>
+            {sampleStock && (
+              <small className="vehicle-photo-note">
+                Photographed at our Wingfield showroom · Price and details are
+                samples.
+              </small>
+            )}
           </section>
           <ul className="vehicle-facts" aria-label="Key details">
             {facts.map(([Icon, label, value]) => (
@@ -1847,20 +1877,27 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
               </li>
             ))}
           </ul>
-          <section
-            className="vehicle-about"
-            aria-labelledby="overview-heading"
-          >
-            <span className="eyebrow">Dealer comments</span>
-            <h2 id="overview-heading">
-              {car.make === "HSV"
-                ? "Australian muscle."
-                : car.make === "Holden"
-                  ? "An Australian icon."
-                  : "Built for the enthusiast."}
-            </h2>
-            <p>{car.description}</p>
-          </section>
+          {car.description && (
+            <section
+              className="vehicle-about"
+              aria-labelledby="overview-heading"
+            >
+              <span className="eyebrow">Dealer comments</span>
+              <h2 id="overview-heading">
+                {car.make === "HSV"
+                  ? "Australian muscle."
+                  : car.make === "Holden"
+                    ? "An Australian icon."
+                    : "Built for the enthusiast."}
+              </h2>
+              {car.description
+                .split(/\n{2,}/)
+                .filter(Boolean)
+                .map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+            </section>
+          )}
           <section className="vehicle-visit" aria-labelledby="visit-heading">
             <span className="vehicle-visit-icon" aria-hidden="true">
               <MapPin size={20} />
@@ -1889,7 +1926,10 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
             ) : (
               <>
                 <strong>{money(car.price)}</strong>
-                <p>Excludes government charges · Sample price</p>
+                <p>
+                  Excludes government charges
+                  {sampleStock && " · Sample price"}
+                </p>
                 <Finance price={car.price} />
                 <button
                   className="vehicle-finance-ask"
@@ -1915,9 +1955,9 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
               ))}
             </dl>
             <p className="detail-note">
-              This listing is a design preview. Vehicle details and pricing are
-              sample data. Contact the dealer to confirm actual stock,
-              condition and specifications.
+              {sampleStock
+                ? "This listing is a design preview. Vehicle details and pricing are sample data. Contact the dealer to confirm actual stock, condition and specifications."
+                : "Details are provided in good faith. Please confirm the specification, condition and price with Madi before you buy."}
             </p>
           </section>
           <section className="vehicle-call" aria-labelledby="call-heading">
@@ -2514,7 +2554,11 @@ function Footer() {
       </div>
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} MM Prestige Motors.</span>
-        <span>Website preview · Sample listing details.</span>
+        <span>
+          {sampleStock
+            ? "Website preview · Sample listing details."
+            : "Call to confirm availability."}
+        </span>
         <span>WINGFIELD / ADELAIDE</span>
       </div>
     </footer>
@@ -2530,6 +2574,7 @@ const router = createBrowserRouter([
       { path: "/crm", element: <CrmDemo /> },
       { path: "/", element: <HomePage /> },
       { path: "/stock", element: <StockPage /> },
+      { path: "/stock/manage", element: <StockAdmin /> },
       { path: "/stock/:id", element: <VehiclePage /> },
       { path: "*", element: <NotFound /> },
     ],

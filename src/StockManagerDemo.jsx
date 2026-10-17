@@ -22,7 +22,8 @@ import {
   Sparkles,
   Wifi,
 } from "lucide-react";
-import { vehicles, money, number } from "./data";
+import { money, number } from "./data";
+import { sampleVehicles as vehicles } from "./sample-stock";
 import "./stock-manager.css";
 
 const examplePhotos = [

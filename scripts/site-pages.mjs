@@ -5,17 +5,23 @@
 import { existsSync, readFileSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import { business, money, number, sampleStock, vehicles } from "../src/data.js";
+import { business, money, number } from "../src/data.js";
+import { publicStock } from "./stock-source.mjs";
 
-const variants = JSON.parse(
-  readFileSync(new URL("../src/image-variants.json", import.meta.url), "utf8"),
-);
+// The stock manager's published cars, or the sample listings.
+const { vehicles, sampleStock, photos } = publicStock();
+const variants = {
+  ...JSON.parse(readFileSync(new URL("../src/image-variants.json", import.meta.url), "utf8")),
+  ...photos,
+};
 const production = process.env.VERCEL_PROJECT_PRODUCTION_URL;
 export const SITE_URL = (
   process.env.SITE_URL ||
   (production ? `https://${production}` : "https://mmprestiege.vercel.app")
 ).replace(/\/$/, "");
 const NAME = "MM Prestige Motors";
+// Uploaded photos already have full URLs; site photos are paths.
+const absolute = (src) => (/^https?:\/\//.test(src) ? src : `${SITE_URL}${src}`);
 const START = "<!-- site-head -->";
 const END = "<!-- /site-head -->";
 
@@ -55,7 +61,9 @@ function vehiclePage(car) {
     `${number(car.kms)} km`,
     car.transmission,
     sold ? "Sold" : money(car.price),
-  ].join(" · ");
+  ]
+    .filter(Boolean)
+    .join(" · ");
   return {
     file: `stock/${car.id}.html`,
     path: `/stock/${car.id}`,
@@ -69,7 +77,7 @@ function vehiclePage(car) {
           "@type": "Car",
           name,
           url,
-          image: `${SITE_URL}${image}`,
+          image: absolute(image),
           brand: { "@type": "Brand", name: car.make },
           model: car.model,
           vehicleModelDate: String(car.year),
@@ -120,6 +128,13 @@ const pages = [
     noindex: true,
   },
   {
+    file: "stock/manage.html",
+    path: "/stock/manage",
+    title: `Stock manager | ${NAME}`,
+    description: "Add and update the cars on the MM Prestige Motors website.",
+    noindex: true,
+  },
+  {
     file: "stock-manager.html",
     path: "/stock-manager",
     title: `Stock management demo | ${NAME}`,
@@ -150,7 +165,7 @@ function head({ path, title, description, image = "/og-image.png", noindex, sche
     `<meta property="og:title" content="${escape(title)}" />`,
     `<meta property="og:description" content="${escape(description)}" />`,
     `<meta property="og:url" content="${url}" />`,
-    `<meta property="og:image" content="${SITE_URL}${image}" />`,
+    `<meta property="og:image" content="${absolute(image)}" />`,
     '<meta property="og:image:width" content="1200" />',
     '<meta property="og:image:height" content="630" />',
     '<meta name="twitter:card" content="summary_large_image" />',
@@ -166,6 +181,8 @@ const robots = `User-agent: *
 Allow: /
 Disallow: /crm
 Disallow: /stock-manager
+Disallow: /stock/manage
+Disallow: /api/
 Disallow: /presentation
 Disallow: /downloads/
 

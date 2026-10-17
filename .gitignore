@@ -7,3 +7,4 @@ test-results/
 .screenshots/
 .vercel/
 __pycache__/
+.stock/

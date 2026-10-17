@@ -1,7 +1,13 @@
-import variants from "./image-variants.json";
+import siteVariants from "./image-variants.json";
+import { managedPhotos } from "./stock";
 
-// Responsive sources for a photo in public/images. The WebP sizes come from
-// scripts/optimize-images.mjs; the original file stays as the fallback src.
+// Sizes for a photo: site photos in public/images get WebP copies from
+// scripts/optimize-images.mjs; photos uploaded in the stock manager are
+// resized in the browser when they're added.
+const variants = { ...siteVariants, ...managedPhotos };
+
+// Responsive sources for a photo. The original file (or, for uploaded
+// photos, the 1600 px copy) stays as the fallback src.
 export function responsive(src, sizes) {
   const entry = variants[src];
   return entry ? { src, srcSet: entry.srcset, sizes } : { src };

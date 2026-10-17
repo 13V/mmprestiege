@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build",
+    "build": "node scripts/stock-snapshot.mjs && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "node tests/smoke.mjs",
     "test:stock-manager": "node tests/stock-manager.mjs",
@@ -13,11 +13,13 @@
     "presentation:build": "node scripts/build-presentation.mjs",
     "images": "node scripts/optimize-images.mjs",
     "share-image": "node scripts/share-image.mjs",
-    "test:pages": "vite build && node tests/build-pages.mjs"
+    "test:pages": "npm run build && node tests/build-pages.mjs",
+    "test:stock": "node tests/stock-lookup.mjs && node tests/stock-admin.mjs"
   },
   "dependencies": {
     "@fontsource/big-shoulders-display": "^5.3.0",
     "@fontsource/manrope": "^5.3.0",
+    "@vercel/blob": "2.8.0",
     "lucide-react": "^0.468.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
