@@ -1,6 +1,6 @@
-# Photo sources
+# Photo and video sources
 
-Every photo on the site comes from MM Prestige Motors' own showroom photoshoot: 29 photos supplied by the dealership in October 2026 (original files `MMMOTOR.CWATSON.jpg` and `MMMOTOR.CWATSON-2.jpg` to `-29.jpg`, about 5,800 × 3,900 px). They show the Wingfield showroom, the shopfront on Grand Junction Road and the cars on site that day.
+Every photo and film on the site comes from MM Prestige Motors. The photos are from the dealership's showroom photoshoot: 29 photos supplied by the dealership in October 2026 (original files `MMMOTOR.CWATSON.jpg` and `MMMOTOR.CWATSON-2.jpg` to `-29.jpg`, about 5,800 × 3,900 px). They show the Wingfield showroom, the shopfront on Grand Junction Road and the cars on site that day.
 
 The sample listings are mapped to the photographed cars, so each listing shows its own car. Each listing's year, price, kilometres and specifications are still samples (see `sampleStock` in `src/data.js`).
 
@@ -42,6 +42,26 @@ Crops are given as fractions of the upright original frame (left, top, right, bo
 | `hsv-maloo-green-side.jpg` | 2 | 0, 0.469, 0.206, 0.675 | Green Gen-F Maloo side | Stock manager demo's example photos |
 | `madi-portrait.jpg` | 28 | 0.337, 0.241, 0.647, 0.447 (320 px square) | Madi in an MM Prestige vest in the showroom | Call Madi card on each listing, home "Talk directly with Madi" tile |
 | `madi-showroom.jpg` | 28 | 0.1, 0.17, 0.9, 0.837 (4:5) | Madi in an MM Prestige vest, red HSVs and the wall sign behind | Home "Meet Madi" section |
+
+## Video
+
+The dealership supplied five walkthrough clips in October 2026, filmed on a gimbal in the showroom (848 × 464 px, 30 fps, with sound). Clip 4 is the same footage as clip 2.
+
+| Clip | Length | Content |
+| --- | --- | --- |
+| 1 | 19.5 s | Walk from the street past the Maloo R8 and Ferrari 360, through the roller door and into the showroom, then a pan across the line-up |
+| 2 (and 4) | 4.6 s | Pan along the line-up under the wall sign |
+| 3 | 3.2 s | Pan from the red Gen-F GTS to the black Clubsport |
+| 5 | 3.8 s | Pan from the black Clubsport back to the red GTS |
+
+`scripts/showroom-films.sh` turns them into the two hero films in `public/video`. The clips run at 0.8× speed (24 fps). They are lightly denoised and the sound is dropped. For desktops they are upscaled to 1,280 px with Lanczos and contrast-adaptive sharpening; phones get an 848 px cut. Each film is saved as AV1, with H.264 for browsers that can't play AV1. The colour grade is applied in CSS, the same as the hero photos.
+
+| Film | Made from | Length | Used for |
+| --- | --- | --- | --- |
+| `showroom-walk-*` | Clip 1. The end dissolves into the start so it loops without a jump, and the loop opens as the camera enters the showroom | 23.1 s | Home hero |
+| `showroom-pans-*` | Clips 2, 3 and 5, dissolving into each other and back round to the start | 11.5 s | Stock page hero (tablets and desktops) |
+
+Each film is 0.7 to 3.9 MB, depending on size and codec. They load only after the rest of the page has loaded. Visitors who ask for reduced motion or data saving keep the still photo instead.
 
 ## Notes
 

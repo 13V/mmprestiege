@@ -50,6 +50,8 @@ import {
   Camera,
   Zap,
   Share2,
+  Pause,
+  Play,
 } from "lucide-react";
 import { vehicles, money, number, business } from "./data";
 import ThemedSelect from "./ThemedSelect";
@@ -646,6 +648,126 @@ function HomeSearch() {
   );
 }
 const SPECIALTIES = ["HSV", "Holden", "Commodore", "Clubsport", "Maloo", "Prestige"];
+// Showroom films (public/video, made by scripts/showroom-films.sh): AV1 where
+// the browser plays it, H.264 otherwise; the smaller cut on phones.
+function filmSources(name) {
+  const size = window.matchMedia("(max-width: 700px)").matches ? 848 : 1280;
+  return [
+    [`/video/showroom-${name}-${size}.av1.mp4`, 'video/mp4; codecs="av01.0.05M.08"'],
+    [`/video/showroom-${name}-${size}.mp4`, 'video/mp4; codecs="avc1.640028"'],
+  ];
+}
+function filmPausedByVisitor() {
+  try {
+    return localStorage.getItem("mm-film") === "paused";
+  } catch {
+    return false;
+  }
+}
+// A muted showroom film loops behind a hero once the page has loaded. The
+// hero photo stays underneath, and the film only shows while it plays, so a
+// slow connection, blocked autoplay or a paused film leaves the photo.
+// Visitors who prefer reduced motion or save data keep the photo. The
+// button pauses the film and the specialties marquee, and is remembered.
+function HeroFilm({ name, minWidth = 0 }) {
+  const video = useRef(null);
+  const [ready, setReady] = useState(false),
+    [playing, setPlaying] = useState(false),
+    [blocked, setBlocked] = useState(false),
+    [paused, setPaused] = useState(filmPausedByVisitor);
+  useEffect(() => {
+    if (
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      navigator.connection?.saveData ||
+      !window.matchMedia(`(min-width: ${minWidth}px)`).matches
+    )
+      return;
+    // Wait for the page (and its photos) to load, then a quiet moment.
+    let idle;
+    const start = () =>
+      (idle = (window.requestIdleCallback || setTimeout)(() => setReady(true)));
+    if (document.readyState === "complete") start();
+    else window.addEventListener("load", start, { once: true });
+    return () => {
+      window.removeEventListener("load", start);
+      (window.cancelIdleCallback || clearTimeout)(idle);
+    };
+  }, [minWidth]);
+  useEffect(() => {
+    document.documentElement.toggleAttribute("data-motion-paused", paused);
+    try {
+      localStorage.setItem("mm-film", paused ? "paused" : "playing");
+    } catch {
+      // The choice still applies for this visit if storage is blocked.
+    }
+  }, [paused]);
+  // Play only while the hero is on screen and the tab is visible.
+  useEffect(() => {
+    const element = video.current;
+    if (!element) return;
+    element.muted = true;
+    let visible = false;
+    const sync = () => {
+      if (visible && !paused && !document.hidden)
+        element.play().catch(() => setBlocked(true));
+      else element.pause();
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      sync();
+    });
+    observer.observe(element);
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", sync);
+    };
+  }, [ready, paused]);
+  if (!ready) return null;
+  const toggle = () => {
+    if (playing) return setPaused(true);
+    setPaused(false);
+    setBlocked(false);
+    video.current?.play().catch(() => setBlocked(true));
+  };
+  return (
+    <>
+      <video
+        ref={video}
+        className={`reference-hero-image hero-film${playing ? " is-playing" : ""}`}
+        muted
+        loop
+        playsInline
+        preload="auto"
+        disablePictureInPicture
+        aria-hidden="true"
+        tabIndex={-1}
+        onPlaying={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+      >
+        {filmSources(name).map(([src, type]) => (
+          <source key={src} src={src} type={type} />
+        ))}
+      </video>
+      {(playing || paused || blocked) && (
+        <button
+          type="button"
+          className="hero-film-toggle"
+          aria-label={
+            playing ? "Pause the showroom video" : "Play the showroom video"
+          }
+          onClick={toggle}
+        >
+          {playing ? (
+            <Pause size={15} fill="currentColor" />
+          ) : (
+            <Play size={15} fill="currentColor" />
+          )}
+        </button>
+      )}
+    </>
+  );
+}
 function Home({ saved, toggleSaved, onEnquire }) {
   const [collectionTab, setCollectionTab] = useState("available");
   const [featuredStart, setFeaturedStart] = useState(0);
@@ -663,6 +785,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
           alt="HSVs lined up under the MM Prestige Motors sign in the Wingfield showroom"
           fetchPriority="high"
         />
+        <HeroFilm name="walk" />
         <div className="reference-hero-content">
           <h1 className="reveal-words">
             <RevealWords text="HSV & Holden specialists" />
@@ -1182,6 +1305,9 @@ function Stock({ saved, toggleSaved, onEnquire }) {
           alt=""
           fetchPriority="high"
         />
+        {/* Phones show the stock hero as a stacked card, so the film is
+            kept for wider screens. */}
+        <HeroFilm name="pans" minWidth={701} />
         <div className="reference-hero-content">
           <h1 className="reveal-words">
             <RevealWords text="Cars with character." />

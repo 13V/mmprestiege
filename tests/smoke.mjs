@@ -240,6 +240,25 @@ try {
     await page.evaluate(() => window.scrollTo(0, 0));
     await expect(page.locator('.header')).not.toHaveClass(/is-compact/);
   });
+  await check('A muted showroom film plays behind the home hero and can be paused', async () => {
+    await page.goto(baseURL);
+    const film = page.locator('.reference-hero video.hero-film');
+    await expect(film).toHaveCount(1, { timeout: 10000 });
+    await expect(film.locator('source')).toHaveCount(2);
+    expect(await film.evaluate(video => video.muted && video.loop && video.playsInline)).toBe(true);
+    // The hero photo stays underneath as the fallback.
+    await expect(page.locator('.reference-hero img.reference-hero-image')).toHaveAttribute('src', '/images/showroom-lineup.jpg');
+    const playable = await film.evaluate(video => [...video.querySelectorAll('source')].some(source => video.canPlayType(source.type)));
+    if (!playable) return;
+    await expect(film).toHaveClass(/is-playing/, { timeout: 15000 });
+    await page.getByRole('button', { name: 'Pause the showroom video' }).click();
+    await expect(film).not.toHaveClass(/is-playing/);
+    expect(await film.evaluate(video => video.paused)).toBe(true);
+    await expect(page.locator('html')).toHaveAttribute('data-motion-paused', '');
+    await page.getByRole('button', { name: 'Play the showroom video' }).click();
+    await expect(film).toHaveClass(/is-playing/);
+    await expect(page.locator('html')).not.toHaveAttribute('data-motion-paused', '');
+  });
   await check('Sell-your-car form prepares a trade-in message with the car details', async () => {
     await page.locator('.header-actions').getByRole('button', { name: 'Sell your car', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Sell or trade your car with MM Prestige Motors' });
@@ -558,6 +577,9 @@ try {
     // A duration up to 0.1ms preserves transition events without visible motion.
     expect(motion.transition.split(',').every(duration => parseFloat(duration) <= 0.0001)).toBeTruthy();
     expect(motion.animation).toBe('none');
+    // The hero keeps its photo: no film is loaded.
+    await page.waitForTimeout(800);
+    await expect(page.locator('video.hero-film')).toHaveCount(0);
     await page.emulateMedia({ reducedMotion: 'no-preference' });
   });
   await page.goto(baseURL);
@@ -624,6 +646,12 @@ try {
       });
     }
   }
+  await check('Phones keep the stock hero photo without a film', async () => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await goStock();
+    await page.waitForTimeout(1200);
+    await expect(page.locator('video.hero-film')).toHaveCount(0);
+  });
   await check('Stock follows the home layout with four generous columns on a wide screen', async () => {
     await page.setViewportSize({ width: 2493, height: 1265 });
     // Measure the settled layout: with reduced motion the cards don't slide in.

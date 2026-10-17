@@ -387,3 +387,71 @@
 .collection-card .card-photo-peek.is-shown {
   opacity: 1;
 }
+
+/* Showroom films behind the home and stock heroes (HeroFilm in main.jsx).
+   The film shares the hero photo's position, grade and zoom, and fades in
+   over it only while it plays. */
+.reference-hero .hero-film {
+  opacity: 0;
+  transition: opacity 1400ms var(--mm-ease-out);
+}
+.reference-hero .hero-film.is-playing {
+  opacity: 1;
+}
+.stock-hero .hero-film {
+  object-position: center 30%;
+}
+.hero-film-toggle {
+  position: absolute;
+  z-index: 3;
+  top: 100px;
+  right: 4%;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: #fff;
+  background: #11111199;
+  border: 1px solid #ffffff2e;
+  border-radius: 50%;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition:
+    background-color var(--mm-base) var(--mm-ease),
+    border-color var(--mm-base) var(--mm-ease);
+}
+.hero-film-toggle:hover {
+  background: #111111e0;
+  border-color: #ffffff59;
+}
+.hero-film-toggle:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+@media (max-width: 600px) {
+  /* Phones: on the right of the photo band, clear of its faded edges. */
+  .showroom-hero .hero-film-toggle {
+    top: 176px;
+    right: 14px;
+    width: 36px;
+    height: 36px;
+  }
+}
+@media (max-width: 700px) {
+  .page-hero .hero-film,
+  .page-hero .hero-film-toggle {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-film,
+  .hero-film-toggle {
+    display: none;
+  }
+}
+/* Pausing the film also stills the specialties marquee. */
+[data-motion-paused] .marque-marquee > .marque-strip {
+  animation-play-state: paused;
+}
