@@ -93,6 +93,8 @@
 /* ---------- Stock: collection ---------- */
 .dealer-home .stock-collection {
   padding-top: clamp(56px, 5.5vw, 88px);
+  /* Search results land with the heading clear of the floating header. */
+  scroll-margin-top: 24px;
 }
 .stock-collection .section-title {
   align-items: flex-end;
@@ -546,6 +548,10 @@
   height: 100%;
   object-fit: cover;
   cursor: zoom-in;
+  /* The small copy shows while the full photo loads (also during the morph). */
+  background-position: center;
+  background-size: cover;
+  border-radius: inherit;
 }
 .vehicle-stage-nav,
 .vehicle-hero-expand {
@@ -904,7 +910,7 @@
 
 /* ---------- Vehicle: specifications ---------- */
 .vehicle-specs {
-  scroll-margin-top: 24px;
+  scroll-margin-top: 90px;
 }
 .spec-rows {
   margin: 12px 0 0;

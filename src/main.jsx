@@ -1,6 +1,7 @@
 import React, {
   lazy,
   Suspense,
+  useContext,
   useEffect,
   useState,
   useMemo,
@@ -8,14 +9,17 @@ import React, {
 } from "react";
 import { createRoot } from "react-dom/client";
 import {
-  BrowserRouter,
-  Routes,
-  Route,
+  createBrowserRouter,
+  RouterProvider,
   Link,
+  Outlet,
+  ScrollRestoration,
+  useOutletContext,
   useLocation,
   useSearchParams,
   useParams,
   useNavigate,
+  UNSAFE_ViewTransitionContext as ViewTransitionContext,
 } from "react-router-dom";
 import {
   ArrowUpRight,
@@ -49,7 +53,7 @@ import {
 } from "lucide-react";
 import { vehicles, money, number, business } from "./data";
 import ThemedSelect from "./ThemedSelect";
-import { responsive } from "./images";
+import { prefetch, responsive, smallest } from "./images";
 import "./styles.css";
 import "./dealer.css";
 import "./foundation.css";
@@ -82,7 +86,12 @@ const CrmDemo = lazy(() => import("./CrmDemo"));
 
 function Logo() {
   return (
-    <Link to="/" className="brand" aria-label="MM Prestige Motors home">
+    <Link
+      to="/"
+      className="brand"
+      aria-label="MM Prestige Motors home"
+      viewTransition
+    >
       <span>
         <b>MM Prestige</b>
         <small>Motors</small>
@@ -121,8 +130,9 @@ function App() {
     setSaved((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
   }
   return (
-    <BrowserRouter>
-      <ScrollReset />
+    <>
+      <ScrollRestoration />
+      <DocumentTitle />
       <SiteLayout
         onEnquire={(details = {}) => setEnquiry(details)}
         savedCount={saved.length}
@@ -134,44 +144,9 @@ function App() {
             </div>
           }
         >
-        <Routes>
-          <Route path="/stock-manager" element={<StockManagerDemo />} />
-          <Route path="/crm" element={<CrmDemo />} />
-          <Route
-            path="/"
-            element={
-              <Home
-                saved={saved}
-                toggleSaved={toggleSaved}
-                onEnquire={setEnquiry}
-              />
-            }
+          <Outlet
+            context={{ saved, toggleSaved, onEnquire: setEnquiry }}
           />
-          <Route
-            path="/stock"
-            element={
-              <Stock
-                saved={saved}
-                toggleSaved={toggleSaved}
-                onEnquire={setEnquiry}
-              />
-            }
-          />
-          <Route
-            path="/stock/:id"
-            element={
-              <Vehicle
-                saved={saved}
-                toggleSaved={toggleSaved}
-                onEnquire={setEnquiry}
-              />
-            }
-          />
-          <Route
-            path="*"
-            element={<NotFound />}
-          />
-        </Routes>
         </Suspense>
       </SiteLayout>
       {enquiry && (
@@ -181,11 +156,11 @@ function App() {
           onClose={() => setEnquiry(null)}
         />
       )}
-    </BrowserRouter>
+    </>
   );
 }
 const REVEAL_TARGETS = [
-  ".marque-words li",
+  ".marque-marquee",
   ".section-title",
   ".offer-copy",
   ".offer-performance",
@@ -269,8 +244,10 @@ function SiteLayout({ children, onEnquire, savedCount }) {
     </div>
   );
 }
-function ScrollReset() {
-  const { pathname, hash } = useLocation();
+// Scrolling is handled by <ScrollRestoration />: new pages open at the top
+// (or at their #section), and Back returns to where the visitor was.
+function DocumentTitle() {
+  const { pathname } = useLocation();
   useEffect(() => {
     const vehicle = vehicles.find((car) => pathname === `/stock/${car.id}`);
     const route = pathname.replace(/\/$/, "");
@@ -286,20 +263,29 @@ function ScrollReset() {
               : route === ""
                 ? "MM Prestige Motors | HSV & Holden Specialists, Adelaide"
                 : "Page not found | MM Prestige Motors";
-    if (hash) {
-      requestAnimationFrame(() =>
-        document
-          .getElementById(hash.slice(1))
-          ?.scrollIntoView({ behavior: "instant" }),
-      );
-    } else {
-      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    }
-  }, [pathname, hash]);
+  }, [pathname]);
   return null;
 }
 function Header({ onEnquire, savedCount = 0 }) {
   const [open, setOpen] = useState(false);
+  const [compact, setCompact] = useState(false);
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      // Float once the header has scrolled out of view.
+      setCompact(window.scrollY > 110);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
   const menuButton = useRef(null);
   const navigation = useRef(null);
   const { pathname, search, hash } = useLocation();
@@ -340,7 +326,7 @@ function Header({ onEnquire, savedCount = 0 }) {
         </a>
       </div>
       <header
-        className="header"
+        className={compact ? "header is-compact" : "header"}
         onBlur={(event) => {
           // relatedTarget is null when a click doesn't move focus (Safari).
           if (
@@ -359,7 +345,11 @@ function Header({ onEnquire, savedCount = 0 }) {
             className={open ? "nav open" : "nav"}
             aria-label="Main navigation"
           >
-            <Link className={pathname === "/" ? "active" : ""} to="/">
+            <Link
+              className={pathname === "/" ? "active" : ""}
+              to="/"
+              viewTransition
+            >
               Home
             </Link>
             <Link to="/#about" onClick={goToSection("about")}>
@@ -370,12 +360,14 @@ function Header({ onEnquire, savedCount = 0 }) {
                 pathname.startsWith("/stock") && !soldView ? "active" : ""
               }
               to="/stock"
+              viewTransition
             >
               Inventory
             </Link>
             <Link
               className={`nav-sold ${soldView ? "active" : ""}`}
               to="/stock?status=sold"
+              viewTransition
             >
               Sold cars
             </Link>
@@ -432,13 +424,64 @@ function Header({ onEnquire, savedCount = 0 }) {
     </>
   );
 }
+// Splits a title into words that rise into place in turn (see motion.css).
+// A "\n" in the text starts a new line.
+function RevealWords({ text }) {
+  let index = 0;
+  return text.split("\n").map((line, l, lines) => (
+    <React.Fragment key={l}>
+      {line.split(" ").map((word, w, words) => (
+        <React.Fragment key={w}>
+          <span className="word" style={{ "--i": index++ }}>
+            <span>{word}</span>
+          </span>
+          {w < words.length - 1 && " "}
+        </React.Fragment>
+      ))}
+      {l < lines.length - 1 && (
+        <>
+          {" "}
+          <br />
+        </>
+      )}
+    </React.Fragment>
+  ));
+}
+// While a view transition to a car's listing runs, its card photo and the
+// listing's main photo share one name, so the photo morphs between them.
+// Only the destination car is named, so no two elements ever share it.
+function useCarMorph(id) {
+  const transition = useContext(ViewTransitionContext);
+  return transition?.isTransitioning &&
+    transition.nextLocation?.pathname === `/stock/${id}`
+    ? "car-photo"
+    : undefined;
+}
 function CarCard({ car, saved, toggleSaved }) {
+  const morph = useCarMorph(car.id);
+  // Hovering with a mouse fades in the car's second photo once it loads;
+  // whichever photo is showing is the one that morphs into the listing.
+  const second = car.status === "available" && car.gallery?.[1];
+  const [peek, setPeek] = useState(false),
+    [peekReady, setPeekReady] = useState(false),
+    [hover, setHover] = useState(false);
+  const peeking = hover && peekReady;
+  // Warm the listing's main photo so it is ready to morph into.
+  const warm = () => prefetch(car.gallery?.[0] || car.image, SIZES.stage);
   return (
     <article
       className={`car-card collection-card ${car.status === "sold" ? "sold-card" : ""}`}
+      onPointerEnter={(event) => {
+        warm();
+        if (event.pointerType !== "mouse") return;
+        setHover(true);
+        if (second) setPeek(true);
+      }}
+      onPointerLeave={() => setHover(false)}
+      onFocus={warm}
     >
       <div className="card-heading">
-        <Link className="card-title" to={`/stock/${car.id}`}>
+        <Link className="card-title" to={`/stock/${car.id}`} viewTransition>
           {car.make} {car.model}
         </Link>
         <p className="card-variant">
@@ -449,12 +492,23 @@ function CarCard({ car, saved, toggleSaved }) {
         className="card-photo"
         to={`/stock/${car.id}`}
         aria-label={`View ${car.year} ${car.make} ${car.model}`}
+        viewTransition
       >
         <img
           {...responsive(car.image, SIZES.card)}
           alt={`${car.colour} ${car.make} ${car.model}`}
           loading="lazy"
+          style={{ viewTransitionName: peeking ? undefined : morph }}
         />
+        {peek && (
+          <img
+            className={`card-photo-peek${peeking ? " is-shown" : ""}`}
+            {...responsive(second, SIZES.card)}
+            alt=""
+            onLoad={() => setPeekReady(true)}
+            style={{ viewTransitionName: peeking ? morph : undefined }}
+          />
+        )}
         {car.status === "sold" ? (
           <span className="car-tag sold-tag">SOLD</span>
         ) : (
@@ -506,7 +560,11 @@ function CarCard({ car, saved, toggleSaved }) {
           <MapPin size={14} />
           Wingfield, South Australia
         </p>
-        <Link className="card-detail-button" to={`/stock/${car.id}`}>
+        <Link
+          className="card-detail-button"
+          to={`/stock/${car.id}`}
+          viewTransition
+        >
           View vehicle <ChevronRight size={17} />
         </Link>
         <a className="card-call-button" href={`tel:${business.tel}`}>
@@ -537,7 +595,7 @@ function HomeSearch() {
     if (make) query.set("make", make);
     if (model) query.set("model", model);
     if (budget) query.set("max", budget);
-    navigate(`/stock${query.size ? `?${query}` : ""}`);
+    navigate(`/stock${query.size ? `?${query}` : ""}`, { viewTransition: true });
   }
   return (
     <form className="hero-search" onSubmit={submit} aria-label="Find a car">
@@ -587,6 +645,7 @@ function HomeSearch() {
     </form>
   );
 }
+const SPECIALTIES = ["HSV", "Holden", "Commodore", "Clubsport", "Maloo", "Prestige"];
 function Home({ saved, toggleSaved, onEnquire }) {
   const [collectionTab, setCollectionTab] = useState("available");
   const [featuredStart, setFeaturedStart] = useState(0);
@@ -605,7 +664,9 @@ function Home({ saved, toggleSaved, onEnquire }) {
           fetchPriority="high"
         />
         <div className="reference-hero-content">
-          <h1>HSV &amp; Holden specialists</h1>
+          <h1 className="reveal-words">
+            <RevealWords text="HSV & Holden specialists" />
+          </h1>
           <HomeSearch />
         </div>
         <div className="hero-footnote">
@@ -635,19 +696,26 @@ function Home({ saved, toggleSaved, onEnquire }) {
           </p>
         </a>
       </section>
-      <ul
-        className="marque-strip marque-words"
-        aria-label="Our specialties — not a list of current inventory"
-      >
-        {["HSV", "Holden", "Commodore", "Clubsport", "Maloo", "Prestige"].map(
-          (name) => (
+      <div className="marque-marquee">
+        <ul
+          className="marque-strip marque-words"
+          aria-label="Our specialties — not a list of current inventory"
+        >
+          {SPECIALTIES.map((name) => (
             <li key={name}>{name}</li>
-          ),
-        )}
-      </ul>
+          ))}
+        </ul>
+        <ul className="marque-strip marque-words marque-copy" aria-hidden="true">
+          {SPECIALTIES.map((name) => (
+            <li key={name}>{name}</li>
+          ))}
+        </ul>
+      </div>
       <section className="reference-offer offer-bento" id="services">
         <div className="offer-copy">
-          <h2>What we offer</h2>
+          <h2 className="reveal-words">
+            <RevealWords text="What we offer" />
+          </h2>
           <p>
             Prestige and performance cars, with a focus on
             <br className="desktop-break" /> HSV, Holden Commodore and
@@ -667,11 +735,11 @@ function Home({ saved, toggleSaved, onEnquire }) {
               <span>04</span>Viewings by arrangement in Wingfield
             </li>
           </ol>
-          <Link className="button primary" to="/stock">
+          <Link className="button primary" to="/stock" viewTransition>
             Explore more <ArrowRight size={16} />
           </Link>
         </div>
-        <Link className="offer-performance" to="/stock">
+        <Link className="offer-performance" to="/stock" viewTransition>
           <div>
             <h3>Performance</h3>
             <p>For the drive you look forward to.</p>
@@ -701,7 +769,9 @@ function Home({ saved, toggleSaved, onEnquire }) {
       </section>
       <section className="section collection reference-collection">
         <div className="section-title">
-          <h2>From our collection</h2>
+          <h2 className="reveal-words">
+            <RevealWords text="From our collection" />
+          </h2>
         </div>
         <div className="home-collection-toolbar">
           <div
@@ -727,7 +797,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
               </button>
             ))}
           </div>
-          <Link className="button primary" to="/stock">
+          <Link className="button primary" to="/stock" viewTransition>
             View all <ArrowRight size={14} />
           </Link>
         </div>
@@ -759,7 +829,11 @@ function Home({ saved, toggleSaved, onEnquire }) {
           are from our Wingfield showroom; prices and details are examples.
           Call Madi for current availability.
         </p>
-        <Link className="text-link collection-explore" to="/stock">
+        <Link
+          className="text-link collection-explore"
+          to="/stock"
+          viewTransition
+        >
           Explore our stock <ArrowRight size={18} />
         </Link>
       </section>
@@ -770,10 +844,8 @@ function Home({ saved, toggleSaved, onEnquire }) {
           loading="lazy"
         />
         <div>
-          <h2>
-            Sell your car to
-            <br />
-            our dealership
+          <h2 className="reveal-words">
+            <RevealWords text={"Sell your car to\nour dealership"} />
           </h2>
           <p>
             Ready for something different? Talk with Madi
@@ -803,9 +875,8 @@ function Home({ saved, toggleSaved, onEnquire }) {
         </figure>
         <div className="meet-madi-copy">
           <p className="meet-madi-eyebrow">Meet Madi</p>
-          <h2 id="meet-madi-heading">
-            Driven by trust. <br />
-            Defined by quality.
+          <h2 id="meet-madi-heading" className="reveal-words">
+            <RevealWords text={"Driven by trust.\nDefined by quality."} />
           </h2>
           <p>
             At MM Prestige Motors you deal with Madi directly, from the first
@@ -827,7 +898,9 @@ function Home({ saved, toggleSaved, onEnquire }) {
       </section>
       <section className="section reviews mm-reviews" id="reviews">
         <div className="section-title">
-          <h2>Customer reviews</h2>
+          <h2 className="reveal-words">
+            <RevealWords text="Customer reviews" />
+          </h2>
           <div className="rating">
             <b>5.0</b>
             <span>
@@ -866,10 +939,8 @@ function Home({ saved, toggleSaved, onEnquire }) {
       </section>
       <section className="reference-contact dealer-about" id="visit">
         <div className="contact-copy">
-          <h2>
-            Start your journey
-            <br />
-            with us today
+          <h2 className="reveal-words">
+            <RevealWords text={"Start your journey\nwith us today"} />
           </h2>
           <p>
             Visit our Wingfield showroom. Speak directly with Madi about a car,
@@ -980,9 +1051,11 @@ function NotFound({ title = "That road ends here." }) {
           fetchPriority="high"
         />
         <div className="reference-hero-content">
-          <h1>{title}</h1>
+          <h1 className="reveal-words">
+            <RevealWords text={title} />
+          </h1>
           <div className="page-hero-actions">
-            <Link className="button primary" to="/stock">
+            <Link className="button primary" to="/stock" viewTransition>
               Explore our stock <ArrowRight size={18} />
             </Link>
           </div>
@@ -1036,7 +1109,7 @@ function Stock({ saved, toggleSaved, onEnquire }) {
         current.delete("saved");
         return current;
       },
-      { replace: true },
+      { replace: true, preventScrollReset: true },
     );
   }, [params]);
   const filtersClose = useRef(null);
@@ -1094,8 +1167,11 @@ function Stock({ saved, toggleSaved, onEnquire }) {
     setMax("");
     setSavedOnly(false);
   }
+  // Switching tabs updates the address but keeps the visitor's place.
   function changeStatus(value) {
-    setParams(value === "available" ? {} : { status: value });
+    setParams(value === "available" ? {} : { status: value }, {
+      preventScrollReset: true,
+    });
   }
   return (
     <main className="dealer-home inner-page stock-browse">
@@ -1107,7 +1183,9 @@ function Stock({ saved, toggleSaved, onEnquire }) {
           fetchPriority="high"
         />
         <div className="reference-hero-content">
-          <h1>Cars with character.</h1>
+          <h1 className="reveal-words">
+            <RevealWords text="Cars with character." />
+          </h1>
           <form
             className="hero-search stock-search"
             role="search"
@@ -1399,19 +1477,29 @@ function Stock({ saved, toggleSaved, onEnquire }) {
     </main>
   );
 }
+// Pages read the saved cars and the enquiry opener from the layout (App).
+function HomePage() {
+  return <Home {...useOutletContext()} />;
+}
+function StockPage() {
+  return <Stock {...useOutletContext()} />;
+}
+// A fresh listing per car, so its photo index and dialogs start over.
+function VehiclePage() {
+  const { id } = useParams();
+  return <Vehicle key={id} {...useOutletContext()} />;
+}
 function Vehicle({ saved, toggleSaved, onEnquire }) {
   const { id } = useParams();
+  const morph = useCarMorph(id);
+  // Arriving by the photo morph, the stage skips its own entrance.
+  const [morphArrival] = useState(() => Boolean(morph));
   const car = vehicles.find((c) => c.id === id);
   const thumbStrip = useRef(null);
   const swipeStart = useRef(null);
   const [index, setIndex] = useState(0),
     [zoom, setZoom] = useState(false),
     [copied, setCopied] = useState(false);
-  useEffect(() => {
-    setIndex(0);
-    setZoom(false);
-    setCopied(false);
-  }, [id]);
   const photos = car ? (car.gallery?.length ? car.gallery : [car.image]) : [];
   const move = (n) => setIndex((i) => (i + n + photos.length) % photos.length);
   useEffect(() => {
@@ -1489,16 +1577,22 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
     .filter((c) => c.id !== id && c.status === "available")
     .slice(0, 4);
   return (
-    <main className="dealer-home inner-page vehicle-detail">
+    <main
+      className={`dealer-home inner-page vehicle-detail${morphArrival ? " is-morph-arrival" : ""}`}
+    >
       <section className="vehicle-listing" aria-labelledby="vehicle-title">
         <div className="vehicle-topbar">
           <nav className="vehicle-crumbs" aria-label="Breadcrumb">
             <ol>
               <li>
-                <Link to="/">Home</Link>
+                <Link to="/" viewTransition>
+                  Home
+                </Link>
               </li>
               <li>
-                <Link to="/stock">Stock</Link>
+                <Link to="/stock" viewTransition>
+                  Stock
+                </Link>
               </li>
               <li aria-current="page">{name}</li>
             </ol>
@@ -1547,10 +1641,14 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
             >
               <img
                 key={photos[index]}
-                className="vehicle-stage-image"
+                className={`vehicle-stage-image${index === 0 && morphArrival ? " is-morph-target" : ""}`}
                 {...responsive(photos[index], SIZES.stage)}
                 alt={photoLabel(index)}
                 fetchPriority="high"
+                style={{
+                  viewTransitionName: index === 0 ? morph : undefined,
+                  backgroundImage: `url(${smallest(photos[index])})`,
+                }}
                 onClick={() => setZoom(true)}
               />
               {sold && <span className="vehicle-stage-badge">Sold</span>}
@@ -1752,7 +1850,7 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
         >
           <div className="section-title">
             <h2 id="related-heading">More from our collection</h2>
-            <Link className="text-link" to="/stock">
+            <Link className="text-link" to="/stock" viewTransition>
               View all stock <ArrowRight size={18} />
             </Link>
           </div>
@@ -2252,9 +2350,15 @@ function Footer() {
         </div>
         <div>
           <span className="footer-label">Menu</span>
-          <Link to="/">Home</Link>
-          <Link to="/stock">Available stock</Link>
-          <Link to="/stock?status=sold">Sold cars</Link>
+          <Link to="/" viewTransition>
+            Home
+          </Link>
+          <Link to="/stock" viewTransition>
+            Available stock
+          </Link>
+          <Link to="/stock?status=sold" viewTransition>
+            Sold cars
+          </Link>
           <Link to="/#about">Our story</Link>
         </div>
         <div>
@@ -2275,7 +2379,7 @@ function Footer() {
             <br />
             Talk to Madi about it.
           </p>
-          <Link className="button" to="/stock">
+          <Link className="button" to="/stock" viewTransition>
             Explore the collection <ArrowRight size={15} />
           </Link>
         </div>
@@ -2288,4 +2392,21 @@ function Footer() {
     </footer>
   );
 }
-createRoot(document.getElementById("root")).render(<App />);
+// App is the layout; the pages are data routes so links can use view
+// transitions.
+const router = createBrowserRouter([
+  {
+    element: <App />,
+    children: [
+      { path: "/stock-manager", element: <StockManagerDemo /> },
+      { path: "/crm", element: <CrmDemo /> },
+      { path: "/", element: <HomePage /> },
+      { path: "/stock", element: <StockPage /> },
+      { path: "/stock/:id", element: <VehiclePage /> },
+      { path: "*", element: <NotFound /> },
+    ],
+  },
+]);
+createRoot(document.getElementById("root")).render(
+  <RouterProvider router={router} />,
+);

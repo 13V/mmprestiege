@@ -230,6 +230,16 @@ try {
     await expect(about.getByRole('link', { name: 'Call Madi', exact: true })).toHaveAttribute('href', 'tel:+61411710409');
     await expect(page.locator('.featured .stock-tag').first()).toHaveText('THE ICON');
   });
+  await check('Specialties marquee hides its repeat from screen readers and the header floats once scrolled', async () => {
+    await expect(page.locator('.marque-words[aria-label]')).toHaveCount(1);
+    await expect(page.locator('.marque-copy')).toHaveAttribute('aria-hidden', 'true');
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(page.locator('.header')).not.toHaveClass(/is-compact/);
+    await page.evaluate(() => window.scrollTo(0, 700));
+    await expect(page.locator('.header')).toHaveClass(/is-compact/);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(page.locator('.header')).not.toHaveClass(/is-compact/);
+  });
   await check('Sell-your-car form prepares a trade-in message with the car details', async () => {
     await page.locator('.header-actions').getByRole('button', { name: 'Sell your car', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Sell or trade your car with MM Prestige Motors' });
@@ -277,6 +287,13 @@ try {
     await expect(cards()).toHaveCount(5);
   });
   await check('Available, sold and all stock', async () => {
+    // Switching tabs keeps the visitor's place on the page.
+    await page.evaluate(() => window.scrollTo(0, 650));
+    // Dispatched so the test doesn't scroll the tab into view first.
+    await status('Sold').dispatchEvent('click');
+    await expect(page).toHaveURL(/status=sold/);
+    expect(await page.evaluate(() => Math.round(window.scrollY))).toBe(650);
+    await status('In stock').click();
     await status('Sold').click();
     await expect(cards()).toHaveCount(1);
     await expect(page.locator('.collection-grid .sold-tag')).toHaveCount(1);
@@ -359,6 +376,32 @@ try {
     await expect(dialog.locator('.message-preview')).toContainText('Budget: Over $100,000');
     await expect(dialog.locator('.message-preview')).not.toContainText('Years:');
     await page.keyboard.press('Escape');
+  });
+  await check('A car photo morphs into its listing and Back returns to the same place', async () => {
+    await goStock();
+    // Record which photos carry a view-transition name as each transition starts.
+    await page.evaluate(() => {
+      window.morphs = [];
+      const start = document.startViewTransition?.bind(document);
+      if (start) document.startViewTransition = update => {
+        window.morphs.push([...document.images].map(image => image.style.viewTransitionName).filter(Boolean));
+        return start(update);
+      };
+    });
+    const card = cards().nth(4);
+    await card.scrollIntoViewIfNeeded();
+    const y = await page.evaluate(() => Math.round(window.scrollY));
+    expect(y).toBeGreaterThan(300);
+    // A plain mouse click, so the test doesn't scroll the page first.
+    const box = await card.locator('.card-photo').boundingBox();
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(page).toHaveURL(/\/stock\/[^/]+$/);
+    if (await page.evaluate(() => typeof document.startViewTransition === 'function'))
+      expect(await page.evaluate(() => window.morphs[0])).toEqual(['car-photo']);
+    await expect.poll(() => page.locator('.vehicle-stage-image').evaluate(image => image.style.viewTransitionName)).toBe('');
+    await page.goBack();
+    await expect(page).toHaveURL(/\/stock$/);
+    await expect.poll(() => page.evaluate(() => Math.round(window.scrollY))).toBe(y);
   });
   await check('Photos are served as resized WebP files', async () => {
     const card = cards().first().locator('img');

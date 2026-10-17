@@ -1,8 +1,9 @@
 /* ==========================================================================
    Motion: quiet, consistent movement that supports the prestige feel.
-   Heroes ease in on arrival, sections rise into view as they are reached,
-   red actions catch a soft sheen, the sell banner drifts and the showroom
-   pin breathes. Nothing here runs for visitors who prefer reduced motion.
+   Pages crossfade and a car's photo morphs from its card into the listing,
+   heroes ease in on arrival, sections rise into view as they are reached,
+   red actions catch a soft sheen and the sell banner drifts. Nothing here
+   runs for visitors who prefer reduced motion.
    ========================================================================== */
 :root {
   --mm-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -126,4 +127,263 @@
       animation-range: entry 0% exit 100%;
     }
   }
+}
+
+/* Page transitions (view transitions on internal links). Pages crossfade;
+   the car photo named by useCarMorph in main.jsx morphs into the listing. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 420ms;
+    animation-timing-function: var(--mm-ease-out);
+  }
+  ::view-transition-group(car-photo) {
+    z-index: 2;
+    animation-duration: 680ms;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  ::view-transition-old(car-photo),
+  ::view-transition-new(car-photo) {
+    height: 100%;
+    object-fit: cover;
+    animation-duration: 680ms;
+  }
+  /* Arriving by the morph, the photo is already in place. */
+  .is-morph-arrival .vehicle-gallery,
+  .vehicle-stage-image.is-morph-target {
+    animation: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* Titles rise word by word: hero titles on arrival, section titles as they
+   are revealed. Each word is masked along its baseline while it rises, then
+   unmasked so the hero title's shadow is never clipped. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-words .word {
+    display: inline-block;
+    vertical-align: bottom;
+  }
+  .reveal-words .word > span {
+    display: inline-block;
+  }
+  .reference-hero-content > .reveal-words {
+    animation: none;
+  }
+  .reference-hero .reveal-words .word,
+  .reveal.is-revealed .reveal-words .word {
+    animation: mm-word-unmask 1150ms var(--mm-ease-out) both;
+    animation-delay: calc(var(--word-delay, 120ms) + var(--i) * 75ms);
+  }
+  .reference-hero .reveal-words .word > span,
+  .reveal.is-revealed .reveal-words .word > span {
+    animation: mm-word-rise 1150ms var(--mm-ease-out) both;
+    animation-delay: calc(var(--word-delay, 120ms) + var(--i) * 75ms);
+  }
+  .reveal.is-revealed .reveal-words {
+    --word-delay: 80ms;
+  }
+}
+@keyframes mm-word-rise {
+  from {
+    transform: translateY(125%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes mm-word-unmask {
+  0%,
+  85% {
+    clip-path: inset(-0.6em -0.6em 0 -0.6em);
+  }
+  100% {
+    clip-path: inset(-0.6em);
+  }
+}
+
+/* The home hero settles, then gently zooms and its title lifts away as the
+   page scrolls (where scroll-linked animation is supported). */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reference-home .reference-hero-image {
+      animation:
+        mm-hero-settle 2400ms var(--mm-ease-out) backwards,
+        mm-hero-zoom linear both;
+      animation-timeline: auto, scroll(root);
+      animation-range: normal, 0 90vh;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) and (min-width: 851px) {
+    .reference-home .reference-hero-content {
+      animation: mm-hero-lift linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 75vh;
+    }
+  }
+}
+@keyframes mm-hero-zoom {
+  to {
+    scale: 1.1;
+  }
+}
+@keyframes mm-hero-lift {
+  to {
+    opacity: 0;
+    translate: 0 -48px;
+  }
+}
+
+/* The specialties strip runs as a slow marquee; with reduced motion it stays
+   the single static row (the copy is hidden). */
+.marque-copy {
+  display: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .marque-marquee {
+    --marquee-gap: clamp(40px, 5vw, 96px);
+    display: flex;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  }
+  .marque-marquee > .marque-strip.marque-words {
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: var(--marquee-gap);
+    padding: clamp(34px, 3.4vw, 50px) var(--marquee-gap) clamp(34px, 3.4vw, 50px) 0;
+    animation: mm-marquee 42s linear infinite;
+  }
+  .marque-marquee > .marque-copy {
+    display: flex;
+  }
+  .marque-marquee .marque-words li {
+    position: relative;
+    font-size: clamp(26px, 2.6vw, 42px);
+    letter-spacing: 0.08em;
+    color: #6f6f73;
+  }
+  .marque-marquee .marque-words li:nth-child(even) {
+    color: transparent;
+    -webkit-text-stroke: 1px #6f6f73;
+  }
+  .marque-marquee .marque-words li::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: calc(var(--marquee-gap) / -2 - 3px);
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    transform: translateY(-50%);
+  }
+  .marque-marquee:hover > .marque-strip {
+    animation-play-state: paused;
+  }
+}
+@keyframes mm-marquee {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Revealed photos wipe up into view and settle; the black Clubsport drives
+   into the red panel. */
+@media (prefers-reduced-motion: no-preference) {
+  .meet-madi-photo.reveal.is-revealed,
+  .contact-location.reveal.is-revealed .contact-map {
+    animation: mm-wipe 1300ms var(--mm-ease-out) backwards;
+  }
+  .meet-madi-photo.reveal.is-revealed img,
+  .contact-location.reveal.is-revealed .contact-map > img {
+    animation: mm-unzoom 1700ms var(--mm-ease-out) backwards;
+  }
+  .offer-trade.reveal.is-revealed img {
+    animation: mm-drive-in 1500ms cubic-bezier(0.16, 1, 0.3, 1) 220ms backwards;
+  }
+}
+.contact-map {
+  --wipe-radius: var(--radius-md);
+}
+@keyframes mm-wipe {
+  from {
+    clip-path: inset(100% 0 0 0 round var(--wipe-radius, var(--radius-lg)));
+  }
+  to {
+    clip-path: inset(0 0 0 0 round var(--wipe-radius, var(--radius-lg)));
+  }
+}
+@keyframes mm-unzoom {
+  from {
+    transform: scale(1.16);
+  }
+}
+@keyframes mm-drive-in {
+  from {
+    opacity: 0;
+    transform: translateX(70%);
+    filter: blur(4px);
+  }
+  35% {
+    opacity: 1;
+  }
+  to {
+    transform: none;
+    filter: none;
+  }
+}
+
+/* Once the page scrolls past the hero, the header floats as a compact
+   frosted bar. */
+.home-shell .header.is-compact {
+  position: fixed;
+  top: 10px;
+  height: 64px;
+  background: #141416d9;
+  border: 1px solid #ffffff17;
+  border-radius: var(--radius-md);
+  box-shadow: 0 18px 40px -22px #000000e6;
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
+}
+@media (max-width: 600px) {
+  .home-shell .header.is-compact {
+    top: 6px;
+    height: 58px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .home-shell .header.is-compact {
+    animation: mm-header-drop 480ms var(--mm-ease-out);
+  }
+}
+@keyframes mm-header-drop {
+  from {
+    transform: translateY(-130%);
+  }
+}
+
+/* Card hover: the second photo fades in over the first. */
+.collection-card .card-photo-peek {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  opacity: 0;
+  transition:
+    opacity 600ms var(--mm-ease-out),
+    transform var(--mm-slow) var(--mm-ease);
+}
+.collection-card .card-photo-peek.is-shown {
+  opacity: 1;
 }

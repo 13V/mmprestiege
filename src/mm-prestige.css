@@ -381,7 +381,7 @@ h4) {
 }
 .collection-card .card-photo { position: relative; border-radius: var(--radius-sm); background: var(--surface-2); }
 .collection-card .card-photo::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px #ffffff12; pointer-events: none; }
-.collection-card .card-photo img { transition: transform var(--mm-slow) var(--mm-ease); }
+.collection-card .card-photo img { border-radius: inherit; transition: transform var(--mm-slow) var(--mm-ease); }
 .collection-card .sold-tag { font-size: var(--fs-label); letter-spacing: 0.12em; border-radius: var(--radius-xs); }
 /* Merchandising tags ("Just arrived") sit on dark glass so red stays for SOLD and actions. */
 .collection-card .stock-tag {
