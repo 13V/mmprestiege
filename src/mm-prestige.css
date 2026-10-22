@@ -479,9 +479,8 @@ h4) {
 .reference-hero { border-radius: var(--radius-lg); }
 /* The showroom photo sits low so the wall sign stays clear above the title.
    Wide screens cap the hero's height, so the photo moves back up there.
-   A deeper grade and a vignette keep the bright shoot photo from looking
-   flat on the charcoal page, and draw the eye to the sign and the cars. */
-.reference-home .reference-hero-image { filter: brightness(0.84) contrast(1.12) saturate(1.1); }
+   The photo's deeper hero grade is in the file (scripts/photos); a vignette
+   draws the eye to the sign and the cars. */
 @media (min-width: 601px) {
   .reference-home .reference-hero-image { object-position: center 83%; }
   .reference-home .showroom-hero::after {
@@ -625,7 +624,6 @@ h4) {
 
 /* B23 Sell banner */
 .reference-sell { width: 100%; margin: 0; display: flex; align-items: center; background: var(--surface-1); border-radius: var(--radius-lg); }
-.reference-sell > img { filter: contrast(1.12) brightness(0.84) saturate(1.06); }
 .reference-sell::after {
   content: "";
   position: absolute;
@@ -686,7 +684,6 @@ h4) {
   height: 100%;
   object-fit: cover;
   object-position: center top;
-  filter: contrast(1.08) brightness(0.9) saturate(1.05);
   transition: transform var(--mm-slow) var(--mm-ease);
 }
 @media (max-width: 600px) {

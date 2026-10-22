@@ -1,14 +1,22 @@
 // Writes web-sized WebP copies of every photo in public/images to
 // public/images/opt, plus a 1200 × 630 JPEG crop for link previews, and
 // records them in src/image-variants.json so pages can offer srcset.
-// Run `npm run images` after adding or replacing photos.
-import { mkdir, readdir, stat, writeFile } from "node:fs/promises";
+// Run `npm run images` after adding or replacing photos (the shoot photos
+// themselves are made by scripts/photos/export.py). Copies that no photo
+// uses any more are deleted.
+import { mkdir, readdir, rm, stat, writeFile } from "node:fs/promises";
 import { join, parse } from "node:path";
 import sharp from "sharp";
 
 const SOURCE = "public/images";
 const OUTPUT = "public/images/opt";
-const WIDTHS = [480, 960, 1600, 2400];
+// 3200 px covers full-width photos on 2× screens up to 1,600 px wide.
+const WIDTHS = [480, 960, 1600, 2400, 3200];
+// Smart subsampling keeps red paint crisp against black trim. Resized copies
+// get light sharpening on edges, which resizing softens; the full-size copy
+// is already sharpened.
+const WEBP = { quality: 82, effort: 6, smartSubsample: true };
+const SHARPEN = { sigma: 0.5, m1: 0.3, m2: 1.5 };
 const SHARE = { width: 1200, height: 630 };
 
 async function newer(source, target) {
@@ -21,6 +29,7 @@ async function newer(source, target) {
 
 await mkdir(OUTPUT, { recursive: true });
 const manifest = {};
+const keep = new Set();
 const files = (await readdir(SOURCE))
   .filter((file) => /\.(jpe?g|png|webp)$/i.test(file))
   .sort();
@@ -34,10 +43,14 @@ for (const file of files) {
     widths.push(width);
   for (const w of widths) {
     const output = join(OUTPUT, `${name}-${w}.webp`);
-    if (await newer(input, output))
-      await sharp(input).resize({ width: w }).webp({ quality: 78, effort: 5 }).toFile(output);
+    keep.add(output);
+    if (!(await newer(input, output))) continue;
+    let image = sharp(input).resize({ width: w });
+    if (w < width) image = image.sharpen(SHARPEN);
+    await image.webp(WEBP).toFile(output);
   }
   const share = join(OUTPUT, `${name}-share.jpg`);
+  keep.add(share);
   if (await newer(input, share))
     await sharp(input)
       .resize({ ...SHARE, fit: "cover" })
@@ -52,4 +65,6 @@ for (const file of files) {
   };
 }
 await writeFile("src/image-variants.json", `${JSON.stringify(manifest, null, 2)}\n`);
-console.log(`Optimised ${files.length} photos into ${OUTPUT}.`);
+const stale = (await readdir(OUTPUT)).map((file) => join(OUTPUT, file)).filter((file) => !keep.has(file));
+await Promise.all(stale.map((file) => rm(file)));
+console.log(`Optimised ${files.length} photos into ${OUTPUT}` + (stale.length ? `; removed ${stale.length} unused copies.` : "."));

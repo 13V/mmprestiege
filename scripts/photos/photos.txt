@@ -1,0 +1,33 @@
+# Site photos made from the dealership's photoshoot originals by export.py.
+# Crop boxes are fractions of the upright original frame (left top right
+# bottom). Width is the largest size kept (smaller crops keep their own
+# size). Looks are defined in grade.py.
+#
+# name                         shot x0       y0      x1       y1      width look
+showroom-lineup.jpg            2    0        0       1        1       3200  hero
+showroom-collection.jpg        21   0        0       1        1       3200  hero
+showroom-doorway.jpg           9    0        0       1        1       3200  hero
+showroom-street.jpg            13   0        0       1        1       3200  hero
+sell-roller-door.jpg           15   0        0       1        1       3200  hero
+performance-gts-rear.jpg       21   0.51875  0.3749  0.95625  1       1600  listing
+hsv-gts-genf-front.jpg         22   0        0       1        1       3200  listing
+hsv-gts-genf-rear.jpg          21   0.4      0.4     1        1       3200  listing
+hsv-gts-genf-showroom.jpg      7    0.2      0.4967  0.50625  0.80625 3200  listing
+hsv-clubsport-r8-front.jpg     20   0.50625  0.4874  0.99375  0.9747  3200  listing
+hsv-clubsport-r8-showroom.jpg  20   0        0       1        1       3200  listing
+ferrari-360-front.jpg          24   0.025    0.075   0.95     1       3200  listing
+ferrari-360-street.jpg         13   0.625    0.5623  1        0.9372  3200  listing
+ferrari-360-doorway.jpg        18   0.4      0.4     1        1       3200  listing
+hsv-maloo-r8-side.jpg          13   0        0.3843  0.525    0.9091  3200  listing
+hsv-maloo-r8-rear.jpg          15   0        0.3936  0.475    0.8688  3200  listing
+hsv-gts-e3-front.jpg           3    0.0625   0.075   0.9875   1       3200  listing
+hsv-gts-e3-nose.jpg            4    0        0.3875  1        0.8319  3200  listing
+hsv-gts-e3-lineup.jpg          2    0.5125   0.4405  1        0.928   3200  listing
+hsv-maloo-e3-front.jpg         2    0.1125   0.4405  0.50625  0.8341  3200  listing
+hsv-maloo-green-front.jpg      21   0        0.4358  0.234375 0.6701  3200  listing
+hsv-maloo-green-side.jpg       2    0        0.4686  0.20625  0.6748  3200  listing
+madi-portrait.jpg              28   0.3374   0.2406  0.6467   0.4469  320   portrait
+madi-showroom.jpg              28   0.1      0.17    0.9      0.8367  1600  portrait
+# The Clubsport cut-out keeps the background mask already in the file (made
+# with BiRefNet, see docs/photo-sources.md); only its colour is replaced.
+clubsport-cutout.webp          20   0.53     0.47    0.95     0.985   1400  listing

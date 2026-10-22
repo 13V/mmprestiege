@@ -6,9 +6,13 @@ The sample listings are mapped to the photographed cars, so each listing shows i
 
 ## Processing
 
-- Crops were cut from the full-size originals, resized to at most 2,400 px wide and saved as JPEG (quality 84). Camera metadata, including any location data, was removed.
-- `npm run images` makes the WebP sizes in `public/images/opt` and the 1,200 × 630 link-preview crops from these files.
-- `clubsport-cutout.webp` was cut out of shot 20 on this machine with the open-source BiRefNet background-removal model (through `rembg`). No photo was uploaded to an outside service.
+`scripts/photos/export.py` makes every site photo from the full-size originals: `python3 -I scripts/photos/export.py <folder of originals> [name ...]` (it needs numpy, opencv-python-headless and Pillow). The crops, sizes and looks are listed in `scripts/photos/photos.txt`, and the grade is in `scripts/photos/grade.py`.
+
+- **Grade.** The photographer's edit is bright, flat and slightly cool: its brightest lights stop at light grey, the concrete has a blue tint and the red paint looks pale orange. Every photo now gets the same grade: neutral white balance measured on the grey concrete, with a touch of warmth; levels so lights reach white and shadows reach near black; an S-curve; richer colour (muted colours lifted more than strong ones, greys left grey, strong paint deepened slightly); a light clean-up of camera grain, scaled to each shot's grain (the indoor shots are ISO 640 to 800); and local contrast with an edge-aware filter, so there are no halos round the cars. White balance and levels are measured on the whole frame, so every crop of a shot matches.
+- **Looks.** Car photos get the *listing* look. Photos with text over them (the home, stock and 404 heroes, the sell banner and the location card) get the *hero* look, with darker mid-tones so white text stays readable; no browser filter is applied on top. Madi's photos get the gentler *portrait* look, so skin stays natural.
+- **Sizes.** Photos are kept up to 3,200 px wide (crops smaller than that keep their full size), sharpened for the web after resizing and saved as JPEG (quality 90, full colour resolution). Camera metadata, including any location data, is removed.
+- `npm run images` makes the WebP sizes in `public/images/opt` (480, 960, 1,600, 2,400 and 3,200 px; quality 82 with sharp YUV conversion, which keeps red paint crisp against black trim, and light edge sharpening on the resized copies) and the 1,200 × 630 link-preview crops.
+- `clubsport-cutout.webp` was cut out of shot 20 on this machine with the open-source BiRefNet background-removal model (through `rembg`). The export keeps its mask and replaces only its colour. No photo was uploaded to an outside service.
 - `public/og-image.png` places the wordmark over `showroom-lineup.jpg` (`npm run share-image`).
 
 ## Files
@@ -76,4 +80,4 @@ Each film is 1.2 to 5.3 MB, depending on size and codec: a desktop downloads abo
 - Number plates are readable in several photos (the gold Maloo, the E3 GTS and the Ferrari). The dealership asked for them to stay readable, so they are not blurred.
 - The black Clubsport's bumper reflects the photographer. It is too small to see at the panel's display size.
 - The dealership confirmed the portraits (shots 26 to 29) show Madi. Shot 28 is used for the round portrait and the Meet Madi photo; the others aren't used.
-- The home hero, sell banner and location photos get a deeper grade in CSS (`src/mm-prestige.css`) so the bright shoot edit sits well on the dark page. Listing photos are shown as supplied.
+- The grade is built into the files (see [Processing](#processing)); the site applies no colour filters to photos. Sold cars' card photos are shown desaturated on purpose.

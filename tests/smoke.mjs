@@ -253,9 +253,9 @@ try {
       expect(response.ok(), src).toBe(true);
     }
     expect(await film.evaluate(video => video.muted && video.loop && video.playsInline)).toBe(true);
-    // The film has the photo's grade built in, so CSS must not grade it again.
+    // The film and the photo have the grade built in, so CSS must not grade either.
     expect(await film.evaluate(video => getComputedStyle(video).filter)).toBe('none');
-    expect(await page.locator('.reference-hero img.reference-hero-image').evaluate(image => getComputedStyle(image).filter)).toContain('brightness(0.84)');
+    expect(await page.locator('.reference-hero img.reference-hero-image').evaluate(image => getComputedStyle(image).filter)).toBe('none');
     // The hero photo stays underneath as the fallback.
     await expect(page.locator('.reference-hero img.reference-hero-image')).toHaveAttribute('src', '/images/showroom-lineup.jpg');
     const playable = await film.evaluate(video => [...video.querySelectorAll('source')].some(source => video.canPlayType(source.type)));
@@ -437,7 +437,8 @@ try {
     await expect(card).toHaveAttribute('srcset', /\/images\/opt\/.+\.webp \d+w/);
     await page.waitForFunction(() => document.querySelector('.collection-grid img')?.currentSrc?.endsWith('.webp'));
     await page.goto(`${baseURL}${firstVehicleRoute}`);
-    await expect(page.locator('.vehicle-stage-image')).toHaveAttribute('srcset', /hsv-gts-genf-front-2400\.webp 2400w/);
+    // Full-frame photos go up to 3200 px for large high-density screens.
+    await expect(page.locator('.vehicle-stage-image')).toHaveAttribute('srcset', /hsv-gts-genf-front-2400\.webp 2400w, \/images\/opt\/hsv-gts-genf-front-3200\.webp 3200w/);
   });
   await check('Vehicle detail and carousel', async () => {
     await page.goto(`${baseURL}${firstVehicleRoute}`);
