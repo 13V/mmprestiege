@@ -247,7 +247,9 @@ try {
     // AV1, then HEVC, then H.264 for older browsers. Desktops get the 1920 px cut.
     await expect(film.locator('source')).toHaveCount(3);
     const sources = await film.locator('source').evaluateAll(list => list.map(source => source.getAttribute('src')));
-    expect(sources).toEqual(['/video/showroom-walk-1920.av1.mp4', '/video/showroom-walk-1920.hevc.mp4', '/video/showroom-walk-1280.mp4']);
+    // Each URL carries the films' version, so browsers drop cached copies after a re-encode.
+    expect(sources.every(src => /\?v=\d+$/.test(src))).toBe(true);
+    expect(sources.map(src => src.replace(/\?v=\d+$/, ''))).toEqual(['/video/showroom-walk-1920.av1.mp4', '/video/showroom-walk-1920.hevc.mp4', '/video/showroom-walk-1280.mp4']);
     for (const src of sources) {
       const response = await page.request.head(`${baseURL}${src}`);
       expect(response.ok(), src).toBe(true);
@@ -434,11 +436,12 @@ try {
   });
   await check('Photos are served as resized WebP files', async () => {
     const card = cards().first().locator('img');
-    await expect(card).toHaveAttribute('srcset', /\/images\/opt\/.+\.webp \d+w/);
-    await page.waitForFunction(() => document.querySelector('.collection-grid img')?.currentSrc?.endsWith('.webp'));
+    // Each copy's URL carries a hash of the file, so a changed photo is fetched again.
+    await expect(card).toHaveAttribute('srcset', /\/images\/opt\/.+\.webp\?v=[0-9a-f]{8} \d+w/);
+    await page.waitForFunction(() => /\.webp(\?|$)/.test(document.querySelector('.collection-grid img')?.currentSrc || ''));
     await page.goto(`${baseURL}${firstVehicleRoute}`);
     // Full-frame photos go up to 3200 px for large high-density screens.
-    await expect(page.locator('.vehicle-stage-image')).toHaveAttribute('srcset', /hsv-gts-genf-front-2400\.webp 2400w, \/images\/opt\/hsv-gts-genf-front-3200\.webp 3200w/);
+    await expect(page.locator('.vehicle-stage-image')).toHaveAttribute('srcset', /hsv-gts-genf-front-2400\.webp\?v=[0-9a-f]{8} 2400w, \/images\/opt\/hsv-gts-genf-front-3200\.webp\?v=[0-9a-f]{8} 3200w/);
   });
   await check('Vehicle detail and carousel', async () => {
     await page.goto(`${baseURL}${firstVehicleRoute}`);
@@ -669,7 +672,7 @@ try {
     const film = page.locator('.reference-hero video.hero-film');
     await expect(film).toHaveCount(1, { timeout: 10000 });
     const sources = await film.locator('source').evaluateAll(list => list.map(source => source.getAttribute('src')));
-    expect(sources).toEqual(['/video/showroom-walk-1280.av1.mp4', '/video/showroom-walk-1280.hevc.mp4', '/video/showroom-walk-1280.mp4']);
+    expect(sources.map(src => src.replace(/\?v=\d+$/, ''))).toEqual(['/video/showroom-walk-1280.av1.mp4', '/video/showroom-walk-1280.hevc.mp4', '/video/showroom-walk-1280.mp4']);
   });
   await check('Stock follows the home layout with four generous columns on a wide screen', async () => {
     await page.setViewportSize({ width: 2493, height: 1265 });

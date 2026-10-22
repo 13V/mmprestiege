@@ -44,7 +44,7 @@ check("Every car has a page with its own title, description and photo preview", 
     const name = `${car.year} ${car.make} ${car.model}`;
     expect(tag(html, /<title>([^<]+)/) === `${name} | MM Prestige Motors`, `${car.id} title`);
     expect(html.includes(`/stock/${car.id}" />`), `${car.id} canonical`);
-    expect(/og:image" content="https:\/\/[^"]+\/images\/opt\/[^"]+-share\.jpg"/.test(html), `${car.id} share photo`);
+    expect(/og:image" content="https:\/\/[^"]+\/images\/opt\/[^"]+-share\.jpg\?v=[0-9a-f]{8}"/.test(html), `${car.id} share photo`);
     expect(html.includes(car.status === "sold" ? "· Sold" : "$"), `${car.id} price or sold in description`);
     expect(html.includes("(sample listing)") === sampleStock, `${car.id} sample label follows sampleStock`);
     expect(/"@type":"Car"/.test(html) === !sampleStock, `${car.id} car data only for real stock`);
@@ -153,7 +153,7 @@ try {
     expect(!html.includes("(sample listing)"), "no sample label");
     expect(/"@type":"Car"/.test(html) && html.includes(`"image":"${blob}/p-1-share.jpg"`), "car structured data");
     const sold = readManaged("stock/hsv-maloo-2012.html");
-    expect(/og:image" content="https:\/\/[^"]+\/images\/opt\/hsv-maloo-e3-front-share\.jpg"/.test(sold), "site photo preview");
+    expect(/og:image" content="https:\/\/[^"]+\/images\/opt\/hsv-maloo-e3-front-share\.jpg\?v=[0-9a-f]{8}"/.test(sold), "site photo preview");
     expect(sold.includes("· Sold") && !sold.includes(" ·  · "), "sold description without an empty variant");
     const sitemap = readManaged("sitemap.xml");
     expect((sitemap.match(/<url>/g) || []).length === 4, "sitemap lists the real cars");

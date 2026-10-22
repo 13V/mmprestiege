@@ -7,7 +7,9 @@
 # like the source clips, so every browser decodes it the same way.
 # Usage: encode.sh <work dir with walk-loop.mkv and pans-loop.mkv> <out dir>
 #        [walk] [pans]   (both by default)
-# Set PYTHON to use a virtual environment with numpy and opencv.
+# Set PYTHON to use a virtual environment with numpy and opencv. After
+# re-encoding, bump FILM_VERSION in src/main.jsx so browsers fetch the new
+# files.
 set -e
 work=$1; out=$2; shift 2
 here=$(cd "$(dirname "$0")" && pwd)

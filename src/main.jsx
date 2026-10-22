@@ -655,13 +655,16 @@ const SPECIALTIES = ["HSV", "Holden", "Commodore", "Clubsport", "Maloo", "Presti
 // Showroom films (public/video, made by scripts/films): AV1 for Chrome, Edge
 // and Firefox, HEVC for Safari and H.264 for anything else; 1920 px on
 // larger screens and 1280 px on phones.
+// Bump after re-encoding the films (scripts/films/encode.sh), so browsers
+// fetch the new files instead of a copy cached for up to a day.
+const FILM_VERSION = 2;
 function filmSources(name) {
   const size = window.matchMedia("(max-width: 700px)").matches ? 1280 : 1920;
   return [
     [`/video/showroom-${name}-${size}.av1.mp4`, 'video/mp4; codecs="av01.0.08M.08"'],
     [`/video/showroom-${name}-${size}.hevc.mp4`, 'video/mp4; codecs="hvc1.1.6.L120.90"'],
     [`/video/showroom-${name}-1280.mp4`, 'video/mp4; codecs="avc1.640028"'],
-  ];
+  ].map(([src, type]) => [`${src}?v=${FILM_VERSION}`, type]);
 }
 function filmPausedByVisitor() {
   try {

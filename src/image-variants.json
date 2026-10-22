@@ -2,151 +2,151 @@
   "/images/clubsport-cutout.webp": {
     "width": 1400,
     "height": 1181,
-    "srcset": "/images/opt/clubsport-cutout-480.webp 480w, /images/opt/clubsport-cutout-960.webp 960w, /images/opt/clubsport-cutout-1400.webp 1400w",
-    "share": "/images/opt/clubsport-cutout-share.jpg"
+    "srcset": "/images/opt/clubsport-cutout-480.webp?v=fcab01cd 480w, /images/opt/clubsport-cutout-960.webp?v=aaa442a3 960w, /images/opt/clubsport-cutout-1400.webp?v=560e3278 1400w",
+    "share": "/images/opt/clubsport-cutout-share.jpg?v=5d461ff9"
   },
   "/images/ferrari-360-doorway.jpg": {
     "width": 3200,
     "height": 2134,
-    "srcset": "/images/opt/ferrari-360-doorway-480.webp 480w, /images/opt/ferrari-360-doorway-960.webp 960w, /images/opt/ferrari-360-doorway-1600.webp 1600w, /images/opt/ferrari-360-doorway-2400.webp 2400w, /images/opt/ferrari-360-doorway-3200.webp 3200w",
-    "share": "/images/opt/ferrari-360-doorway-share.jpg"
+    "srcset": "/images/opt/ferrari-360-doorway-480.webp?v=766b2a2d 480w, /images/opt/ferrari-360-doorway-960.webp?v=88bce404 960w, /images/opt/ferrari-360-doorway-1600.webp?v=f6c6d7b2 1600w, /images/opt/ferrari-360-doorway-2400.webp?v=4df4127e 2400w, /images/opt/ferrari-360-doorway-3200.webp?v=e1714610 3200w",
+    "share": "/images/opt/ferrari-360-doorway-share.jpg?v=58b061a1"
   },
   "/images/ferrari-360-front.jpg": {
     "width": 3200,
     "height": 2133,
-    "srcset": "/images/opt/ferrari-360-front-480.webp 480w, /images/opt/ferrari-360-front-960.webp 960w, /images/opt/ferrari-360-front-1600.webp 1600w, /images/opt/ferrari-360-front-2400.webp 2400w, /images/opt/ferrari-360-front-3200.webp 3200w",
-    "share": "/images/opt/ferrari-360-front-share.jpg"
+    "srcset": "/images/opt/ferrari-360-front-480.webp?v=6fdfab61 480w, /images/opt/ferrari-360-front-960.webp?v=0f6d38ca 960w, /images/opt/ferrari-360-front-1600.webp?v=1f95b3ff 1600w, /images/opt/ferrari-360-front-2400.webp?v=215ca10e 2400w, /images/opt/ferrari-360-front-3200.webp?v=64df6cec 3200w",
+    "share": "/images/opt/ferrari-360-front-share.jpg?v=9f8b8a07"
   },
   "/images/ferrari-360-street.jpg": {
     "width": 2174,
     "height": 1449,
-    "srcset": "/images/opt/ferrari-360-street-480.webp 480w, /images/opt/ferrari-360-street-960.webp 960w, /images/opt/ferrari-360-street-1600.webp 1600w, /images/opt/ferrari-360-street-2174.webp 2174w",
-    "share": "/images/opt/ferrari-360-street-share.jpg"
+    "srcset": "/images/opt/ferrari-360-street-480.webp?v=01a4ba41 480w, /images/opt/ferrari-360-street-960.webp?v=3ca67f9c 960w, /images/opt/ferrari-360-street-1600.webp?v=47a48aca 1600w, /images/opt/ferrari-360-street-2174.webp?v=75579011 2174w",
+    "share": "/images/opt/ferrari-360-street-share.jpg?v=2deca3cc"
   },
   "/images/hsv-clubsport-r8-front.jpg": {
     "width": 2852,
     "height": 1901,
-    "srcset": "/images/opt/hsv-clubsport-r8-front-480.webp 480w, /images/opt/hsv-clubsport-r8-front-960.webp 960w, /images/opt/hsv-clubsport-r8-front-1600.webp 1600w, /images/opt/hsv-clubsport-r8-front-2400.webp 2400w, /images/opt/hsv-clubsport-r8-front-2852.webp 2852w",
-    "share": "/images/opt/hsv-clubsport-r8-front-share.jpg"
+    "srcset": "/images/opt/hsv-clubsport-r8-front-480.webp?v=f0242773 480w, /images/opt/hsv-clubsport-r8-front-960.webp?v=a510eb26 960w, /images/opt/hsv-clubsport-r8-front-1600.webp?v=1af4aa0f 1600w, /images/opt/hsv-clubsport-r8-front-2400.webp?v=8e34eaea 2400w, /images/opt/hsv-clubsport-r8-front-2852.webp?v=fbe96fad 2852w",
+    "share": "/images/opt/hsv-clubsport-r8-front-share.jpg?v=3958fa30"
   },
   "/images/hsv-clubsport-r8-showroom.jpg": {
     "width": 3200,
     "height": 2133,
-    "srcset": "/images/opt/hsv-clubsport-r8-showroom-480.webp 480w, /images/opt/hsv-clubsport-r8-showroom-960.webp 960w, /images/opt/hsv-clubsport-r8-showroom-1600.webp 1600w, /images/opt/hsv-clubsport-r8-showroom-2400.webp 2400w, /images/opt/hsv-clubsport-r8-showroom-3200.webp 3200w",
-    "share": "/images/opt/hsv-clubsport-r8-showroom-share.jpg"
+    "srcset": "/images/opt/hsv-clubsport-r8-showroom-480.webp?v=6ef76fb7 480w, /images/opt/hsv-clubsport-r8-showroom-960.webp?v=0dc67aba 960w, /images/opt/hsv-clubsport-r8-showroom-1600.webp?v=3ac78762 1600w, /images/opt/hsv-clubsport-r8-showroom-2400.webp?v=6f3fa885 2400w, /images/opt/hsv-clubsport-r8-showroom-3200.webp?v=3e7492b0 3200w",
+    "share": "/images/opt/hsv-clubsport-r8-showroom-share.jpg?v=a50880c2"
   },
   "/images/hsv-gts-e3-front.jpg": {
     "width": 3200,
     "height": 2133,
-    "srcset": "/images/opt/hsv-gts-e3-front-480.webp 480w, /images/opt/hsv-gts-e3-front-960.webp 960w, /images/opt/hsv-gts-e3-front-1600.webp 1600w, /images/opt/hsv-gts-e3-front-2400.webp 2400w, /images/opt/hsv-gts-e3-front-3200.webp 3200w",
-    "share": "/images/opt/hsv-gts-e3-front-share.jpg"
+    "srcset": "/images/opt/hsv-gts-e3-front-480.webp?v=c4d93050 480w, /images/opt/hsv-gts-e3-front-960.webp?v=dde937fa 960w, /images/opt/hsv-gts-e3-front-1600.webp?v=b8281c80 1600w, /images/opt/hsv-gts-e3-front-2400.webp?v=200b79eb 2400w, /images/opt/hsv-gts-e3-front-3200.webp?v=8e8b15c4 3200w",
+    "share": "/images/opt/hsv-gts-e3-front-share.jpg?v=ca8ab13e"
   },
   "/images/hsv-gts-e3-lineup.jpg": {
     "width": 2757,
     "height": 1838,
-    "srcset": "/images/opt/hsv-gts-e3-lineup-480.webp 480w, /images/opt/hsv-gts-e3-lineup-960.webp 960w, /images/opt/hsv-gts-e3-lineup-1600.webp 1600w, /images/opt/hsv-gts-e3-lineup-2400.webp 2400w, /images/opt/hsv-gts-e3-lineup-2757.webp 2757w",
-    "share": "/images/opt/hsv-gts-e3-lineup-share.jpg"
+    "srcset": "/images/opt/hsv-gts-e3-lineup-480.webp?v=97b9f1a5 480w, /images/opt/hsv-gts-e3-lineup-960.webp?v=51c016b8 960w, /images/opt/hsv-gts-e3-lineup-1600.webp?v=db7543e2 1600w, /images/opt/hsv-gts-e3-lineup-2400.webp?v=9495f875 2400w, /images/opt/hsv-gts-e3-lineup-2757.webp?v=74382e98 2757w",
+    "share": "/images/opt/hsv-gts-e3-lineup-share.jpg?v=01ea5edd"
   },
   "/images/hsv-gts-e3-nose.jpg": {
     "width": 3200,
     "height": 2133,
-    "srcset": "/images/opt/hsv-gts-e3-nose-480.webp 480w, /images/opt/hsv-gts-e3-nose-960.webp 960w, /images/opt/hsv-gts-e3-nose-1600.webp 1600w, /images/opt/hsv-gts-e3-nose-2400.webp 2400w, /images/opt/hsv-gts-e3-nose-3200.webp 3200w",
-    "share": "/images/opt/hsv-gts-e3-nose-share.jpg"
+    "srcset": "/images/opt/hsv-gts-e3-nose-480.webp?v=e355b23b 480w, /images/opt/hsv-gts-e3-nose-960.webp?v=88b7bfa5 960w, /images/opt/hsv-gts-e3-nose-1600.webp?v=5c58080f 1600w, /images/opt/hsv-gts-e3-nose-2400.webp?v=149960de 2400w, /images/opt/hsv-gts-e3-nose-3200.webp?v=cd2cb85e 3200w",
+    "share": "/images/opt/hsv-gts-e3-nose-share.jpg?v=08c89caa"
   },
   "/images/hsv-gts-genf-front.jpg": {
     "width": 3200,
     "height": 2133,
-    "srcset": "/images/opt/hsv-gts-genf-front-480.webp 480w, /images/opt/hsv-gts-genf-front-960.webp 960w, /images/opt/hsv-gts-genf-front-1600.webp 1600w, /images/opt/hsv-gts-genf-front-2400.webp 2400w, /images/opt/hsv-gts-genf-front-3200.webp 3200w",
-    "share": "/images/opt/hsv-gts-genf-front-share.jpg"
+    "srcset": "/images/opt/hsv-gts-genf-front-480.webp?v=8c0a9b32 480w, /images/opt/hsv-gts-genf-front-960.webp?v=eaa4a7e2 960w, /images/opt/hsv-gts-genf-front-1600.webp?v=c4f87d7b 1600w, /images/opt/hsv-gts-genf-front-2400.webp?v=420f3510 2400w, /images/opt/hsv-gts-genf-front-3200.webp?v=ff87339a 3200w",
+    "share": "/images/opt/hsv-gts-genf-front-share.jpg?v=b43c521f"
   },
   "/images/hsv-gts-genf-rear.jpg": {
     "width": 3200,
     "height": 2134,
-    "srcset": "/images/opt/hsv-gts-genf-rear-480.webp 480w, /images/opt/hsv-gts-genf-rear-960.webp 960w, /images/opt/hsv-gts-genf-rear-1600.webp 1600w, /images/opt/hsv-gts-genf-rear-2400.webp 2400w, /images/opt/hsv-gts-genf-rear-3200.webp 3200w",
-    "share": "/images/opt/hsv-gts-genf-rear-share.jpg"
+    "srcset": "/images/opt/hsv-gts-genf-rear-480.webp?v=3affe9e2 480w, /images/opt/hsv-gts-genf-rear-960.webp?v=5c61edb4 960w, /images/opt/hsv-gts-genf-rear-1600.webp?v=003da2b4 1600w, /images/opt/hsv-gts-genf-rear-2400.webp?v=d7148b31 2400w, /images/opt/hsv-gts-genf-rear-3200.webp?v=51cffaef 3200w",
+    "share": "/images/opt/hsv-gts-genf-rear-share.jpg?v=47f7c426"
   },
   "/images/hsv-gts-genf-showroom.jpg": {
     "width": 1793,
     "height": 1208,
-    "srcset": "/images/opt/hsv-gts-genf-showroom-480.webp 480w, /images/opt/hsv-gts-genf-showroom-960.webp 960w, /images/opt/hsv-gts-genf-showroom-1600.webp 1600w, /images/opt/hsv-gts-genf-showroom-1793.webp 1793w",
-    "share": "/images/opt/hsv-gts-genf-showroom-share.jpg"
+    "srcset": "/images/opt/hsv-gts-genf-showroom-480.webp?v=bf4a04cb 480w, /images/opt/hsv-gts-genf-showroom-960.webp?v=e643fd12 960w, /images/opt/hsv-gts-genf-showroom-1600.webp?v=1392d56c 1600w, /images/opt/hsv-gts-genf-showroom-1793.webp?v=83d92ea9 1793w",
+    "share": "/images/opt/hsv-gts-genf-showroom-share.jpg?v=89889a7f"
   },
   "/images/hsv-maloo-e3-front.jpg": {
     "width": 2227,
     "height": 1484,
-    "srcset": "/images/opt/hsv-maloo-e3-front-480.webp 480w, /images/opt/hsv-maloo-e3-front-960.webp 960w, /images/opt/hsv-maloo-e3-front-1600.webp 1600w, /images/opt/hsv-maloo-e3-front-2227.webp 2227w",
-    "share": "/images/opt/hsv-maloo-e3-front-share.jpg"
+    "srcset": "/images/opt/hsv-maloo-e3-front-480.webp?v=465f98c9 480w, /images/opt/hsv-maloo-e3-front-960.webp?v=25634eb3 960w, /images/opt/hsv-maloo-e3-front-1600.webp?v=a70f31fd 1600w, /images/opt/hsv-maloo-e3-front-2227.webp?v=81e7233d 2227w",
+    "share": "/images/opt/hsv-maloo-e3-front-share.jpg?v=34b8e022"
   },
   "/images/hsv-maloo-green-front.jpg": {
     "width": 1397,
     "height": 931,
-    "srcset": "/images/opt/hsv-maloo-green-front-480.webp 480w, /images/opt/hsv-maloo-green-front-960.webp 960w, /images/opt/hsv-maloo-green-front-1397.webp 1397w",
-    "share": "/images/opt/hsv-maloo-green-front-share.jpg"
+    "srcset": "/images/opt/hsv-maloo-green-front-480.webp?v=9d30b320 480w, /images/opt/hsv-maloo-green-front-960.webp?v=4bac93e5 960w, /images/opt/hsv-maloo-green-front-1397.webp?v=5e6c3e71 1397w",
+    "share": "/images/opt/hsv-maloo-green-front-share.jpg?v=e28d7d16"
   },
   "/images/hsv-maloo-green-side.jpg": {
     "width": 1167,
     "height": 778,
-    "srcset": "/images/opt/hsv-maloo-green-side-480.webp 480w, /images/opt/hsv-maloo-green-side-960.webp 960w, /images/opt/hsv-maloo-green-side-1167.webp 1167w",
-    "share": "/images/opt/hsv-maloo-green-side-share.jpg"
+    "srcset": "/images/opt/hsv-maloo-green-side-480.webp?v=6600547d 480w, /images/opt/hsv-maloo-green-side-960.webp?v=9172feab 960w, /images/opt/hsv-maloo-green-side-1167.webp?v=f30715be 1167w",
+    "share": "/images/opt/hsv-maloo-green-side-share.jpg?v=6d0fa451"
   },
   "/images/hsv-maloo-r8-rear.jpg": {
     "width": 2820,
     "height": 1881,
-    "srcset": "/images/opt/hsv-maloo-r8-rear-480.webp 480w, /images/opt/hsv-maloo-r8-rear-960.webp 960w, /images/opt/hsv-maloo-r8-rear-1600.webp 1600w, /images/opt/hsv-maloo-r8-rear-2400.webp 2400w, /images/opt/hsv-maloo-r8-rear-2820.webp 2820w",
-    "share": "/images/opt/hsv-maloo-r8-rear-share.jpg"
+    "srcset": "/images/opt/hsv-maloo-r8-rear-480.webp?v=2e6defaf 480w, /images/opt/hsv-maloo-r8-rear-960.webp?v=8d9daea0 960w, /images/opt/hsv-maloo-r8-rear-1600.webp?v=77dea9e8 1600w, /images/opt/hsv-maloo-r8-rear-2400.webp?v=7e74d569 2400w, /images/opt/hsv-maloo-r8-rear-2820.webp?v=11a6a7d8 2820w",
+    "share": "/images/opt/hsv-maloo-r8-rear-share.jpg?v=ec7d0f79"
   },
   "/images/hsv-maloo-r8-side.jpg": {
     "width": 3044,
     "height": 2029,
-    "srcset": "/images/opt/hsv-maloo-r8-side-480.webp 480w, /images/opt/hsv-maloo-r8-side-960.webp 960w, /images/opt/hsv-maloo-r8-side-1600.webp 1600w, /images/opt/hsv-maloo-r8-side-2400.webp 2400w, /images/opt/hsv-maloo-r8-side-3044.webp 3044w",
-    "share": "/images/opt/hsv-maloo-r8-side-share.jpg"
+    "srcset": "/images/opt/hsv-maloo-r8-side-480.webp?v=2dd14df3 480w, /images/opt/hsv-maloo-r8-side-960.webp?v=719ab5f0 960w, /images/opt/hsv-maloo-r8-side-1600.webp?v=1d828bca 1600w, /images/opt/hsv-maloo-r8-side-2400.webp?v=5a7bf021 2400w, /images/opt/hsv-maloo-r8-side-3044.webp?v=1e23b763 3044w",
+    "share": "/images/opt/hsv-maloo-r8-side-share.jpg?v=877ca2d8"
   },
   "/images/madi-portrait.jpg": {
     "width": 320,
     "height": 320,
-    "srcset": "/images/opt/madi-portrait-320.webp 320w",
-    "share": "/images/opt/madi-portrait-share.jpg"
+    "srcset": "/images/opt/madi-portrait-320.webp?v=d46c5f82 320w",
+    "share": "/images/opt/madi-portrait-share.jpg?v=01c3cc9e"
   },
   "/images/madi-showroom.jpg": {
     "width": 1600,
     "height": 2000,
-    "srcset": "/images/opt/madi-showroom-480.webp 480w, /images/opt/madi-showroom-960.webp 960w, /images/opt/madi-showroom-1600.webp 1600w",
-    "share": "/images/opt/madi-showroom-share.jpg"
+    "srcset": "/images/opt/madi-showroom-480.webp?v=6e97e4cf 480w, /images/opt/madi-showroom-960.webp?v=e775787d 960w, /images/opt/madi-showroom-1600.webp?v=b80e2d23 1600w",
+    "share": "/images/opt/madi-showroom-share.jpg?v=796760ce"
   },
   "/images/performance-gts-rear.jpg": {
     "width": 1600,
     "height": 1525,
-    "srcset": "/images/opt/performance-gts-rear-480.webp 480w, /images/opt/performance-gts-rear-960.webp 960w, /images/opt/performance-gts-rear-1600.webp 1600w",
-    "share": "/images/opt/performance-gts-rear-share.jpg"
+    "srcset": "/images/opt/performance-gts-rear-480.webp?v=361d8654 480w, /images/opt/performance-gts-rear-960.webp?v=f15c68b2 960w, /images/opt/performance-gts-rear-1600.webp?v=d9b7b93d 1600w",
+    "share": "/images/opt/performance-gts-rear-share.jpg?v=6720e955"
   },
   "/images/sell-roller-door.jpg": {
     "width": 3200,
     "height": 2133,
-    "srcset": "/images/opt/sell-roller-door-480.webp 480w, /images/opt/sell-roller-door-960.webp 960w, /images/opt/sell-roller-door-1600.webp 1600w, /images/opt/sell-roller-door-2400.webp 2400w, /images/opt/sell-roller-door-3200.webp 3200w",
-    "share": "/images/opt/sell-roller-door-share.jpg"
+    "srcset": "/images/opt/sell-roller-door-480.webp?v=4e868518 480w, /images/opt/sell-roller-door-960.webp?v=0e6603f7 960w, /images/opt/sell-roller-door-1600.webp?v=c4dec286 1600w, /images/opt/sell-roller-door-2400.webp?v=0f78307f 2400w, /images/opt/sell-roller-door-3200.webp?v=de3c9c32 3200w",
+    "share": "/images/opt/sell-roller-door-share.jpg?v=1a60e7ef"
   },
   "/images/showroom-collection.jpg": {
     "width": 3200,
     "height": 2134,
-    "srcset": "/images/opt/showroom-collection-480.webp 480w, /images/opt/showroom-collection-960.webp 960w, /images/opt/showroom-collection-1600.webp 1600w, /images/opt/showroom-collection-2400.webp 2400w, /images/opt/showroom-collection-3200.webp 3200w",
-    "share": "/images/opt/showroom-collection-share.jpg"
+    "srcset": "/images/opt/showroom-collection-480.webp?v=97edb24b 480w, /images/opt/showroom-collection-960.webp?v=af63587e 960w, /images/opt/showroom-collection-1600.webp?v=baac5c7b 1600w, /images/opt/showroom-collection-2400.webp?v=f9bdfef0 2400w, /images/opt/showroom-collection-3200.webp?v=01ec3327 3200w",
+    "share": "/images/opt/showroom-collection-share.jpg?v=6dbea4ee"
   },
   "/images/showroom-doorway.jpg": {
     "width": 3200,
     "height": 2133,
-    "srcset": "/images/opt/showroom-doorway-480.webp 480w, /images/opt/showroom-doorway-960.webp 960w, /images/opt/showroom-doorway-1600.webp 1600w, /images/opt/showroom-doorway-2400.webp 2400w, /images/opt/showroom-doorway-3200.webp 3200w",
-    "share": "/images/opt/showroom-doorway-share.jpg"
+    "srcset": "/images/opt/showroom-doorway-480.webp?v=d96ce2e6 480w, /images/opt/showroom-doorway-960.webp?v=05a7b5f6 960w, /images/opt/showroom-doorway-1600.webp?v=d0898246 1600w, /images/opt/showroom-doorway-2400.webp?v=2bb3dcb6 2400w, /images/opt/showroom-doorway-3200.webp?v=d4253c05 3200w",
+    "share": "/images/opt/showroom-doorway-share.jpg?v=a5fd8a5c"
   },
   "/images/showroom-lineup.jpg": {
     "width": 3200,
     "height": 2134,
-    "srcset": "/images/opt/showroom-lineup-480.webp 480w, /images/opt/showroom-lineup-960.webp 960w, /images/opt/showroom-lineup-1600.webp 1600w, /images/opt/showroom-lineup-2400.webp 2400w, /images/opt/showroom-lineup-3200.webp 3200w",
-    "share": "/images/opt/showroom-lineup-share.jpg"
+    "srcset": "/images/opt/showroom-lineup-480.webp?v=f338d923 480w, /images/opt/showroom-lineup-960.webp?v=b42ec18d 960w, /images/opt/showroom-lineup-1600.webp?v=2bfae734 1600w, /images/opt/showroom-lineup-2400.webp?v=4346afc7 2400w, /images/opt/showroom-lineup-3200.webp?v=147d8500 3200w",
+    "share": "/images/opt/showroom-lineup-share.jpg?v=33b9bd3b"
   },
   "/images/showroom-street.jpg": {
     "width": 3200,
     "height": 2133,
-    "srcset": "/images/opt/showroom-street-480.webp 480w, /images/opt/showroom-street-960.webp 960w, /images/opt/showroom-street-1600.webp 1600w, /images/opt/showroom-street-2400.webp 2400w, /images/opt/showroom-street-3200.webp 3200w",
-    "share": "/images/opt/showroom-street-share.jpg"
+    "srcset": "/images/opt/showroom-street-480.webp?v=b4b6df40 480w, /images/opt/showroom-street-960.webp?v=b4598e15 960w, /images/opt/showroom-street-1600.webp?v=6fe36eae 1600w, /images/opt/showroom-street-2400.webp?v=91034785 2400w, /images/opt/showroom-street-3200.webp?v=49a7cca0 3200w",
+    "share": "/images/opt/showroom-street-share.jpg?v=5e8dcd47"
   }
 }

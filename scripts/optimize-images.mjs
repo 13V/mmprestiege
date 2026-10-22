@@ -4,7 +4,8 @@
 // Run `npm run images` after adding or replacing photos (the shoot photos
 // themselves are made by scripts/photos/export.py). Copies that no photo
 // uses any more are deleted.
-import { mkdir, readdir, rm, stat, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { join, parse } from "node:path";
 import sharp from "sharp";
 
@@ -18,6 +19,11 @@ const WIDTHS = [480, 960, 1600, 2400, 3200];
 const WEBP = { quality: 82, effort: 6, smartSubsample: true };
 const SHARPEN = { sigma: 0.5, m1: 0.3, m2: 1.5 };
 const SHARE = { width: 1200, height: 630 };
+
+// Each URL carries a short hash of its file, so browsers fetch a photo again
+// as soon as it changes instead of keeping a copy cached for a day.
+const versioned = async (file) =>
+  `/${file.replace(/^public\//, "")}?v=${createHash("sha1").update(await readFile(file)).digest("hex").slice(0, 8)}`;
 
 async function newer(source, target) {
   try {
@@ -60,8 +66,8 @@ for (const file of files) {
   manifest[`/images/${file}`] = {
     width,
     height,
-    srcset: widths.map((w) => `/images/opt/${name}-${w}.webp ${w}w`).join(", "),
-    share: `/images/opt/${name}-share.jpg`,
+    srcset: (await Promise.all(widths.map(async (w) => `${await versioned(join(OUTPUT, `${name}-${w}.webp`))} ${w}w`))).join(", "),
+    share: await versioned(share),
   };
 }
 await writeFile("src/image-variants.json", `${JSON.stringify(manifest, null, 2)}\n`);
