@@ -4,7 +4,8 @@
 #   1. stabilise and upscale each clip (stabilise_upscale.py, Real-ESRGAN),
 #   2. edit them into seamless loops with slow motion and eased dissolves
 #      (edit.sh),
-#   3. encode AV1, HEVC and H.264 at 1920 and 1280 px (encode.sh).
+#   3. grade them like the hero photos and encode AV1, HEVC and H.264 at
+#      1920 and 1280 px (encode.sh).
 # Needs ffmpeg with libx264, libx265 and libsvtav1, and Python 3 with
 # opencv-python-headless, numpy, scipy, onnx and onnxruntime (set PYTHON to
 # use a virtual environment). Upscaling runs on the CPU, about 3 s a frame.

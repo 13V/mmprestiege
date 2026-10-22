@@ -64,16 +64,17 @@ The dealership supplied five walkthrough clips in October 2026, filmed on a gimb
 2. **Upscaling**. Each frame is upscaled 4× with the open-source Real-ESRGAN general model (an even blend of its standard and denoising weights, converted to run in ONNX Runtime by `esrgan_onnx.py`), then resized to 1,920 px wide. The model weights come from the Real-ESRGAN releases on GitHub.
 3. **Slow motion** (`edit.sh`). The clips run at 0.8× speed. Motion-interpolated in-between frames keep them at a true 30 fps.
 4. **Loops**. Eased dissolves join the clips into loops with no visible jump.
-5. **Encoding** (`encode.sh`). Each film is saved at 1,920 px for tablets and desktops and 1,280 px for phones, as AV1, as HEVC for Safari, and as H.264 for older browsers, with BT.709 colour like the source clips. The sound is dropped.
+5. **Grading** (`scripts/photos/film_lut.py`). Each film gets the hero photos' grade, so it matches the photo it fades in over. The white balance and levels are measured on frames from the film itself, and the grade is applied as a 3D colour LUT.
+6. **Encoding** (`encode.sh`). Each film is saved at 1,920 px for tablets and desktops and 1,280 px for phones, as AV1, as HEVC for Safari, and as H.264 for older browsers, with BT.709 colour like the source clips. The sound is dropped.
 
-The home film has the home hero photo's colour grade built into the file, so the browser doesn't have to filter every frame; it matches the CSS grade on the photo underneath. Clip 5 isn't used: it pans back the way clip 3 came, and the camera operator shows in the Clubsport's paint. Clip 1 stops at 18.3 s, before the camera nears the Clubsport's bonnet.
+Clip 5 isn't used: it pans back the way clip 3 came, and the camera operator shows in the Clubsport's paint. Clip 1 stops at 18.3 s, before the camera nears the Clubsport's bonnet.
 
 | Film | Made from | Length | Used for |
 | --- | --- | --- | --- |
 | `showroom-walk-*` | Clip 1. The end dissolves into the start, and the loop opens as the camera enters the showroom | 21.3 s | Home hero |
 | `showroom-pans-*` | Clips 2 and 3, dissolving into each other and back round to the start | 7.0 s | Stock page hero (tablets and desktops) |
 
-Each film is 1.2 to 5.3 MB, depending on size and codec: a desktop downloads about 4.5 MB for the home film and 1.9 MB for the stock film, and a phone about 2.9 MB for the home film. They load only after the rest of the page has loaded, and a button on the hero pauses them. Visitors who ask for reduced motion or data saving keep the still photo instead.
+Each film is 1.3 to 5.8 MB, depending on size and codec: a desktop downloads about 5.3 MB for the home film and 2.2 MB for the stock film, and a phone about 3.3 MB for the home film. They load only after the rest of the page has loaded, and a button on the hero pauses them. Visitors who ask for reduced motion or data saving keep the still photo instead.
 
 ## Notes
 

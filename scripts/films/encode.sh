@@ -7,21 +7,21 @@
 # like the source clips, so every browser decodes it the same way.
 # Usage: encode.sh <work dir with walk-loop.mkv and pans-loop.mkv> <out dir>
 #        [walk] [pans]   (both by default)
+# Set PYTHON to use a virtual environment with numpy and opencv.
 set -e
 work=$1; out=$2; shift 2
+here=$(cd "$(dirname "$0")" && pwd)
+py=${PYTHON:-python3}
 mkdir -p "$out"
-# The home film carries the home hero's CSS grade, brightness(0.84)
-# contrast(1.12) saturate(1.1) (src/mm-prestige.css), in the file, so the
-# browser doesn't have to filter every frame. Brightness and contrast make one
-# straight-line curve (rounded), then saturate is a colour matrix.
-curve="clip(0.9408*val-14.8,0,255)"
-home_grade="format=gbrp,lutrgb=r='$curve':g='$curve':b='$curve',colorchannelmixer=rr=1.0787:rg=-0.0715:rb=-0.0072:gr=-0.0213:gg=1.0285:gb=-0.0072:br=-0.0213:bg=-0.0715:bb=1.1028"
+# Each film gets the hero photos' colour grade (scripts/photos/grade.py), so
+# it matches the photo it fades in over: a 3D LUT measured on the film's own
+# frames, applied in RGB before the conversion to BT.709.
 tags="-colorspace bt709 -color_primaries bt709 -color_trc bt709 -color_range tv"
 to709() { echo "scale=$1:-2:flags=lanczos+accurate_rnd+full_chroma_int:out_color_matrix=bt709:out_range=tv,format=yuv420p"; }
 for film in ${*:-walk pans}; do
   src="$work/$film-loop.mkv"
-  grade=null
-  [ "$film" = walk ] && grade=$home_grade
+  "$py" -I "$here/../photos/film_lut.py" "$src" "$work/$film-grade.cube" hero
+  grade="format=gbrp,lut3d=file='$work/$film-grade.cube':interp=tetrahedral"
   for width in 1920 1280; do
     if [ "$width" = 1920 ]; then av1=38; hevc=28; else av1=36; hevc=27; fi
     vf="$grade,$(to709 $width)"
