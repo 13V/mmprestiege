@@ -143,6 +143,12 @@
     "srcset": "/images/opt/showroom-lineup-480.webp?v=f338d923 480w, /images/opt/showroom-lineup-960.webp?v=b42ec18d 960w, /images/opt/showroom-lineup-1600.webp?v=2bfae734 1600w, /images/opt/showroom-lineup-2400.webp?v=4346afc7 2400w, /images/opt/showroom-lineup-3200.webp?v=147d8500 3200w",
     "share": "/images/opt/showroom-lineup-share.jpg?v=33b9bd3b"
   },
+  "/images/showroom-mobile.jpg": {
+    "width": 1080,
+    "height": 1920,
+    "srcset": "/images/opt/showroom-mobile-480.webp?v=ba12461f 480w, /images/opt/showroom-mobile-960.webp?v=f08c7441 960w, /images/opt/showroom-mobile-1080.webp?v=825b1b18 1080w",
+    "share": "/images/opt/showroom-mobile-share.jpg?v=153d0022"
+  },
   "/images/showroom-street.jpg": {
     "width": 3200,
     "height": 2133,

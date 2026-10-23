@@ -708,13 +708,51 @@ try {
     await page.waitForTimeout(1200);
     await expect(page.locator('video.hero-film')).toHaveCount(0);
   });
-  await check('Phones get the 1280 px home film', async () => {
+  const filmSources = film => film.locator('source').evaluateAll(list => list.map(source => source.getAttribute('src').replace(/\?v=\d+$/, '')));
+  await check('Phones get the upright home film over its first frame, filling the hero', async () => {
     await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(baseURL);
+    // The photo swaps to the phone film's first frame and fills the hero.
+    const photo = page.locator('.showroom-hero img.reference-hero-image');
+    await expect.poll(() => photo.evaluate(image => image.currentSrc)).toContain('/images/opt/showroom-mobile-');
+    // Layout sizes, so the photo's settle-in zoom doesn't count.
+    const fit = await photo.evaluate(image => ({ top: image.offsetTop, height: image.offsetHeight, hero: image.closest('.showroom-hero').clientHeight }));
+    expect(fit.top).toBe(0);
+    expect(Math.abs(fit.height - fit.hero)).toBeLessThanOrEqual(1);
+    const film = page.locator('.reference-hero video.hero-film');
+    await expect(film).toHaveCount(1, { timeout: 10000 });
+    // Standard screens get the 720 px cut.
+    const sources = await filmSources(film);
+    expect(sources).toEqual(['/video/showroom-mobile-720.av1.mp4', '/video/showroom-mobile-720.hevc.mp4', '/video/showroom-mobile-720.mp4']);
+    for (const src of sources) {
+      const response = await page.request.head(`${baseURL}${src}`);
+      expect(response.ok(), src).toBe(true);
+    }
+  });
+  await check('Sharp phone screens get the 1080 px upright film', async () => {
+    const phone = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true });
+    try {
+      const phonePage = await phone.newPage();
+      await phonePage.goto(baseURL);
+      const film = phonePage.locator('.reference-hero video.hero-film');
+      await expect(film).toHaveCount(1, { timeout: 10000 });
+      const sources = await filmSources(film);
+      expect(sources).toEqual(['/video/showroom-mobile-1080.av1.mp4', '/video/showroom-mobile-1080.hevc.mp4', '/video/showroom-mobile-720.mp4']);
+      for (const src of sources) {
+        const response = await phonePage.request.head(`${baseURL}${src}`);
+        expect(response.ok(), src).toBe(true);
+      }
+    } finally {
+      await phone.close();
+    }
+  });
+  await check('Small tablets keep the walk-in film at 1280 px over the wide photo', async () => {
+    await page.setViewportSize({ width: 680, height: 900 });
     await page.goto(baseURL);
     const film = page.locator('.reference-hero video.hero-film');
     await expect(film).toHaveCount(1, { timeout: 10000 });
-    const sources = await film.locator('source').evaluateAll(list => list.map(source => source.getAttribute('src')));
-    expect(sources.map(src => src.replace(/\?v=\d+$/, ''))).toEqual(['/video/showroom-walk-1280.av1.mp4', '/video/showroom-walk-1280.hevc.mp4', '/video/showroom-walk-1280.mp4']);
+    expect(await filmSources(film)).toEqual(['/video/showroom-walk-1280.av1.mp4', '/video/showroom-walk-1280.hevc.mp4', '/video/showroom-walk-1280.mp4']);
+    await expect.poll(() => page.locator('.showroom-hero img.reference-hero-image').evaluate(image => image.currentSrc)).toContain('/images/opt/showroom-lineup-');
   });
   await check('Stock follows the home layout with four generous columns on a wide screen', async () => {
     await page.setViewportSize({ width: 2493, height: 1265 });

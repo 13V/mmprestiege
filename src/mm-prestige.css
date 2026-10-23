@@ -543,6 +543,13 @@ h4) {
   }
   .showroom-hero h1,
 .showroom-hero .hero-footnote p { text-shadow: none; }
+  /* The home hero's film fills the hero on phones: no fade at its edges,
+     and the title gets a soft shadow over the moving picture. */
+  .reference-home .showroom-hero .reference-hero-image {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .reference-home .showroom-hero h1 { text-shadow: 0 2px 20px #000d; }
 }
 
 /* B17 Specialties strip: the single row lines up with the content edges */

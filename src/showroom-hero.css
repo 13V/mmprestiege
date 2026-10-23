@@ -90,6 +90,25 @@
   .showroom-hero::after {
     background: linear-gradient(#1119, #1110 14%, #1110 58%, #1115);
   }
+  /* Phones: the home hero's upright film (or its still) fills the hero
+     behind the title; the shade keeps the header, title and search
+     legible. */
+  .reference-home .showroom-hero .reference-hero-image {
+    top: 0;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+  .reference-home .showroom-hero::after {
+    background: linear-gradient(
+      #111111c2,
+      #11111100 16%,
+      #11111100 33%,
+      #111111a8 48%,
+      #111111e0 66%,
+      #111111f0
+    );
+  }
   .showroom-hero .reference-hero-content {
     top: 335px;
     bottom: auto;

@@ -650,16 +650,26 @@ function HomeSearch() {
 const SPECIALTIES = ["HSV", "Holden", "Commodore", "Clubsport", "Maloo", "Prestige"];
 // Showroom films (public/video, made by scripts/films): AV1 for Chrome, Edge
 // and Firefox, HEVC for Safari and H.264 for anything else; 1920 px on
-// larger screens and 1280 px on phones.
-// Bump after re-encoding the films (scripts/films/encode.sh), so browsers
-// fetch the new files instead of a copy cached for up to a day.
+// larger screens and 1280 px up to 700 px wide. A hero can also have an
+// upright film for phones, where its layout is portrait (up to 600 px):
+// 1080 px wide on sharp screens, 720 px otherwise.
+// Bump after re-encoding the films (scripts/films/encode.sh and mobile.sh),
+// so browsers fetch the new files instead of a copy cached for up to a day.
 const FILM_VERSION = 2;
-function filmSources(name) {
-  const size = window.matchMedia("(max-width: 700px)").matches ? 1280 : 1920;
+const PHONE_HERO = "(max-width: 600px)";
+function filmSources(name, phone) {
+  let film = name,
+    size = window.matchMedia("(max-width: 700px)").matches ? 1280 : 1920,
+    fallback = 1280;
+  if (phone && window.matchMedia(PHONE_HERO).matches) {
+    film = phone;
+    size = window.devicePixelRatio >= 2 ? 1080 : 720;
+    fallback = 720;
+  }
   return [
-    [`/video/showroom-${name}-${size}.av1.mp4`, 'video/mp4; codecs="av01.0.08M.08"'],
-    [`/video/showroom-${name}-${size}.hevc.mp4`, 'video/mp4; codecs="hvc1.1.6.L120.90"'],
-    [`/video/showroom-${name}-1280.mp4`, 'video/mp4; codecs="avc1.640028"'],
+    [`/video/showroom-${film}-${size}.av1.mp4`, 'video/mp4; codecs="av01.0.08M.08"'],
+    [`/video/showroom-${film}-${size}.hevc.mp4`, 'video/mp4; codecs="hvc1.1.6.L120.90"'],
+    [`/video/showroom-${film}-${fallback}.mp4`, 'video/mp4; codecs="avc1.640028"'],
   ].map(([src, type]) => [`${src}?v=${FILM_VERSION}`, type]);
 }
 function filmPausedByVisitor() {
@@ -674,7 +684,7 @@ function filmPausedByVisitor() {
 // slow connection, blocked autoplay or a paused film leaves the photo.
 // Visitors who prefer reduced motion or save data keep the photo. The
 // button pauses the film and the specialties marquee, and is remembered.
-function HeroFilm({ name, minWidth = 0 }) {
+function HeroFilm({ name, phone, minWidth = 0 }) {
   const video = useRef(null);
   const [ready, setReady] = useState(false),
     [playing, setPlaying] = useState(false),
@@ -750,7 +760,7 @@ function HeroFilm({ name, minWidth = 0 }) {
         onPlaying={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
       >
-        {filmSources(name).map(([src, type]) => (
+        {filmSources(name, phone).map(([src, type]) => (
           <source key={src} src={src} type={type} />
         ))}
       </video>
@@ -784,13 +794,22 @@ function Home({ saved, toggleSaved, onEnquire }) {
   return (
     <main className="dealer-home reference-home">
       <section className="reference-hero showroom-hero">
-        <img
-          className="reference-hero-image"
-          {...responsive("/images/showroom-lineup.jpg", SIZES.hero)}
-          alt="HSVs lined up under the MM Prestige Motors sign in the Wingfield showroom"
-          fetchPriority="high"
-        />
-        <HeroFilm name="walk" />
+        {/* Phones get an upright still: the phone film's first frame, so
+            the film fades in over it without a jump. */}
+        <picture>
+          <source
+            media={PHONE_HERO}
+            srcSet={responsive("/images/showroom-mobile.jpg").srcSet}
+            sizes={SIZES.hero}
+          />
+          <img
+            className="reference-hero-image"
+            {...responsive("/images/showroom-lineup.jpg", SIZES.hero)}
+            alt="HSVs lined up under the MM Prestige Motors sign in the Wingfield showroom"
+            fetchPriority="high"
+          />
+        </picture>
+        <HeroFilm name="walk" phone="mobile" />
         <div className="reference-hero-content">
           <h1 className="reveal-words">
             <RevealWords text="HSV & Holden specialists" />
