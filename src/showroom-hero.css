@@ -134,4 +134,66 @@
   .showroom-hero .hero-map {
     bottom: 25px;
   }
+  /* Phones: the home hero stacks its title, search and location from the
+     bottom up in the page flow, so they can't run into each other however
+     big the phone draws the type. The film and its shade stay behind. */
+  .reference-home .showroom-hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: auto;
+    min-height: 730px;
+    aspect-ratio: auto;
+    padding: 100px 5% 18px;
+  }
+  .reference-home .showroom-hero .reference-hero-content {
+    position: relative;
+    inset: auto;
+  }
+  /* The tagline only repeats the title, so phones leave it out. */
+  .reference-home .showroom-hero .hero-footnote {
+    display: none;
+  }
+  /* The map card becomes one quiet line under the search: pin, address,
+     then the link. */
+  .reference-home .showroom-hero .hero-map {
+    position: relative;
+    inset: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: auto;
+    min-height: 44px;
+    margin-top: 10px;
+    padding: 4px 2px;
+    background: none;
+    color: #fff;
+    border-radius: 0;
+  }
+  /* No card, so no card lift or shadow on hover. */
+  .reference-home .showroom-hero .hero-map:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  .reference-home .showroom-hero .hero-map > span {
+    display: contents;
+  }
+  .reference-home .showroom-hero .hero-map > span > svg {
+    flex: none;
+    width: 20px;
+  }
+  .reference-home .showroom-hero .hero-map p {
+    flex: 1;
+    order: 1;
+    margin: 0;
+    color: #d4d4d8;
+    font-size: var(--fs-caption);
+    line-height: 1.45;
+  }
+  .reference-home .showroom-hero .hero-map b {
+    flex: none;
+    order: 2;
+    font-size: var(--fs-caption);
+    text-underline-offset: 3px;
+  }
 }

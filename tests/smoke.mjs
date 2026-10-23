@@ -791,6 +791,36 @@ try {
       await phone.close();
     }
   });
+  await check('Phones stack the home title, search and map link without overlap', async () => {
+    for (const width of [430, 320]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(baseURL);
+      const hero = page.locator('.reference-home .showroom-hero');
+      await expect(hero.locator('.hero-footnote')).toBeHidden();
+      const map = hero.locator('a.hero-map');
+      await expect(map).toBeVisible();
+      await expect(map).toHaveAttribute('href', /google\.com\/maps/);
+      // Layout positions, so the arrival animations don't count.
+      const layout = await hero.evaluate(section => {
+        const box = element => {
+          let top = 0;
+          for (let node = element; node && node !== section; node = node.offsetParent) top += node.offsetTop;
+          return { top, bottom: top + element.offsetHeight };
+        };
+        return {
+          header: document.querySelector('.header').getBoundingClientRect().bottom - section.getBoundingClientRect().top,
+          title: box(section.querySelector('h1')),
+          search: box(section.querySelector('.hero-search')),
+          map: box(section.querySelector('.hero-map')),
+          height: section.clientHeight,
+        };
+      });
+      expect(layout.title.top, `${width}px`).toBeGreaterThan(layout.header);
+      expect(layout.title.bottom, `${width}px`).toBeLessThanOrEqual(layout.search.top);
+      expect(layout.search.bottom, `${width}px`).toBeLessThanOrEqual(layout.map.top);
+      expect(layout.map.bottom, `${width}px`).toBeLessThanOrEqual(layout.height);
+    }
+  });
   await check('Small tablets keep the walk-in film at 1280 px over the wide photo', async () => {
     await page.setViewportSize({ width: 680, height: 900 });
     await page.goto(baseURL);
