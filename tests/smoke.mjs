@@ -240,17 +240,62 @@ try {
     await expect(page.locator('.offer-performance img')).toHaveAttribute('alt', /Ferrari 360.*Maloo.*GTS/);
     await expect(page.locator('.featured .stock-tag').first()).toHaveText('THE ICON');
   });
-  await check('Meet Madi is gone, and About us leads to the contact section', async () => {
-    await expect(page.locator('#about, .meet-madi')).toHaveCount(0);
+  await check('Meet Madi is gone, and About us leads to the showroom tour', async () => {
+    await expect(page.locator('.meet-madi')).toHaveCount(0);
     await expect(page.locator('body')).not.toContainText('Meet Madi');
-    await expect(page.locator('.footer').getByRole('link', { name: 'Our story', exact: true })).toHaveAttribute('href', '/#visit');
+    await expect(page.locator('.footer').getByRole('link', { name: 'Our story', exact: true })).toHaveAttribute('href', '/#about');
     await page.locator('.nav').getByRole('link', { name: 'About us', exact: true }).click();
-    await expect(page).toHaveURL(/\/#visit$/);
-    await expect(page.locator('#visit').getByRole('heading', { level: 2 })).toHaveText(/Start your journey with us today/);
+    await expect(page).toHaveURL(/\/#about$/);
+    await expect(page.locator('#about').getByRole('heading', { level: 2 })).toHaveText(/Take a look around/i);
     await expect.poll(async () => {
-      const { y } = await page.locator('#visit').boundingBox();
+      const { y } = await page.locator('#about').boundingBox();
       return y >= 0 && y < 200;
     }).toBe(true);
+  });
+  await check('The showroom tour walks from the street to the line-up, with a gallery and a viewing enquiry', async () => {
+    await page.goto(baseURL);
+    const tour = page.locator('#about');
+    // It sits where Meet Madi was: after the sell banner, before the reviews.
+    expect(await page.evaluate(() => {
+      const order = [...document.querySelectorAll('.reference-sell, #about, #reviews')].map(el => el.id || 'sell');
+      return order.join(' ');
+    })).toBe('sell about reviews');
+    const photos = tour.locator('.tour-strip img');
+    expect(await photos.evaluateAll(list => list.map(img => img.getAttribute('src')))).toEqual(['/images/tour-street.jpg', '/images/tour-door.jpg', '/images/tour-floor.jpg', '/images/tour-yellow.jpg', '/images/tour-lineup.jpg']);
+    expect(await photos.evaluateAll(list => list.every(img => img.alt.length > 30 && img.srcset.includes('.webp') && img.width && img.height))).toBe(true);
+    await expect(tour.locator('.tour-caption b')).toHaveText(['Out front', 'Through the door', 'Inside', 'Up close', 'The line-up']);
+    await expect(tour.locator('.tour-count')).toHaveText('01 / 05');
+    await expect(tour.getByRole('button', { name: 'Previous showroom photo' })).toHaveAttribute('aria-disabled', 'true');
+    const next = tour.getByRole('button', { name: 'Next showroom photo' });
+    await next.click();
+    await expect(tour.locator('.tour-count')).toHaveText('02 / 05');
+    for (let i = 0; i < 6 && (await next.getAttribute('aria-disabled')) !== 'true'; i++) {
+      await next.click();
+      await page.waitForTimeout(700);
+    }
+    await expect(next).toHaveAttribute('aria-disabled', 'true');
+    await expect(tour.locator('.tour-count')).toHaveText('05 / 05');
+    // The whole line-up shows at the end of the strip.
+    const strip = await tour.locator('.tour-strip').boundingBox();
+    const last = await tour.locator('.tour-photo').last().boundingBox();
+    expect(last.x + last.width).toBeLessThanOrEqual(strip.x + strip.width + 1);
+    // Each photo opens large; the arrow keys step through and Escape closes.
+    await tour.locator('.tour-photo').nth(1).click();
+    const gallery = page.getByRole('dialog', { name: 'Showroom photos' });
+    await expect(gallery).toBeVisible();
+    await expect(gallery.locator('img')).toHaveAttribute('src', '/images/tour-door.jpg');
+    await page.keyboard.press('ArrowRight');
+    await expect(gallery.locator('img')).toHaveAttribute('src', '/images/tour-floor.jpg');
+    await expect(gallery.locator('p')).toHaveText('Inside: The showroom floor');
+    await page.keyboard.press('Escape');
+    await expect(gallery).toHaveCount(0);
+    await expect(tour.getByRole('link', { name: 'Browse our stock' })).toHaveAttribute('href', '/stock');
+    await tour.getByRole('button', { name: /Book a viewing/ }).click();
+    const enquiry = page.getByRole('dialog', { name: 'Enquire with MM Prestige Motors' });
+    await expect(enquiry).toBeVisible();
+    await expect(enquiry.locator('textarea').first()).toHaveValue(/see the cars.*viewing at the Wingfield showroom/);
+    await page.keyboard.press('Escape');
+    await expect(enquiry).toHaveCount(0);
   });
   await check('The contact section shows a satellite Google map of the showroom that nothing covers', async () => {
     const map = page.locator('#visit .contact-map iframe');
@@ -590,12 +635,12 @@ try {
     await expect(dialog.getByLabel('Make and model')).toHaveValue('HSV Maloo or similar');
     await page.keyboard.press('Escape');
   });
-  await check('Footer story link scrolls from stock to the contact section', async () => {
+  await check('Footer story link scrolls from stock to the showroom tour', async () => {
     await goStock();
     await page.locator('.footer').getByRole('link', { name: 'Our story', exact: true }).click();
-    await expect(page).toHaveURL(/\/#visit$/);
+    await expect(page).toHaveURL(/\/#about$/);
     await expect.poll(async () => {
-      const { y } = await page.locator('#visit').boundingBox();
+      const { y } = await page.locator('#about').boundingBox();
       return y >= 0 && y < 200;
     }).toBe(true);
   });

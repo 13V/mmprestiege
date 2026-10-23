@@ -13,6 +13,12 @@ export function responsive(src, sizes) {
   return entry ? { src, srcSet: entry.srcset, sizes } : { src };
 }
 
+// A site photo's full size, so layouts can keep its shape before it loads.
+export function photoSize(src) {
+  const entry = siteVariants[src];
+  return entry ? { width: entry.width, height: entry.height } : {};
+}
+
 // The smallest resized copy of a photo, used as an instant placeholder.
 export function smallest(src) {
   const first = variants[src]?.srcset.split(", ")[0];

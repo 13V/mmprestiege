@@ -56,7 +56,7 @@ import {
 import { money, number, business } from "./data";
 import { sampleStock, vehicles } from "./stock";
 import ThemedSelect from "./ThemedSelect";
-import { prefetch, responsive, smallest } from "./images";
+import { photoSize, prefetch, responsive, smallest } from "./images";
 import "./styles.css";
 import "./dealer.css";
 import "./foundation.css";
@@ -170,6 +170,8 @@ const REVEAL_TARGETS = [
   ".card-grid > .car-card",
   ".carousel-controls",
   ".reference-sell > div",
+  ".tour-copy",
+  ".tour-strip > li",
   ".review-grid > .review",
   ".contact-copy",
   ".contact-location",
@@ -192,8 +194,9 @@ function useReveal(pathname) {
     const frame = requestAnimationFrame(() => {
       const shell = document.querySelector(".site-shell");
       if (!shell) return;
-      // Cards are revealed with their grid: on phones the grid scrolls
-      // sideways, so cards off to the side never cross the viewport.
+      // Cards are revealed with their grid (and tour photos with their
+      // strip): these scroll sideways, so items off to the side never cross
+      // the viewport.
       const groups = new Map();
       observer = new IntersectionObserver(
         (entries) =>
@@ -215,7 +218,7 @@ function useReveal(pathname) {
           el.style.setProperty("--reveal-delay", `${Math.min(index, 5) * 70}ms`);
           el.classList.add("reveal");
         }
-        const target = el.closest(".card-grid") || el;
+        const target = el.closest(".card-grid, .tour-strip") || el;
         if (!groups.has(target)) {
           groups.set(target, []);
           observer.observe(target);
@@ -354,7 +357,7 @@ function Header({ onEnquire, savedCount = 0 }) {
             >
               Home
             </Link>
-            <Link to="/#visit" onClick={goToSection("visit")}>
+            <Link to="/#about" onClick={goToSection("about")}>
               About us
             </Link>
             <Link
@@ -783,6 +786,251 @@ function HeroFilm({ name, phone, minWidth = 0 }) {
     </>
   );
 }
+// About us: a tour of the dealership from the street to the line-up, as a
+// filmstrip that keeps each photo's own shape. The arrows (or a swipe) move
+// along the strip, and each photo opens large. Photos from the dealership's
+// phone, June 2026 (see docs/photo-sources.md).
+const TOUR = [
+  {
+    src: "/images/tour-street.jpg",
+    stop: "Out front",
+    caption: "Grand Junction Road, Wingfield",
+    alt: "HSVs lined up outside the MM Prestige Motors showroom under its sign, with the roller door open",
+  },
+  {
+    src: "/images/tour-door.jpg",
+    stop: "Through the door",
+    caption: "A first look through the glass",
+    alt: "The showroom's glass front door under the MM Prestige Motors sign, with HSVs inside",
+  },
+  {
+    src: "/images/tour-floor.jpg",
+    stop: "Inside",
+    caption: "The showroom floor",
+    alt: "Silver, red, black and yellow HSVs on the showroom floor under the MM Prestige Motors wall sign",
+  },
+  {
+    src: "/images/tour-yellow.jpg",
+    stop: "Up close",
+    caption: "Come and see them in person",
+    alt: "A yellow HSV GTS at the front of the showroom, with red and black HSVs behind it",
+  },
+  {
+    src: "/images/tour-lineup.jpg",
+    stop: "The line-up",
+    caption: "Ready to roll",
+    alt: "Four HSVs in silver, red, black and yellow with balloons on their bonnets in the showroom",
+  },
+];
+// The strip's photo height at each layout (see .showroom-tour in
+// mm-prestige.css), so each photo is fetched at the size it's drawn.
+const TOUR_HEIGHTS = [
+  ["(max-width: 700px)", 240],
+  ["(max-width: 1100px)", 360],
+  ["", 520],
+];
+const twoDigits = (n) => String(n).padStart(2, "0");
+function ShowroomTour({ onEnquire }) {
+  const strip = useRef(null);
+  const frame = useRef(0);
+  const [at, setAt] = useState({ index: 0, start: true, end: false, progress: 0 }),
+    [zoom, setZoom] = useState(null),
+    [near, setNear] = useState(false);
+  // Photos off to the side of the strip would only load once swiped to, so
+  // they all load as the tour comes near: swiping never shows a gap.
+  useEffect(() => {
+    const el = strip.current;
+    if (!el || near) return;
+    if (!("IntersectionObserver" in window)) return setNear(true);
+    const observer = new IntersectionObserver(
+      ([entry]) => entry.isIntersecting && setNear(true),
+      { rootMargin: "400px 0px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [near]);
+  const sync = () => {
+    cancelAnimationFrame(frame.current);
+    frame.current = requestAnimationFrame(() => {
+      const el = strip.current;
+      if (!el) return;
+      const items = [...el.children];
+      const max = el.scrollWidth - el.clientWidth;
+      const left = el.scrollLeft;
+      const index = items.reduce(
+        (best, item, i) =>
+          Math.abs(item.offsetLeft - items[0].offsetLeft - left) <
+          Math.abs(items[best].offsetLeft - items[0].offsetLeft - left)
+            ? i
+            : best,
+        0,
+      );
+      setAt({
+        index: left >= max - 2 ? items.length - 1 : index,
+        start: left <= 2,
+        end: left >= max - 2,
+        progress: max > 0 ? left / max : 1,
+      });
+    });
+  };
+  useEffect(() => {
+    sync();
+    window.addEventListener("resize", sync);
+    return () => {
+      window.removeEventListener("resize", sync);
+      cancelAnimationFrame(frame.current);
+    };
+  }, []);
+  const go = (step) => {
+    const el = strip.current;
+    if (!el) return;
+    const items = [...el.children];
+    const i = Math.max(0, Math.min(items.length - 1, at.index + step));
+    // The last photo lines up with the end of the strip (it snaps by its far
+    // edge), so the whole of it shows even when it's wider than the screen.
+    const left =
+      i === items.length - 1
+        ? el.scrollWidth - el.clientWidth
+        : items[i].offsetLeft - items[0].offsetLeft;
+    el.scrollTo({
+      left,
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    });
+  };
+  const show = (n) => setZoom((i) => (i + n + TOUR.length) % TOUR.length);
+  useEffect(() => {
+    if (zoom === null) return;
+    const fn = (e) => {
+      if (e.key === "ArrowLeft") show(-1);
+      if (e.key === "ArrowRight") show(1);
+    };
+    window.addEventListener("keydown", fn);
+    return () => window.removeEventListener("keydown", fn);
+  }, [zoom]);
+  return (
+    <section className="showroom-tour" id="about" aria-labelledby="tour-heading">
+      <div className="tour-copy">
+        <p className="eyebrow tour-eyebrow">About us</p>
+        <h2 id="tour-heading" className="reveal-words">
+          <RevealWords text={"Take a look\naround"} />
+        </h2>
+        <p>
+          From the kerb on Grand Junction Road to the showroom floor, this is
+          where our HSVs and Holdens wait for their next owners.
+        </p>
+        <p className="tour-note">
+          Viewings are by arrangement, so call ahead and we'll have the car
+          you're after ready to see.
+        </p>
+        <div className="tour-actions">
+          <button
+            className="button primary"
+            onClick={() => onEnquire({ purpose: "viewing" })}
+          >
+            Book a viewing <ArrowRight size={15} />
+          </button>
+          <Link className="button" to="/stock" viewTransition>
+            Browse our stock
+          </Link>
+        </div>
+      </div>
+      <div className="tour-gallery">
+        <ol
+          className="tour-strip"
+          ref={strip}
+          onScroll={sync}
+          aria-label="The showroom, from the street to the line-up"
+        >
+          {TOUR.map((stop, i) => {
+            const size = photoSize(stop.src);
+            const ratio = size.width / size.height || 1.5;
+            const sizes = TOUR_HEIGHTS.map(
+              ([media, h]) => `${media} ${Math.round(ratio * h)}px`.trim(),
+            ).join(", ");
+            return (
+              <li key={stop.src} className="tour-stop">
+                <button
+                  type="button"
+                  className="tour-photo"
+                  onClick={() => setZoom(i)}
+                >
+                  <img
+                    {...responsive(stop.src, sizes)}
+                    {...size}
+                    alt={stop.alt}
+                    loading={near ? "eager" : "lazy"}
+                    decoding="async"
+                    draggable={false}
+                  />
+                  <span className="tour-expand" aria-hidden="true">
+                    <Expand size={15} />
+                  </span>
+                </button>
+                <p className="tour-caption">
+                  <span className="tour-number">{twoDigits(i + 1)}</span>
+                  <b>{stop.stop}</b>
+                  <span>{stop.caption}</span>
+                </p>
+              </li>
+            );
+          })}
+        </ol>
+        <div className="tour-footer">
+          <div className="carousel-controls">
+            <button
+              aria-label="Previous showroom photo"
+              aria-disabled={at.start}
+              onClick={() => go(-1)}
+            >
+              <ArrowLeft size={16} />
+            </button>
+            <button
+              aria-label="Next showroom photo"
+              aria-disabled={at.end}
+              onClick={() => go(1)}
+            >
+              <ArrowRight size={16} />
+            </button>
+          </div>
+          <div className="tour-progress" aria-hidden="true">
+            <span style={{ "--progress": at.progress }} />
+          </div>
+          <span className="tour-count">
+            {twoDigits(at.index + 1)} / {twoDigits(TOUR.length)}
+          </span>
+        </div>
+      </div>
+      {zoom !== null && (
+        <Dialog
+          title="Showroom photos"
+          onClose={() => setZoom(null)}
+          className="lightbox"
+        >
+          <img
+            {...responsive(TOUR[zoom].src, SIZES.hero)}
+            alt={TOUR[zoom].alt}
+          />
+          <div className="lightbox-controls">
+            <button aria-label="Previous expanded photo" onClick={() => show(-1)}>
+              <ChevronLeft />
+            </button>
+            <span>
+              {zoom + 1} / {TOUR.length}
+            </span>
+            <button aria-label="Next expanded photo" onClick={() => show(1)}>
+              <ChevronRight />
+            </button>
+          </div>
+          <p>
+            {TOUR[zoom].stop}: {TOUR[zoom].caption}
+          </p>
+        </Dialog>
+      )}
+    </section>
+  );
+}
 function Home({ saved, toggleSaved, onEnquire }) {
   const [collectionTab, setCollectionTab] = useState("available");
   const [featuredStart, setFeaturedStart] = useState(0);
@@ -1029,6 +1277,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
         </div>
         <small>Pictured: inside our Wingfield showroom</small>
       </section>
+      <ShowroomTour onEnquire={onEnquire} />
       <section className="section reviews mm-reviews" id="reviews">
         <div className="section-title">
           <h2 className="reveal-words">
@@ -2264,7 +2513,9 @@ function Enquiry({ vehicle, purpose, onClose }) {
             ? `Hi Madi, I'm interested in the ${carName}` +
               `${vehicle.status === "sold" ? " or something similar" : ""}. ` +
               "Could we arrange a time to chat?"
-            : "Hi Madi, I’d like to chat about your performance car collection.",
+            : purpose === "viewing"
+              ? "Hi, I’d like to come in and see the cars. When would suit for a viewing at the Wingfield showroom?"
+              : "Hi Madi, I’d like to chat about your performance car collection.",
       year: "",
       make: "",
       model: "",
@@ -2514,7 +2765,7 @@ function Footer() {
           <Link to="/stock?status=sold" viewTransition>
             Sold cars
           </Link>
-          <Link to="/#visit">Our story</Link>
+          <Link to="/#about">Our story</Link>
         </div>
         <div>
           <span className="footer-label">Find us</span>

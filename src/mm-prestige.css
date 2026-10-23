@@ -1129,3 +1129,230 @@ h4) {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* B36 About us: the showroom tour (ShowroomTour in main.jsx). A filmstrip
+   that keeps each photo's shape runs from the copy to the page edge, so the
+   next stop always peeks in. Phones stack the copy above a swipeable strip. */
+.dealer-home .showroom-tour {
+  --tour-h: clamp(340px, 32vw, 520px);
+  --tour-edge: 4%;
+  display: grid;
+  grid-template-columns: minmax(300px, 30%) minmax(0, 1fr);
+  column-gap: clamp(32px, 4vw, 72px);
+  align-items: center;
+  padding: var(--section-gap) 0 0 var(--tour-edge);
+}
+.tour-copy {
+  max-width: 440px;
+}
+.tour-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 18px;
+  color: var(--accent-text);
+}
+.tour-eyebrow::before {
+  content: "";
+  width: 26px;
+  height: 2px;
+  background: var(--accent-strong);
+}
+.dealer-home .tour-copy h2 {
+  margin: 0;
+  line-height: 1.02;
+}
+.tour-copy p {
+  margin: 22px 0 0;
+  color: #c9c9cd;
+  font-size: var(--fs-lead);
+  line-height: 1.65;
+}
+.tour-copy .tour-note {
+  margin-top: 12px;
+  color: #9a9a9e;
+  font-size: var(--fs-small);
+}
+.tour-copy .tour-eyebrow {
+  margin-top: 0;
+  color: var(--accent-text);
+  font-size: var(--fs-label);
+}
+.tour-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+.tour-actions .button:not(.primary) {
+  background: transparent;
+  border-color: var(--hairline-strong);
+  color: var(--off-white);
+}
+.tour-actions .button:not(.primary):hover {
+  border-color: #6e6e72;
+  background: var(--surface-1);
+}
+.tour-gallery {
+  min-width: 0;
+}
+.tour-strip {
+  position: relative;
+  display: flex;
+  gap: clamp(14px, 1.6vw, 22px);
+  margin: 0;
+  padding: 4px var(--tour-edge) 4px 0;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  /* Proximity, not mandatory: a photo can be wider than the strip (the
+     line-up), and swiping or the arrows must still reach its far end. */
+  scroll-snap-type: x proximity;
+  scroll-padding-right: var(--tour-edge);
+  scrollbar-width: none;
+}
+.tour-strip::-webkit-scrollbar {
+  display: none;
+}
+.tour-stop {
+  flex: none;
+  width: min-content;
+  scroll-snap-align: start;
+}
+/* The last photo snaps by its far edge, so the end of the strip is a stop. */
+.tour-stop:last-child {
+  scroll-snap-align: end;
+}
+.tour-photo {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--surface-1);
+  cursor: zoom-in;
+}
+.tour-photo img {
+  display: block;
+  width: auto;
+  max-width: none;
+  height: var(--tour-h);
+  transition: transform var(--mm-slow) var(--mm-ease);
+}
+.tour-photo:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+.tour-expand {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  color: #fff;
+  background: #11111199;
+  border: 1px solid #ffffff2e;
+  border-radius: 50%;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transition: opacity var(--mm-base) var(--mm-ease);
+}
+@media (hover: hover) {
+  .tour-photo:hover img { transform: scale(1.035); }
+  .tour-photo:hover .tour-expand { opacity: 1; }
+}
+.tour-photo:focus-visible .tour-expand { opacity: 1; }
+@media (hover: none) {
+  .tour-expand { opacity: 0.85; }
+}
+.tour-caption {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 12px;
+  align-items: baseline;
+  margin: 14px 0 0;
+  font-size: var(--fs-small);
+  line-height: 1.45;
+}
+.tour-number {
+  grid-row: span 2;
+  font-family: var(--display);
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--accent-text);
+}
+.tour-caption b {
+  color: var(--off-white);
+  font-weight: 600;
+}
+.tour-caption > span:last-child {
+  color: #9a9a9e;
+}
+.tour-footer {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 26px;
+  padding-right: var(--tour-edge);
+}
+.tour-footer .carousel-controls {
+  margin: 0;
+}
+.tour-progress {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  overflow: hidden;
+  background: var(--hairline-strong);
+  border-radius: 2px;
+}
+.tour-progress > span {
+  position: absolute;
+  inset: 0;
+  background: var(--accent-strong);
+  transform-origin: left;
+  transform: scaleX(calc(0.2 + 0.8 * var(--progress, 0)));
+  transition: transform var(--mm-base) var(--mm-ease);
+}
+.tour-count {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #9a9a9e;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 1100px) {
+  .dealer-home .showroom-tour {
+    --tour-h: 360px;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 40px;
+  }
+  .tour-copy {
+    max-width: 620px;
+    padding-right: var(--tour-edge);
+  }
+}
+@media (max-width: 700px) {
+  /* Low enough that the next photo peeks in beside the first. */
+  .dealer-home .showroom-tour {
+    --tour-h: min(240px, 56vw);
+    --tour-edge: 5%;
+    row-gap: 30px;
+  }
+  .tour-footer {
+    gap: 14px;
+    margin-top: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tour-photo img,
+  .tour-progress > span {
+    transition: none;
+  }
+}

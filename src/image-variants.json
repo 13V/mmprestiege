@@ -154,5 +154,35 @@
     "height": 2133,
     "srcset": "/images/opt/showroom-street-480.webp?v=b4b6df40 480w, /images/opt/showroom-street-960.webp?v=b4598e15 960w, /images/opt/showroom-street-1600.webp?v=6fe36eae 1600w, /images/opt/showroom-street-2400.webp?v=91034785 2400w, /images/opt/showroom-street-3200.webp?v=49a7cca0 3200w",
     "share": "/images/opt/showroom-street-share.jpg?v=5e8dcd47"
+  },
+  "/images/tour-door.jpg": {
+    "width": 2520,
+    "height": 3400,
+    "srcset": "/images/opt/tour-door-480.webp?v=27004109 480w, /images/opt/tour-door-960.webp?v=ebdd1514 960w, /images/opt/tour-door-1600.webp?v=1ca47d9c 1600w, /images/opt/tour-door-2520.webp?v=033813c5 2520w",
+    "share": "/images/opt/tour-door-share.jpg?v=e802e70f"
+  },
+  "/images/tour-floor.jpg": {
+    "width": 3200,
+    "height": 2140,
+    "srcset": "/images/opt/tour-floor-480.webp?v=13259f18 480w, /images/opt/tour-floor-960.webp?v=abd89378 960w, /images/opt/tour-floor-1600.webp?v=44f0595e 1600w, /images/opt/tour-floor-2400.webp?v=b8db9c85 2400w, /images/opt/tour-floor-3200.webp?v=074ae1de 3200w",
+    "share": "/images/opt/tour-floor-share.jpg?v=5ca448ca"
+  },
+  "/images/tour-lineup.jpg": {
+    "width": 3000,
+    "height": 1632,
+    "srcset": "/images/opt/tour-lineup-480.webp?v=4a5f1246 480w, /images/opt/tour-lineup-960.webp?v=18d52046 960w, /images/opt/tour-lineup-1600.webp?v=e2c0b7c3 1600w, /images/opt/tour-lineup-2400.webp?v=772b220e 2400w, /images/opt/tour-lineup-3000.webp?v=0c35d82a 3000w",
+    "share": "/images/opt/tour-lineup-share.jpg?v=2f0518f9"
+  },
+  "/images/tour-street.jpg": {
+    "width": 3200,
+    "height": 2218,
+    "srcset": "/images/opt/tour-street-480.webp?v=46156789 480w, /images/opt/tour-street-960.webp?v=8abb735c 960w, /images/opt/tour-street-1600.webp?v=a7769061 1600w, /images/opt/tour-street-2400.webp?v=0b4ee9f9 2400w, /images/opt/tour-street-3200.webp?v=44f87e15 3200w",
+    "share": "/images/opt/tour-street-share.jpg?v=c78b509c"
+  },
+  "/images/tour-yellow.jpg": {
+    "width": 3200,
+    "height": 2400,
+    "srcset": "/images/opt/tour-yellow-480.webp?v=0d69dd52 480w, /images/opt/tour-yellow-960.webp?v=c49c869a 960w, /images/opt/tour-yellow-1600.webp?v=68586c6d 1600w, /images/opt/tour-yellow-2400.webp?v=79d5f2c5 2400w, /images/opt/tour-yellow-3200.webp?v=911512c0 3200w",
+    "share": "/images/opt/tour-yellow-share.jpg?v=29d7f75a"
   }
 }

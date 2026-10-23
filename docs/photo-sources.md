@@ -1,6 +1,6 @@
 # Photo and video sources
 
-Every photo and film on the site comes from MM Prestige Motors. Most of the photos are from the dealership's showroom photoshoot: 29 photos supplied by the dealership in October 2026 (original files `MMMOTOR.CWATSON.jpg` and `MMMOTOR.CWATSON-2.jpg` to `-29.jpg`, about 5,800 × 3,900 px). They show the Wingfield showroom, the shopfront on Grand Junction Road and the cars on site that day. Two more photos came from the dealership's phone, also in October 2026 (see [Phone photos](#phone-photos)).
+Every photo and film on the site comes from MM Prestige Motors. Most of the photos are from the dealership's showroom photoshoot: 29 photos supplied by the dealership in October 2026 (original files `MMMOTOR.CWATSON.jpg` and `MMMOTOR.CWATSON-2.jpg` to `-29.jpg`, about 5,800 × 3,900 px). They show the Wingfield showroom, the shopfront on Grand Junction Road and the cars on site that day. Two more photos came from the dealership's phone, also in October 2026 (see [Phone photos](#phone-photos)), and five more, taken on a phone in June 2026, make up the home page's showroom tour (see [Showroom tour photos](#showroom-tour-photos)).
 
 The sample listings are mapped to the photographed cars, so each listing shows its own car. Each listing's year, price, kilometres and specifications are still samples (see `sampleStock` in `src/data.js`).
 
@@ -54,6 +54,24 @@ The dealership sent two photos from a phone in October 2026: elevated views over
 | `sell-showroom-overhead.jpg` | *hero* | Full frame | The showroom from above: the MM Prestige Motors wall sign top centre, rows of HSVs, and a red Ferrari 360's roof in the foreground | Sell-your-car banner |
 | `performance-ferrari-gts.jpg` | *listing* | 0, 300, 1250, 1270 (1,250 × 970 px) | Red Ferrari 360 Modena head-on beside a red HSV Maloo and a red E3 GTS, with more of the collection behind | "Performance" panel |
 
+## Showroom tour photos
+
+In late October 2026 the dealership sent more photos and clips taken on a phone in June 2026: launch-day photos of the showroom (balloons on the cars) and the building from the street. Five photos make the home page's showroom tour ("Take a look around", the About us section). Each was graded with `scripts/photos/grade.py` (*listing* look, white balance and levels measured on the whole frame), cropped as noted, sharpened for the web and saved as JPEG without camera metadata; `npm run images` makes their WebP sizes.
+
+| Local file | Original | Crop (fractions of the upright frame: left, top, right, bottom) | Content | Tour stop |
+| --- | --- | --- | --- | --- |
+| `tour-street.jpg` | `20260627_104422.jpg` (4,000 × 3,000) | 0.145, 0.03, 1, 0.82 | The building on Grand Junction Road under the MM Prestige Motors sign, with a yellow, a grey, a red and a silver HSV lined up out front and the roller door open. The crop leaves out the neighbouring appliance shop's wall and sign | 01 Out front |
+| `tour-door.jpg` | `20260614_071508.jpg` (3,000 × 4,000) | 0.08, 0, 0.92, 0.85 | The glass front door under the sign, with HSVs and balloons inside. The crop leaves out the neighbour's wall and the security sticker on the door | 02 Through the door |
+| `tour-floor.jpg` | `20260614_071704.jpg` (4,000 × 3,000) | 0, 0.06, 0.83, 0.80 | The showroom floor under the wall sign: silver, red, black and yellow HSVs with balloons. The crop leaves out a power lead across the floor and the party props on the right | 03 Inside |
+| `tour-yellow.jpg` | `20260614_072625.jpg` (4,000 × 3,000) | Full frame | A yellow HSV GTS at the front of the showroom, red and black HSVs behind it and the sign above | 04 Up close |
+| `tour-lineup.jpg` | `20260614_085817.jpg` (3,000 × 1,632) | Full frame | Silver, red, black and yellow HSVs side by side under the sign, with gold and black balloons on their bonnets | 05 The line-up |
+
+Not used:
+
+- `20260627_104816.jpg`, a second view of the building from the street, much like `tour-street.jpg`.
+- `IMG_20260628_173421_979.jpg` (904 × 492), a small copy of the line-up photo, and `Screenshot_20260628_215606_Facebook.jpg`, a phone screenshot of a Facebook post.
+- Three clips (`20260627_104453.mp4`, `104555.mp4` and `104653.mp4`, HDR, 17 to 34 s): each opens on the building for a few seconds, then walks along the street, the fence and the bins. There's no showroom footage to make a film from.
+
 ## Video
 
 The dealership supplied five walkthrough clips in October 2026, filmed on a gimbal in the showroom (848 × 464 px, 30 fps, with sound). Clip 4 is the same footage as clip 2.
@@ -99,7 +117,7 @@ The rest of the clip walks past the cars close up and pans to the sign; it isn't
 
 ## Notes
 
-- Number plates are readable in several photos (the gold Maloo, the E3 GTS and the Ferrari, and both phone photos). The dealership asked for them to stay readable, so they are not blurred.
+- Number plates are readable in several photos (the gold Maloo, the E3 GTS and the Ferrari, and the phone photos, including the showroom tour). The dealership asked for them to stay readable, so they are not blurred.
 - The black Clubsport's bumper reflects the photographer. It is too small to see at the panel's display size.
 - The dealership confirmed the portraits (shots 26 to 29) show Madi. Shot 28 is used for the round portrait (and for the Meet Madi photo, which is no longer shown); the others aren't used.
 - The grade is built into the files (see [Processing](#processing)); the site applies no colour filters to photos. Sold cars' card photos are shown desaturated on purpose.
