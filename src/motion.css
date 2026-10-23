@@ -295,14 +295,10 @@
   }
 }
 
-/* The showroom map wipes up into view; the black Clubsport drives into the
-   red panel. */
+/* The showroom map wipes up into view. */
 @media (prefers-reduced-motion: no-preference) {
   .contact-location.reveal.is-revealed .contact-map {
     animation: mm-wipe 1300ms var(--mm-ease-out) backwards;
-  }
-  .offer-trade.reveal.is-revealed img {
-    animation: mm-drive-in 1500ms cubic-bezier(0.16, 1, 0.3, 1) 220ms backwards;
   }
 }
 .contact-map {
@@ -316,21 +312,6 @@
     clip-path: inset(0 0 0 0 round var(--wipe-radius, var(--radius-lg)));
   }
 }
-@keyframes mm-drive-in {
-  from {
-    opacity: 0;
-    transform: translateX(70%);
-    filter: blur(4px);
-  }
-  35% {
-    opacity: 1;
-  }
-  to {
-    transform: none;
-    filter: none;
-  }
-}
-
 /* Once the page scrolls past the hero, the header floats as a compact
    frosted bar. */
 .home-shell .header.is-compact {

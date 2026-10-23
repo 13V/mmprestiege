@@ -239,6 +239,21 @@ try {
     await expect(page.locator('.offer-performance img')).toHaveAttribute('src', '/images/performance-ferrari-gts.jpg');
     await expect(page.locator('.offer-performance img')).toHaveAttribute('alt', /Ferrari 360.*Maloo.*GTS/);
     await expect(page.locator('.featured .stock-tag').first()).toHaveText('THE ICON');
+    // The banner photo is upscaled, so big and sharp screens get a 3,200 px copy.
+    await expect(page.locator('.reference-sell > img')).toHaveAttribute('srcset', /sell-showroom-overhead-3200\.webp\S* 3200w/);
+  });
+  await check('Next up shows the showroom line-up, and the call tile says Contact us without a portrait', async () => {
+    await expect(page.locator('.offer-trade img')).toHaveAttribute('src', '/images/tour-lineup.jpg');
+    await expect(page.locator('.offer-trade')).toContainText("Let’s talk cars");
+    await expect(page.locator('.offer-call-label')).toHaveText('Contact us');
+    await expect(page.locator('.offer-call img')).toHaveCount(0);
+    await expect(page.locator('.offer-call')).toHaveAttribute('href', 'tel:+61411710409');
+    // The site speaks as "us"; only customers' own reviews name Madi.
+    expect(await page.evaluate(() => {
+      const main = document.querySelector('main').cloneNode(true);
+      main.querySelectorAll('#reviews').forEach(node => node.remove());
+      return main.textContent.includes('Madi');
+    })).toBe(false);
   });
   await check('Meet Madi is gone, and About us leads to the showroom tour', async () => {
     await expect(page.locator('.meet-madi')).toHaveCount(0);
@@ -371,7 +386,7 @@ try {
     await dialog.getByLabel('Phone number').fill('0400000000');
     await dialog.getByRole('button', { name: 'Prepare enquiry' }).click();
     const message = decodeURIComponent((await dialog.getByRole('link', { name: 'Send via SMS' }).getAttribute('href')).split('?body=')[1]);
-    expect(message).toContain("Hi Madi, I'd like to trade in my car.");
+    expect(message).toContain("Hi, I'd like to trade in my car.");
     expect(message).toContain('Car: 2015 Holden Commodore SS');
     expect(message).toContain('Kilometres: 85,000');
     expect(message).toContain('Condition: Good');
@@ -380,7 +395,7 @@ try {
     await page.keyboard.press('Escape');
     await expect(dialog).toHaveCount(0);
   });
-  await check('Header shows Madi\'s number and every link on desktop', async () => {
+  await check('Header shows our number and every link on desktop', async () => {
     await expect(page.locator('.header-call')).toHaveAttribute('href', 'tel:+61411710409');
     await expect(page.locator('.header-call')).toContainText('0411 710 409');
     await expect(page.getByRole('button', { name: 'Open navigation' })).toBeHidden();
@@ -588,7 +603,7 @@ try {
     await expect(page.locator('#specifications')).toContainText('Wingfield, SA');
   });
   await check('Finance link prepares a finance enquiry for the car', async () => {
-    await page.getByRole('button', { name: /Ask Madi about finance/ }).click();
+    await page.getByRole('button', { name: /Ask us about finance/ }).click();
     const dialog = page.getByRole('dialog', { name: 'Enquire with MM Prestige Motors' });
     await expect(dialog.getByLabel('Your message')).toHaveValue(/finance for the 2016 HSV GTS/);
     await page.keyboard.press('Escape');
@@ -608,7 +623,7 @@ try {
     await expect(dialog).toBeVisible();
     await dialog.getByLabel('Your name').fill('Website QA');
     await dialog.getByLabel('Phone number').fill('0400000000');
-    await expect(dialog.getByLabel('Your message')).toHaveValue(new RegExp(`Hi Madi, I'm interested in the ${firstVehicleName}`));
+    await expect(dialog.getByLabel('Your message')).toHaveValue(new RegExp(`Hi, I'm interested in the ${firstVehicleName}`));
     await dialog.getByRole('button', { name: 'Prepare enquiry' }).click();
     await expect(dialog.getByText('Your message is ready.')).toBeVisible();
     const href = await dialog.getByRole('link', { name: 'Send via SMS' }).getAttribute('href');
@@ -628,7 +643,8 @@ try {
     await expect(page.locator('.vehicle-hero-count')).toHaveText('01 / 01');
     await expect(page.getByRole('button', { name: 'Next vehicle photo', exact: true })).toHaveCount(0);
     await expect(page.locator('.finance')).toHaveCount(0);
-    await expect(page.locator('#call-heading')).toHaveText('Talk to Madi');
+    await expect(page.locator('#call-heading')).toHaveText('Talk to Us');
+    await expect(page.locator('.vehicle-call img')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Find me something similar' })).toBeVisible();
     await page.getByRole('button', { name: 'Find me something similar' }).click();
     const dialog = page.getByRole('dialog', { name: 'Find a car with MM Prestige Motors' });

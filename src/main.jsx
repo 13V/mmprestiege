@@ -74,12 +74,10 @@ const SIZES = {
     "(max-width: 600px) 92vw, (max-width: 900px) 46vw, " +
     "(max-width: 1100px) 31vw, 24vw",
   hero: "100vw",
-  offerPanel: "(max-width: 600px) 46vw, 30vw",
-  offerCutout: "(max-width: 600px) 40vw, 22vw",
+  offerPanel: "(max-width: 850px) 46vw, 30vw",
   banner: "100vw",
   stage: "(max-width: 960px) 92vw, 66vw",
   thumb: "(max-width: 700px) 24vw, 11vw",
-  avatar: "56px",
 };
 
 const StockManagerDemo = lazy(() => import("./StockManagerDemo"));
@@ -1068,7 +1066,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
           <p>
             HSV, Holden and Australian muscle.
             <br />
-            Buy, sell or trade with Madi.
+            Buy, sell or trade with us.
             <br />
             Wingfield, South Australia.
           </p>
@@ -1121,7 +1119,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
               <span>01</span>HSV, Holden and Australian performance cars
             </li>
             <li>
-              <span>02</span>Talk directly with Madi
+              <span>02</span>Talk to us directly
             </li>
             <li>
               <span>03</span>Buy, sell or trade your next car
@@ -1151,7 +1149,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
             <h3>Next up.</h3>
             <p>Buy. Sell. Trade.</p>
             <img
-              {...responsive("/images/clubsport-cutout.webp", SIZES.offerCutout)}
+              {...responsive("/images/tour-lineup.jpg", SIZES.offerPanel)}
               alt=""
               loading="lazy"
             />
@@ -1210,13 +1208,13 @@ function Home({ saved, toggleSaved, onEnquire }) {
                 ? "No sold cars to show yet."
                 : "New arrivals are on the way."}
             </h3>
-            <p>Tell Madi what you're after.</p>
+            <p>Tell us what you're after.</p>
             <div className="stock-empty-actions">
               <button
                 className="button primary"
                 onClick={() => onEnquire({ purpose: "find" })}
               >
-                Ask Madi to find one <ArrowRight size={16} />
+                Ask us to find one <ArrowRight size={16} />
               </button>
             </div>
           </div>
@@ -1265,14 +1263,14 @@ function Home({ saved, toggleSaved, onEnquire }) {
             <RevealWords text={"Sell your car to\nour dealership"} />
           </h2>
           <p>
-            Ready for something different? Talk with Madi
+            Ready for something different? Talk with us
             <br className="desktop-break" /> about selling or trading your car.
           </p>
           <button
             className="button primary"
             onClick={() => onEnquire({ purpose: "sell" })}
           >
-            Talk to Madi <ArrowRight size={15} />
+            Talk to us <ArrowRight size={15} />
           </button>
         </div>
         <small>Pictured: inside our Wingfield showroom</small>
@@ -1325,11 +1323,11 @@ function Home({ saved, toggleSaved, onEnquire }) {
             <RevealWords text={"Start your journey\nwith us today"} />
           </h2>
           <p>
-            Visit our Wingfield showroom. Speak directly with Madi about a car,
-            arrange a viewing or discuss a trade-in.
+            Visit our Wingfield showroom. Talk to us about a car, arrange a
+            viewing or discuss a trade-in.
           </p>
           <button className="button primary" onClick={() => onEnquire({})}>
-            Contact Madi <ArrowRight size={15} />
+            Contact us <ArrowRight size={15} />
           </button>
           <div className="contact-hours">
             <h3>Come say hello</h3>
@@ -1372,14 +1370,7 @@ function scrollToSection(element) {
 function CallTile() {
   return (
     <a className="offer-call" href={`tel:${business.tel}`}>
-      <span className="offer-call-person">
-        <img
-          {...responsive("/images/madi-portrait.jpg", SIZES.avatar)}
-          alt=""
-          loading="lazy"
-        />
-        <span className="offer-call-label">Talk directly with Madi</span>
-      </span>
+      <span className="offer-call-label">Contact us</span>
       <b>{business.phone}</b>
       <small>Call to arrange a viewing.</small>
       <Phone className="offer-arrow" size={20} />
@@ -1833,7 +1824,7 @@ function Stock({ saved, toggleSaved, onEnquire }) {
                 className="button outline"
                 onClick={() => onEnquire({ purpose: "find" })}
               >
-                Ask Madi to find one
+                Ask us to find one
               </button>
             </div>
           </div>
@@ -1842,8 +1833,8 @@ function Stock({ saved, toggleSaved, onEnquire }) {
           <div>
             <h3 id="stock-help-heading">Something specific in mind?</h3>
             <p>
-              Tell Madi what you're after, and Madi will keep an eye out for
-              your next drive.
+              Tell us what you're after, and we'll keep an eye out for your
+              next drive.
             </p>
           </div>
           <div className="stock-help-actions">
@@ -2171,7 +2162,7 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
                   className="vehicle-finance-ask"
                   onClick={() => onEnquire({ ...car, purpose: "finance" })}
                 >
-                  Ask Madi about finance <ArrowRight size={15} />
+                  Ask us about finance <ArrowRight size={15} />
                 </button>
               </>
             )}
@@ -2193,26 +2184,17 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
             <p className="detail-note">
               {sampleStock
                 ? "This listing is a design preview. Vehicle details and pricing are sample data. Contact the dealer to confirm actual stock, condition and specifications."
-                : "Details are provided in good faith. Please confirm the specification, condition and price with Madi before you buy."}
+                : "Details are provided in good faith. Please confirm the specification, condition and price with us before you buy."}
             </p>
           </section>
           <section className="vehicle-call" aria-labelledby="call-heading">
             <div className="vehicle-contact-person">
-              <span className="vehicle-avatar" aria-hidden="true">
-                <img
-                  {...responsive("/images/madi-portrait.jpg", SIZES.avatar)}
-                  alt=""
-                  loading="lazy"
-                />
-              </span>
-              <div>
-                <h2 id="call-heading">{sold ? "Talk to Madi" : "Call Us"}</h2>
-                <p>MM Prestige Motors · Wingfield</p>
-              </div>
+              <h2 id="call-heading">{sold ? "Talk to Us" : "Call Us"}</h2>
+              <p>MM Prestige Motors · Wingfield</p>
             </div>
             <p>
               {sold
-                ? "This car has sold, but Madi can help you find something similar."
+                ? "This car has sold, but we can help you find something similar."
                 : "Arrange a viewing, or ask about finance and trade-ins."}
             </p>
             <a className="vehicle-call-number" href={`tel:${business.tel}`}>
@@ -2233,12 +2215,12 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
         <div>
           <strong>{sold ? "Sold" : money(car.price)}</strong>
           <small>
-            {sold ? "Ask Madi about similar cars" : "Excl. government charges"}
+            {sold ? "Ask us about similar cars" : "Excl. government charges"}
           </small>
         </div>
         <button
           className="vehicle-actionbar-message"
-          aria-label="Message Madi"
+          aria-label="Message us"
           onClick={() => onEnquire(sold ? { ...car, purpose: "find" } : car)}
         >
           <MessageSquare size={19} />
@@ -2439,7 +2421,7 @@ const ENQUIRY = {
         Let's talk <em>cars.</em>
       </>
     ),
-    intro: "Tell Madi what you have in mind.",
+    intro: "Tell us what you have in mind.",
   },
   sell: {
     title: "Sell or trade your car with MM Prestige Motors",
@@ -2448,7 +2430,7 @@ const ENQUIRY = {
         Sell or trade <em>your car.</em>
       </>
     ),
-    intro: "Tell Madi about your car and what you'd like to do.",
+    intro: "Tell us about your car and what you'd like to do.",
   },
   find: {
     title: "Find a car with MM Prestige Motors",
@@ -2457,7 +2439,7 @@ const ENQUIRY = {
         Find your <em>next car.</em>
       </>
     ),
-    intro: "Tell Madi what you're looking for, and Madi will keep an eye out.",
+    intro: "Tell us what you're looking for, and we'll keep an eye out.",
   },
 };
 function enquiryText(purpose, form) {
@@ -2471,10 +2453,10 @@ function enquiryText(purpose, form) {
   if (purpose === "sell") {
     const opening =
       {
-        "Sell it": "Hi Madi, I'd like to sell my car.",
-        "Trade it in": "Hi Madi, I'd like to trade in my car.",
+        "Sell it": "Hi, I'd like to sell my car.",
+        "Trade it in": "Hi, I'd like to trade in my car.",
       }[form.plan] ||
-      "Hi Madi, I'd like to talk about selling or trading my car.";
+      "Hi, I'd like to talk about selling or trading my car.";
     const car = [form.year, form.make, form.model]
       .map((value) => value.trim())
       .filter(Boolean)
@@ -2487,7 +2469,7 @@ function enquiryText(purpose, form) {
     ])}${notes}${contact}`;
   }
   if (purpose === "find")
-    return `Hi Madi, I'm looking for a car. Could you keep an eye out for me?\n\n${details(
+    return `Hi, I'm looking for a car. Could you keep an eye out for me?\n\n${details(
       [
         ["Looking for", form.wanted],
         ["Years", form.years],
@@ -2507,15 +2489,15 @@ function Enquiry({ vehicle, purpose, onClose }) {
       phone: "",
       message:
         purpose === "finance"
-          ? `Hi Madi, I'd like to ask about finance for the ${carName}. ` +
+          ? `Hi, I'd like to ask about finance for the ${carName}. ` +
             "Could you call me to talk through the options?"
           : vehicle
-            ? `Hi Madi, I'm interested in the ${carName}` +
+            ? `Hi, I'm interested in the ${carName}` +
               `${vehicle.status === "sold" ? " or something similar" : ""}. ` +
               "Could we arrange a time to chat?"
             : purpose === "viewing"
               ? "Hi, I’d like to come in and see the cars. When would suit for a viewing at the Wingfield showroom?"
-              : "Hi Madi, I’d like to chat about your performance car collection.",
+              : "Hi, I’d like to chat about your performance car collection.",
       year: "",
       make: "",
       model: "",
@@ -2621,7 +2603,7 @@ function Enquiry({ vehicle, purpose, onClose }) {
                 </select>
               </label>
               <label>
-                <span>Anything else Madi should know?{optional}</span>
+                <span>Anything else we should know?{optional}</span>
                 <textarea
                   rows="3"
                   placeholder="Service history, modifications, finance owing…"
@@ -2783,7 +2765,7 @@ function Footer() {
           <p>
             Something caught your eye?
             <br />
-            Talk to Madi about it.
+            Talk to us about it.
           </p>
           <Link className="button" to="/stock" viewTransition>
             Explore the collection <ArrowRight size={15} />

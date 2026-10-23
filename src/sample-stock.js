@@ -151,6 +151,6 @@ export const sampleVehicles = [
     tag: "FOUND ITS NEXT DRIVER",
     stock: "MM097",
     description:
-      "This Maloo has found its next enthusiast. Looking for something similar? Get in touch with Madi to discuss what you have in mind.",
+      "This Maloo has found its next enthusiast. Looking for something similar? Get in touch with us to discuss what you have in mind.",
   },
 ];

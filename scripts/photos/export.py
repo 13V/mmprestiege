@@ -24,10 +24,6 @@ import grade as g  # noqa: E402
 
 OUT = os.path.join(HERE, "..", "..", "public", "images")
 
-# The cut-out was masked at 2000 px wide, then trimmed to the car and resized,
-# so its new colour goes through the same steps to line up with the mask.
-CUTOUTS = {"clubsport-cutout.webp": {"stage": (2000, 1635), "trim": (147, 102, 1865, 1551)}}
-
 
 def read_spec():
     rows = []
@@ -56,18 +52,6 @@ def make(row, frame):
     x0, y0, x1, y1 = row["box"]
     crop = frame[round(y0 * h):round(y1 * h), round(x0 * w):round(x1 * w)]
     path = os.path.join(OUT, row["name"])
-    cut = CUTOUTS.get(row["name"])
-    if cut:
-        with Image.open(path) as old:
-            alpha = old.getchannel("A")
-            size = old.size
-        staged = g.resize(crop, *cut["stage"])
-        tx0, ty0, tx1, ty1 = cut["trim"]
-        out = g.sharpen(g.resize(staged[ty0:ty1, tx0:tx1], *size))
-        rgba = Image.fromarray(g.to_u8(out)).convert("RGBA")
-        rgba.putalpha(alpha)
-        rgba.save(path, quality=92, method=6)
-        return rgba.size
     width = min(row["width"], crop.shape[1])
     ratio = crop.shape[1] / width
     out = g.resize(crop, width)

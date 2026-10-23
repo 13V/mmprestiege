@@ -68,7 +68,7 @@ function vehiclePage(car) {
     file: `stock/${car.id}.html`,
     path: `/stock/${car.id}`,
     title: `${name} | ${NAME}`,
-    description: `${name}: ${facts}${sampleStock ? " (sample listing)" : ""}. Talk to Madi at ${NAME} in Wingfield, Adelaide.`,
+    description: `${name}: ${facts}${sampleStock ? " (sample listing)" : ""}. Enquire with ${NAME} in Wingfield, Adelaide.`,
     image,
     schema: sampleStock
       ? undefined
@@ -110,7 +110,7 @@ const pages = [
     path: "/stock",
     title: `Our collection | ${NAME}`,
     description:
-      "Browse HSV, Holden and Australian performance cars at MM Prestige Motors in Wingfield, Adelaide, or ask Madi to find the car you're after.",
+      "Browse HSV, Holden and Australian performance cars at MM Prestige Motors in Wingfield, Adelaide, or ask us to find the car you're after.",
   },
   ...vehicles.map(vehiclePage),
   {

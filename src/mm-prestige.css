@@ -571,7 +571,25 @@ h4) {
   -webkit-mask-image: linear-gradient(transparent 0%, #000 36%);
   mask-image: linear-gradient(transparent 0%, #000 36%);
 }
-.offer-trade { background: linear-gradient(155deg, var(--accent-strong) 35%, var(--accent-strong-hover) 100%); box-shadow: inset 0 1px 0 #ffffff26; }
+.offer-trade { background: linear-gradient(155deg, var(--accent-strong) 35%, var(--accent-strong-hover) 100%); box-shadow: inset 0 1px 0 #ffffff26; isolation: isolate; }
+/* The showroom line-up fills the panel's lower part: it fades into the red
+   under the title, and a deep red shade at the bottom keeps "Let's talk
+   cars" readable over the light floor. */
+.offer-trade img {
+  object-position: 50% 58%;
+  -webkit-mask-image: linear-gradient(transparent 0%, #000 34%);
+  mask-image: linear-gradient(transparent 0%, #000 34%);
+}
+.offer-trade::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 1;
+  height: 34%;
+  background: linear-gradient(#8f121e00, #8f121ee6);
+  pointer-events: none;
+}
+.offer-trade > :is(h3, p, span) { z-index: 2; }
 
 /* B20 What we offer: panel type + hover */
 .offer-performance h3,
@@ -586,7 +604,7 @@ h4) {
 .offer-trade > span svg { transition: transform var(--mm-slow) var(--mm-ease); }
 @media (hover: hover) {
   .offer-performance:hover img { transform: scale(1.04); }
-  .offer-trade:hover img { transform: translateX(-8px); }
+  .offer-trade:hover img { transform: scale(1.04); }
   .offer-performance:hover .offer-arrow,
 .offer-trade:hover > span svg { transform: translate(3px, -3px); }
 }
@@ -817,22 +835,9 @@ h4) {
   box-shadow: inset 0 1px 0 #ffffff0a;
   transition: background-color var(--mm-base) var(--mm-ease), border-color var(--mm-base) var(--mm-ease);
 }
-.offer-call-person {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.offer-call-label {
   margin-bottom: auto;
   padding: 0 36px 14px 0;
-}
-.offer-call-person img {
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  object-fit: cover;
-  border-radius: 50%;
-  box-shadow: 0 0 0 2px var(--accent-strong);
-}
-.offer-call-label {
   font-size: var(--fs-label);
   font-weight: 600;
   letter-spacing: var(--track-label);
@@ -850,7 +855,7 @@ h4) {
   color: #aaa8a3;
 }
 .offer-call .offer-arrow {
-  top: 34px;
+  top: 20px;
   right: 20px;
   bottom: auto;
   color: var(--accent);
@@ -912,11 +917,11 @@ h4) {
     padding: 18px 20px;
   }
   .offer-call .offer-arrow {
-    top: 30px;
+    top: 16px;
   }
 }
 
-/* Header: Madi's number, saved cars and the full menu on desktop */
+/* Header: our number, saved cars and the full menu on desktop */
 .header-call {
   display: inline-flex;
   align-items: center;

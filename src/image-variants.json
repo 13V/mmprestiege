@@ -1,10 +1,4 @@
 {
-  "/images/clubsport-cutout.webp": {
-    "width": 1400,
-    "height": 1181,
-    "srcset": "/images/opt/clubsport-cutout-480.webp?v=fcab01cd 480w, /images/opt/clubsport-cutout-960.webp?v=aaa442a3 960w, /images/opt/clubsport-cutout-1400.webp?v=560e3278 1400w",
-    "share": "/images/opt/clubsport-cutout-share.jpg?v=5d461ff9"
-  },
   "/images/ferrari-360-doorway.jpg": {
     "width": 3200,
     "height": 2134,
@@ -101,18 +95,6 @@
     "srcset": "/images/opt/hsv-maloo-r8-side-480.webp?v=2dd14df3 480w, /images/opt/hsv-maloo-r8-side-960.webp?v=719ab5f0 960w, /images/opt/hsv-maloo-r8-side-1600.webp?v=1d828bca 1600w, /images/opt/hsv-maloo-r8-side-2400.webp?v=5a7bf021 2400w, /images/opt/hsv-maloo-r8-side-3044.webp?v=1e23b763 3044w",
     "share": "/images/opt/hsv-maloo-r8-side-share.jpg?v=877ca2d8"
   },
-  "/images/madi-portrait.jpg": {
-    "width": 320,
-    "height": 320,
-    "srcset": "/images/opt/madi-portrait-320.webp?v=d46c5f82 320w",
-    "share": "/images/opt/madi-portrait-share.jpg?v=01c3cc9e"
-  },
-  "/images/madi-showroom.jpg": {
-    "width": 1600,
-    "height": 2000,
-    "srcset": "/images/opt/madi-showroom-480.webp?v=6e97e4cf 480w, /images/opt/madi-showroom-960.webp?v=e775787d 960w, /images/opt/madi-showroom-1600.webp?v=b80e2d23 1600w",
-    "share": "/images/opt/madi-showroom-share.jpg?v=796760ce"
-  },
   "/images/performance-ferrari-gts.jpg": {
     "width": 1250,
     "height": 970,
@@ -120,10 +102,10 @@
     "share": "/images/opt/performance-ferrari-gts-share.jpg?v=1e9da72d"
   },
   "/images/sell-showroom-overhead.jpg": {
-    "width": 2000,
-    "height": 1500,
-    "srcset": "/images/opt/sell-showroom-overhead-480.webp?v=f20c6fd3 480w, /images/opt/sell-showroom-overhead-960.webp?v=310c5a36 960w, /images/opt/sell-showroom-overhead-1600.webp?v=4a24b8d2 1600w, /images/opt/sell-showroom-overhead-2000.webp?v=1a2a46e4 2000w",
-    "share": "/images/opt/sell-showroom-overhead-share.jpg?v=11a21944"
+    "width": 3200,
+    "height": 2400,
+    "srcset": "/images/opt/sell-showroom-overhead-480.webp?v=81de1aea 480w, /images/opt/sell-showroom-overhead-960.webp?v=0cae0d6a 960w, /images/opt/sell-showroom-overhead-1600.webp?v=780ea680 1600w, /images/opt/sell-showroom-overhead-2400.webp?v=c1e4b8f5 2400w, /images/opt/sell-showroom-overhead-3200.webp?v=33ea1c80 3200w",
+    "share": "/images/opt/sell-showroom-overhead-share.jpg?v=88cf631b"
   },
   "/images/showroom-collection.jpg": {
     "width": 3200,
