@@ -113,17 +113,17 @@
     "srcset": "/images/opt/madi-showroom-480.webp?v=6e97e4cf 480w, /images/opt/madi-showroom-960.webp?v=e775787d 960w, /images/opt/madi-showroom-1600.webp?v=b80e2d23 1600w",
     "share": "/images/opt/madi-showroom-share.jpg?v=796760ce"
   },
-  "/images/performance-gts-rear.jpg": {
-    "width": 1600,
-    "height": 1525,
-    "srcset": "/images/opt/performance-gts-rear-480.webp?v=361d8654 480w, /images/opt/performance-gts-rear-960.webp?v=f15c68b2 960w, /images/opt/performance-gts-rear-1600.webp?v=d9b7b93d 1600w",
-    "share": "/images/opt/performance-gts-rear-share.jpg?v=6720e955"
+  "/images/performance-ferrari-gts.jpg": {
+    "width": 1250,
+    "height": 970,
+    "srcset": "/images/opt/performance-ferrari-gts-480.webp?v=d07af5fa 480w, /images/opt/performance-ferrari-gts-960.webp?v=c046f6ea 960w, /images/opt/performance-ferrari-gts-1250.webp?v=9a18c3e6 1250w",
+    "share": "/images/opt/performance-ferrari-gts-share.jpg?v=1e9da72d"
   },
-  "/images/sell-roller-door.jpg": {
-    "width": 3200,
-    "height": 2133,
-    "srcset": "/images/opt/sell-roller-door-480.webp?v=4e868518 480w, /images/opt/sell-roller-door-960.webp?v=0e6603f7 960w, /images/opt/sell-roller-door-1600.webp?v=c4dec286 1600w, /images/opt/sell-roller-door-2400.webp?v=0f78307f 2400w, /images/opt/sell-roller-door-3200.webp?v=de3c9c32 3200w",
-    "share": "/images/opt/sell-roller-door-share.jpg?v=1a60e7ef"
+  "/images/sell-showroom-overhead.jpg": {
+    "width": 2000,
+    "height": 1500,
+    "srcset": "/images/opt/sell-showroom-overhead-480.webp?v=f20c6fd3 480w, /images/opt/sell-showroom-overhead-960.webp?v=310c5a36 960w, /images/opt/sell-showroom-overhead-1600.webp?v=4a24b8d2 1600w, /images/opt/sell-showroom-overhead-2000.webp?v=1a2a46e4 2000w",
+    "share": "/images/opt/sell-showroom-overhead-share.jpg?v=11a21944"
   },
   "/images/showroom-collection.jpg": {
     "width": 3200,

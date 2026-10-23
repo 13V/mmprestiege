@@ -28,8 +28,17 @@ page.on('console', message => {
   runtimeErrors.push(message.text());
 });
 const mutationRequests = [];
+// The contact map is Google's embed; its own calls from inside its frame
+// aren't requests the site makes.
+const fromMap = request => {
+  try {
+    return /^https:\/\/(www|maps)\.google\.[a-z.]+\/maps\b/.test(request.frame().url());
+  } catch {
+    return false;
+  }
+};
 page.on('request', request => {
-  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method())) {
+  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method()) && !fromMap(request)) {
     mutationRequests.push({ method: request.method(), url: request.url() });
   }
 });
@@ -223,12 +232,44 @@ try {
     const link = reviews.getByRole('link', { name: /Read our reviews on Google/ });
     expect(new URL(await link.getAttribute('href')).hostname).toBe('www.google.com');
   });
-  await check('Meet Madi introduces the dealer with a portrait and a call link', async () => {
-    const about = page.locator('#about');
-    await expect(about.getByRole('heading', { level: 2 })).toHaveText(/Driven by trust\. Defined by quality\./);
-    await expect(about.getByRole('img', { name: /Madi/ })).toHaveAttribute('src', '/images/madi-showroom.jpg');
-    await expect(about.getByRole('link', { name: 'Call Madi', exact: true })).toHaveAttribute('href', 'tel:+61411710409');
+  await check('The sell banner and Performance panel show the showroom photos from the dealership\'s phone', async () => {
+    await expect(page.locator('.reference-sell > img')).toHaveAttribute('src', '/images/sell-showroom-overhead.jpg');
+    await expect(page.locator('.reference-sell > img')).toHaveAttribute('alt', /wall sign/);
+    await expect(page.locator('.reference-sell > small')).toHaveText('Pictured: inside our Wingfield showroom');
+    await expect(page.locator('.offer-performance img')).toHaveAttribute('src', '/images/performance-ferrari-gts.jpg');
+    await expect(page.locator('.offer-performance img')).toHaveAttribute('alt', /Ferrari 360.*Maloo.*GTS/);
     await expect(page.locator('.featured .stock-tag').first()).toHaveText('THE ICON');
+  });
+  await check('Meet Madi is gone, and About us leads to the contact section', async () => {
+    await expect(page.locator('#about, .meet-madi')).toHaveCount(0);
+    await expect(page.locator('body')).not.toContainText('Meet Madi');
+    await expect(page.locator('.footer').getByRole('link', { name: 'Our story', exact: true })).toHaveAttribute('href', '/#visit');
+    await page.locator('.nav').getByRole('link', { name: 'About us', exact: true }).click();
+    await expect(page).toHaveURL(/\/#visit$/);
+    await expect(page.locator('#visit').getByRole('heading', { level: 2 })).toHaveText(/Start your journey with us today/);
+    await expect.poll(async () => {
+      const { y } = await page.locator('#visit').boundingBox();
+      return y >= 0 && y < 200;
+    }).toBe(true);
+  });
+  await check('The contact section shows a satellite Google map of the showroom that nothing covers', async () => {
+    const map = page.locator('#visit .contact-map iframe');
+    await expect(map).toHaveCount(1);
+    const src = new URL(await map.getAttribute('src'));
+    expect(src.hostname).toBe('maps.google.com');
+    expect(src.searchParams.get('t')).toBe('k');
+    expect(src.searchParams.get('output')).toBe('embed');
+    expect(src.searchParams.get('q')).toBe('Unit 4/405A Grand Junction Road, Wingfield SA 5013');
+    await expect(map).toHaveAttribute('title', /Satellite map of MM Prestige Motors/);
+    await expect(page.locator('#visit img')).toHaveCount(0);
+    // The map takes drags and zooms: the frame itself is what's under its centre.
+    await map.scrollIntoViewIfNeeded();
+    await expect.poll(() => map.evaluate(frame => {
+      const box = frame.getBoundingClientRect();
+      return document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2) === frame;
+    })).toBe(true);
+    await expect(page.locator('#visit .location-address')).toContainText('Unit 4/405A Grand Junction Road');
+    await expect(page.locator('#visit').getByRole('link', { name: /Get directions/ })).toHaveAttribute('href', /google\.com\/maps/);
   });
   await check('Specialties marquee hides its repeat from screen readers and the header floats once scrolled', async () => {
     await expect(page.locator('.marque-words[aria-label]')).toHaveCount(1);
@@ -542,20 +583,21 @@ try {
     await expect(page.locator('.vehicle-hero-count')).toHaveText('01 / 01');
     await expect(page.getByRole('button', { name: 'Next vehicle photo', exact: true })).toHaveCount(0);
     await expect(page.locator('.finance')).toHaveCount(0);
+    await expect(page.locator('#call-heading')).toHaveText('Talk to Madi');
     await expect(page.getByRole('button', { name: 'Find me something similar' })).toBeVisible();
     await page.getByRole('button', { name: 'Find me something similar' }).click();
     const dialog = page.getByRole('dialog', { name: 'Find a car with MM Prestige Motors' });
     await expect(dialog.getByLabel('Make and model')).toHaveValue('HSV Maloo or similar');
     await page.keyboard.press('Escape');
   });
-  await check('Footer story link scrolls from stock to about', async () => {
+  await check('Footer story link scrolls from stock to the contact section', async () => {
     await goStock();
     await page.locator('.footer').getByRole('link', { name: 'Our story', exact: true }).click();
-    await expect(page).toHaveURL(/\/#about$/);
-    await page.waitForTimeout(600);
-    const rect = await page.locator('#about').boundingBox();
-    expect(rect.y).toBeGreaterThanOrEqual(0);
-    expect(rect.y).toBeLessThan(200);
+    await expect(page).toHaveURL(/\/#visit$/);
+    await expect.poll(async () => {
+      const { y } = await page.locator('#visit').boundingBox();
+      return y >= 0 && y < 200;
+    }).toBe(true);
   });
   await check('Keyboard enquiry traps focus, shows focus and returns to its trigger', async () => {
     await page.goto(`${baseURL}${firstVehicleRoute}`);
@@ -623,7 +665,7 @@ try {
   });
   await check('Phone header keeps a call button and lists saved cars in the menu', async () => {
     await expect(page.locator('.header-call')).toBeVisible();
-    await expect(page.locator('.header-call')).toHaveAttribute('aria-label', 'Call Madi on 0411 710 409');
+    await expect(page.locator('.header-call')).toHaveAttribute('aria-label', 'Call us on 0411 710 409');
     await expect(page.locator('.header-saved')).toBeHidden();
     await page.getByRole('button', { name: 'Open navigation' }).click();
     await expect(page.locator('.nav').getByRole('link', { name: /Saved cars/ })).toHaveAttribute('href', '/stock?status=all&saved=1');
@@ -693,7 +735,7 @@ try {
       await page.emulateMedia({ reducedMotion: null });
     }
   });
-  await check('Vehicle listing puts a large photo beside price, specifications and Madi', async () => {
+  await check('Vehicle listing puts a large photo beside price, specifications and the call card', async () => {
     await page.setViewportSize({ width: 2493, height: 1265 });
     await page.goto(`${baseURL}/stock/hsv-gts-2012`);
     const stage = await page.locator('.vehicle-stage').boundingBox();
@@ -709,9 +751,10 @@ try {
     expect(call.x).toBe(price.x);
     expect(specs.y).toBeGreaterThan(price.y + price.height - 1);
     expect(call.y).toBeGreaterThan(specs.y + specs.height - 1);
+    await expect(page.locator('#call-heading')).toHaveText('Call Us');
     await expect(page.locator('.vehicle-call').getByRole('link', { name: /0411 710 409/ })).toHaveAttribute('href', 'tel:+61411710409');
   });
-  await check('Vehicle listing stacks photos, title, price, specifications then Madi on a phone', async () => {
+  await check('Vehicle listing stacks photos, title, price, specifications then the call card on a phone', async () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(`${baseURL}/stock/hsv-gts-2012`);
     const order = ['.vehicle-stage', '.vehicle-head h1', '.vehicle-price-card', '.vehicle-facts', '#specifications', '.vehicle-call'];
@@ -723,7 +766,7 @@ try {
     const bar = page.locator('.vehicle-actionbar');
     await expect(bar).toBeVisible();
     expect(Math.round((await bar.boundingBox()).y + (await bar.boundingBox()).height)).toBe(844);
-    await expect(bar.getByRole('link', { name: /Call Madi/ })).toHaveAttribute('href', 'tel:+61411710409');
+    await expect(bar.getByRole('link', { name: 'Call Us', exact: true })).toHaveAttribute('href', 'tel:+61411710409');
   });
   await check('Unknown pages use the hero slab and lead back to stock', async () => {
     await page.setViewportSize({ width: 1440, height: 900 });

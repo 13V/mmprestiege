@@ -76,12 +76,10 @@ const SIZES = {
   hero: "100vw",
   offerPanel: "(max-width: 600px) 46vw, 30vw",
   offerCutout: "(max-width: 600px) 40vw, 22vw",
-  banner: "(max-width: 850px) 100vw, 62vw",
+  banner: "100vw",
   stage: "(max-width: 960px) 92vw, 66vw",
   thumb: "(max-width: 700px) 24vw, 11vw",
-  location: "(max-width: 850px) 92vw, 50vw",
   avatar: "56px",
-  portrait: "(max-width: 850px) 92vw, 42vw",
 };
 
 const StockManagerDemo = lazy(() => import("./StockManagerDemo"));
@@ -172,8 +170,6 @@ const REVEAL_TARGETS = [
   ".card-grid > .car-card",
   ".carousel-controls",
   ".reference-sell > div",
-  ".meet-madi-photo",
-  ".meet-madi-copy",
   ".review-grid > .review",
   ".contact-copy",
   ".contact-location",
@@ -358,7 +354,7 @@ function Header({ onEnquire, savedCount = 0 }) {
             >
               Home
             </Link>
-            <Link to="/#about" onClick={goToSection("about")}>
+            <Link to="/#visit" onClick={goToSection("visit")}>
               About us
             </Link>
             <Link
@@ -390,7 +386,7 @@ function Header({ onEnquire, savedCount = 0 }) {
             <a
               className="header-call"
               href={`tel:${business.tel}`}
-              aria-label={`Call Madi on ${business.phone}`}
+              aria-label={`Call us on ${business.phone}`}
             >
               <Phone size={16} />
               <span>{business.phone}</span>
@@ -877,8 +873,8 @@ function Home({ saved, toggleSaved, onEnquire }) {
             <p>For the drive you look forward to.</p>
           </div>
           <img
-            {...responsive("/images/performance-gts-rear.jpg", SIZES.offerPanel)}
-            alt="Rear wheel and brake caliper of a red HSV GTS"
+            {...responsive("/images/performance-ferrari-gts.jpg", SIZES.offerPanel)}
+            alt="A red Ferrari 360 Modena beside a red HSV Maloo and a red HSV GTS in the showroom"
             loading="lazy"
           />
           <ArrowUpRight className="offer-arrow" size={23} />
@@ -980,7 +976,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
           <p className="sample-note">
             Sample listings shown while the website is being prepared. Photos
             are from our Wingfield showroom; prices and details are examples.
-            Call Madi for current availability.
+            Call us for current availability.
           </p>
         )}
         <Link
@@ -993,8 +989,8 @@ function Home({ saved, toggleSaved, onEnquire }) {
       </section>
       <section className="reference-sell">
         <img
-          {...responsive("/images/sell-roller-door.jpg", SIZES.banner)}
-          alt="An HSV Maloo and a Ferrari 360 outside the open showroom door"
+          {...responsive("/images/sell-showroom-overhead.jpg", SIZES.banner)}
+          alt="The Wingfield showroom from above: the MM Prestige Motors wall sign over rows of HSVs, with a Ferrari 360 in front"
           loading="lazy"
         />
         <div>
@@ -1012,43 +1008,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
             Talk to Madi <ArrowRight size={15} />
           </button>
         </div>
-        <small>Pictured: outside our Wingfield showroom</small>
-      </section>
-      <section
-        className="meet-madi"
-        id="about"
-        aria-labelledby="meet-madi-heading"
-      >
-        <figure className="meet-madi-photo">
-          <img
-            {...responsive("/images/madi-showroom.jpg", SIZES.portrait)}
-            alt="Madi in an MM Prestige Motors vest in the Wingfield showroom"
-            loading="lazy"
-          />
-          <figcaption>Madi · MM Prestige Motors, Wingfield</figcaption>
-        </figure>
-        <div className="meet-madi-copy">
-          <p className="meet-madi-eyebrow">Meet Madi</p>
-          <h2 id="meet-madi-heading" className="reveal-words">
-            <RevealWords text={"Driven by trust.\nDefined by quality."} />
-          </h2>
-          <p>
-            At MM Prestige Motors you deal with Madi directly, from the first
-            call to the day you drive away.
-          </p>
-          <p>
-            Buying, selling or trading, Madi will talk you through the car and
-            arrange a viewing at the Wingfield showroom when it suits you.
-          </p>
-          <div className="meet-madi-actions">
-            <a className="button primary" href={`tel:${business.tel}`}>
-              <Phone size={16} /> Call Madi
-            </a>
-            <button className="button" onClick={() => onEnquire({})}>
-              Send a message <ArrowRight size={15} />
-            </button>
-          </div>
-        </div>
+        <small>Pictured: inside our Wingfield showroom</small>
       </section>
       <section className="section reviews mm-reviews" id="reviews">
         <div className="section-title">
@@ -1158,38 +1118,43 @@ function CallTile() {
     </a>
   );
 }
+// Google Maps' keyless embed of the showroom's address, as a satellite view
+// (t=k). It needs no API key.
+const SHOWROOM_MAP = `https://maps.google.com/maps?q=${encodeURIComponent(
+  `${business.address}, ${business.suburb}`,
+)}&t=k&z=18&output=embed`;
+// The map stays free to drag and zoom: nothing sits on top of it, and the
+// address, phone and directions links are beneath it.
 function ShowroomLocation() {
   return (
     <div className="contact-location">
-      <a
-        className="contact-map"
-        href={business.maps}
-        target="_blank"
-        rel="noreferrer"
-        aria-label="View MM Prestige Motors on Google Maps"
-      >
-        <img
-          {...responsive("/images/showroom-street.jpg", SIZES.location)}
-          alt="The MM Prestige Motors showroom on Grand Junction Road"
+      <div className="contact-map">
+        <iframe
+          src={SHOWROOM_MAP}
+          title={`Satellite map of MM Prestige Motors at ${business.address}, ${business.suburb}`}
           loading="lazy"
+          allowFullScreen
+          referrerPolicy="no-referrer-when-downgrade"
         />
-        <div className="location-address">
-          {business.address}
-          <br />
-          {business.suburb}
-          <small>
-            Open Google Maps for directions <ArrowUpRight size={12} />
-          </small>
+      </div>
+      <div className="location-details">
+        <address className="location-address">
+          <MapPin size={17} aria-hidden="true" />
+          <span>
+            {business.address}
+            <br />
+            {business.suburb}
+          </span>
+        </address>
+        <div className="contact-pills">
+          <a href={`tel:${business.tel}`}>
+            <Phone size={17} />
+            {business.phone}
+          </a>
+          <a href={business.maps} target="_blank" rel="noreferrer">
+            Get directions <ArrowUpRight size={17} />
+          </a>
         </div>
-      </a>
-      <div className="contact-pills">
-        <a href={`tel:${business.tel}`}>
-          <Phone size={17} />
-          {business.phone}
-        </a>
-        <a href={business.maps} target="_blank" rel="noreferrer">
-          Get directions <ArrowUpRight size={17} />
-        </a>
       </div>
     </div>
   );
@@ -1973,7 +1938,7 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
                 />
               </span>
               <div>
-                <h2 id="call-heading">{sold ? "Talk to Madi" : "Call Madi"}</h2>
+                <h2 id="call-heading">{sold ? "Talk to Madi" : "Call Us"}</h2>
                 <p>MM Prestige Motors · Wingfield</p>
               </div>
             </div>
@@ -2011,7 +1976,7 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
           <MessageSquare size={19} />
         </button>
         <a className="vehicle-actionbar-call" href={`tel:${business.tel}`}>
-          <Phone size={17} /> Call Madi
+          <Phone size={17} /> Call Us
         </a>
       </div>
       {related.length > 0 && (
@@ -2530,7 +2495,7 @@ function Footer() {
           <Link to="/stock?status=sold" viewTransition>
             Sold cars
           </Link>
-          <Link to="/#about">Our story</Link>
+          <Link to="/#visit">Our story</Link>
         </div>
         <div>
           <span className="footer-label">Find us</span>

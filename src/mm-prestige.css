@@ -598,6 +598,17 @@ h4) {
 @media (max-width: 850px) {
   .reference-offer { align-items: stretch; }
   .offer-trade { height: auto; aspect-ratio: auto; }
+  /* The narrow Performance panel centres the three cars, so the GTS on the
+     right keeps its face. */
+  .offer-performance img { object-position: 50% center; }
+}
+@media (max-width: 600px) {
+  /* The panel's tagline wraps onto two lines on phones, so the photo fades
+     in lower. */
+  .offer-performance img {
+    -webkit-mask-image: linear-gradient(transparent 14%, #000 46%);
+    mask-image: linear-gradient(transparent 14%, #000 46%);
+  }
 }
 @media (min-width: 601px) and (max-width: 850px) {
   .reference-offer { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
@@ -632,18 +643,22 @@ h4) {
   background: linear-gradient(90deg, #111111d9 0%, #11111199 30%, #11111100 58%), linear-gradient(0deg, #11111166 0%, #11111100 35%);
 }
 .reference-sell > div { padding: 56px 4%; }
+/* The showroom from above: the wall sign stays in view over the rows of cars. */
+.reference-sell > img { object-position: center 8%; }
 @media (min-width: 1900px) {
   .reference-sell { max-height: 820px; }
 }
 @media (max-width: 600px) {
   .reference-sell { align-items: flex-start; min-height: 540px; border-radius: var(--radius-md); }
   .reference-sell > div { width: 100%; padding: 32px 5%; }
+  /* Under the text: the sign and the red HSVs, with a short fade so the
+     sign isn't lost in it. */
   .reference-sell > img {
     inset: auto 0 0;
     height: 58%;
-    object-position: right bottom;
-    -webkit-mask-image: linear-gradient(transparent, #000 24%);
-    mask-image: linear-gradient(transparent, #000 24%);
+    object-position: 50% 20%;
+    -webkit-mask-image: linear-gradient(transparent, #000 14%);
+    mask-image: linear-gradient(transparent, #000 14%);
   }
   .reference-sell::after { background: none; }
 }
@@ -675,150 +690,36 @@ h4) {
   .contact-pills > a { min-height: 44px; padding: 10px 16px; }
 }
 
-/* B26 Contact: showroom photo */
+/* B26 Contact: satellite map, with the address and contact pills beneath.
+   Nothing overlays the map, so it can be dragged and zoomed. */
 .contact-map { background-color: var(--surface-1); border: 1px solid var(--hairline); border-radius: var(--radius-md); }
-.contact-map > img {
+.contact-map > iframe {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  transition: transform var(--mm-slow) var(--mm-ease);
-}
-@media (max-width: 600px) {
-  .contact-map > img { object-position: 16% top; }
-}
-.contact-map::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(0deg, #111111a6 0%, #11111100 42%);
-}
-.location-address { z-index: 1; background: #f5f5f3eb; border-radius: var(--radius-sm); font-size: var(--fs-small); }
-.location-address small { font-size: var(--fs-label); }
-@media (hover: hover) {
-  .contact-map:hover > img { transform: scale(1.03); }
-}
-
-/* B32 Meet Madi: the portrait beside the dealership's own tagline */
-.meet-madi {
-  display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
-  align-items: center;
-  gap: clamp(36px, 6vw, 104px);
-  padding: var(--section-gap) 4% 0;
-  color: var(--off-white);
-  scroll-margin-top: 100px;
-}
-.meet-madi-photo {
-  position: relative;
-  margin: 0;
-  overflow: hidden;
-  aspect-ratio: 4 / 5;
-  max-height: 760px;
-  background: var(--surface-1);
-  border-radius: var(--radius-lg);
-}
-.meet-madi-photo img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center 30%;
+  border: 0;
 }
-.meet-madi-photo::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(0deg, #111111b3 0%, #11111100 28%);
-}
-.meet-madi-photo figcaption {
-  position: absolute;
-  z-index: 1;
-  left: 22px;
-  bottom: 18px;
-  font-size: var(--fs-caption);
-  color: #dedee0;
-}
-.meet-madi-eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 0 0 22px;
-  font-size: var(--fs-label);
-  font-weight: 600;
-  letter-spacing: var(--track-label);
-  text-transform: uppercase;
-  color: var(--accent-text);
-}
-.meet-madi-eyebrow::before {
-  content: "";
-  width: 32px;
-  height: 2px;
-  background: var(--accent-strong);
-}
-.meet-madi-copy h2 {
-  margin: 0 0 26px;
-}
-.meet-madi-copy > p:not(.meet-madi-eyebrow) {
-  max-width: 34em;
-  margin: 0 0 14px;
-  font-size: 16px;
-  line-height: 1.7;
-  color: #c9c9cd;
-}
-.meet-madi-actions {
+.location-details {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 24px;
+  margin-top: 16px;
+}
+.location-details .contact-pills { margin-top: 0; }
+.location-address {
+  display: flex;
+  align-items: flex-start;
   gap: 10px;
-  margin-top: 30px;
+  font-style: normal;
+  font-size: var(--fs-small);
+  line-height: 1.6;
+  color: #dedee0;
 }
-.meet-madi-actions .button {
-  min-height: 46px;
-}
-.meet-madi-actions .button:not(.primary) {
-  color: var(--off-white);
-  background: transparent;
-  border-color: var(--hairline-strong);
-}
-@media (hover: hover) {
-  .meet-madi-actions .button:not(.primary):hover {
-    color: #111;
-    background: var(--off-white);
-    border-color: var(--off-white);
-  }
-}
-@media (max-width: 850px) {
-  .meet-madi {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .meet-madi-photo {
-    aspect-ratio: 4 / 3;
-    max-height: none;
-  }
-  .meet-madi-photo img {
-    object-position: center 22%;
-  }
-}
-@media (max-width: 600px) {
-  .meet-madi {
-    gap: 28px;
-    padding-inline: 5%;
-  }
-  .meet-madi-photo {
-    aspect-ratio: 1;
-  }
-  .meet-madi-copy > p:not(.meet-madi-eyebrow) {
-    font-size: 15px;
-  }
-  .meet-madi-actions .button {
-    flex: 1 1 auto;
-    justify-content: center;
-  }
-}
+.location-address svg { flex: none; margin-top: 2px; color: var(--accent); }
 
 /* B27 Footer */
 .footer { background: var(--off-white); }

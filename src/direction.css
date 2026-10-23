@@ -663,24 +663,6 @@ textarea:focus-visible {
   overflow: hidden;
   background-color: #28282b;
 }
-.location-address {
-  position: absolute;
-  left: 15px;
-  bottom: 15px;
-  padding: 12px 15px;
-  color: #252525;
-  background: #eeeef0e8;
-  border-radius: 5px;
-  font-size: 10px;
-  line-height: 1.7;
-}
-.location-address small {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 6px;
-  font-size: 8px;
-}
 .contact-pills {
   display: flex;
   gap: 10px;

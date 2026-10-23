@@ -1,15 +1,15 @@
 # Photo and video sources
 
-Every photo and film on the site comes from MM Prestige Motors. The photos are from the dealership's showroom photoshoot: 29 photos supplied by the dealership in October 2026 (original files `MMMOTOR.CWATSON.jpg` and `MMMOTOR.CWATSON-2.jpg` to `-29.jpg`, about 5,800 × 3,900 px). They show the Wingfield showroom, the shopfront on Grand Junction Road and the cars on site that day.
+Every photo and film on the site comes from MM Prestige Motors. Most of the photos are from the dealership's showroom photoshoot: 29 photos supplied by the dealership in October 2026 (original files `MMMOTOR.CWATSON.jpg` and `MMMOTOR.CWATSON-2.jpg` to `-29.jpg`, about 5,800 × 3,900 px). They show the Wingfield showroom, the shopfront on Grand Junction Road and the cars on site that day. Two more photos came from the dealership's phone, also in October 2026 (see [Phone photos](#phone-photos)).
 
 The sample listings are mapped to the photographed cars, so each listing shows its own car. Each listing's year, price, kilometres and specifications are still samples (see `sampleStock` in `src/data.js`).
 
 ## Processing
 
-`scripts/photos/export.py` makes every site photo from the full-size originals: `python3 -I scripts/photos/export.py <folder of originals> [name ...]` (it needs numpy, opencv-python-headless and Pillow). The crops, sizes and looks are listed in `scripts/photos/photos.txt`, and the grade is in `scripts/photos/grade.py`.
+`scripts/photos/export.py` makes every shoot photo from the full-size originals: `python3 -I scripts/photos/export.py <folder of originals> [name ...]` (it needs numpy, opencv-python-headless and Pillow). The crops, sizes and looks are listed in `scripts/photos/photos.txt`, and the grade is in `scripts/photos/grade.py`.
 
 - **Grade.** The photographer's edit is bright, flat and slightly cool: its brightest lights stop at light grey, the concrete has a blue tint and the red paint looks pale orange. Every photo now gets the same grade: neutral white balance measured on the grey concrete, with a touch of warmth; levels so lights reach white and shadows reach near black; an S-curve; richer colour (muted colours lifted more than strong ones, greys left grey, strong paint deepened slightly); a light clean-up of camera grain, scaled to each shot's grain (the indoor shots are ISO 640 to 800); and local contrast with an edge-aware filter, so there are no halos round the cars. White balance and levels are measured on the whole frame, so every crop of a shot matches.
-- **Looks.** Car photos get the *listing* look. Photos with text over them (the home, stock and 404 heroes, the sell banner and the location card) get the *hero* look, with darker mid-tones so white text stays readable; no browser filter is applied on top. Madi's photos get the gentler *portrait* look, so skin stays natural.
+- **Looks.** Car photos get the *listing* look. Photos with text over them (the home, stock and 404 heroes and the sell banner) get the *hero* look, with darker mid-tones so white text stays readable; no browser filter is applied on top. Madi's photos get the gentler *portrait* look, so skin stays natural.
 - **Sizes.** Photos are kept up to 3,200 px wide (crops smaller than that keep their full size), sharpened for the web after resizing and saved as JPEG (quality 90, full colour resolution). Camera metadata, including any location data, is removed.
 - `npm run images` makes the WebP sizes in `public/images/opt` (480, 960, 1,600, 2,400 and 3,200 px; quality 82 with sharp YUV conversion, which keeps red paint crisp against black trim, and light edge sharpening on the resized copies) and the 1,200 × 630 link-preview crops. Each URL carries a short hash of its file, so browsers fetch a changed photo straight away instead of a copy cached for a day.
 - `clubsport-cutout.webp` was cut out of shot 20 on this machine with the open-source BiRefNet background-removal model (through `rembg`). The export keeps its mask and replaces only its colour. No photo was uploaded to an outside service.
@@ -24,9 +24,7 @@ Crops are given as fractions of the upright original frame (left, top, right, bo
 | `showroom-lineup.jpg` | 2 | Full frame | Gold E3 Maloo and red E3 GTS head-on under the wall sign | Home hero, link-preview image |
 | `showroom-collection.jpg` | 21 | Full frame | Green Maloo, gold Maloo and red HSVs, with the Gen-F GTS's rear in front | Stock page hero |
 | `showroom-doorway.jpg` | 9 | Full frame | Gen-F GTS and black Clubsport inside the open roller door | 404 page hero |
-| `showroom-street.jpg` | 13 | Full frame | Shopfront with the MM Prestige sign and address, Maloo R8 and Ferrari 360 outside | Location card |
-| `sell-roller-door.jpg` | 15 | Full frame | Maloo R8 and Ferrari 360 outside the open roller door | Sell-your-car banner |
-| `performance-gts-rear.jpg` | 21 | 0.519, 0.375, 0.956, 1 | Gen-F GTS rear quarter, wheel and yellow brake caliper | "Performance" panel |
+| `showroom-street.jpg` | 13 | Full frame | Shopfront with the MM Prestige sign and address, Maloo R8 and Ferrari 360 outside | No longer shown (it was the location card; the contact section now has a map) |
 | `clubsport-cutout.webp` | 20 | 0.53, 0.47, 0.95, 0.985, then background removed | Black E3 Clubsport, front | "Next up." panel |
 | `hsv-gts-genf-front.jpg` | 22 | Full frame | Gen-F GTS front three-quarter in the showroom | 2016 HSV GTS listing (main) |
 | `hsv-gts-genf-rear.jpg` | 21 | 0.4, 0.4, 1, 1 | Gen-F GTS rear three-quarter | 2016 HSV GTS listing |
@@ -44,8 +42,17 @@ Crops are given as fractions of the upright original frame (left, top, right, bo
 | `hsv-maloo-e3-front.jpg` | 2 | 0.113, 0.441, 0.506, 0.834 | Gold E3 Maloo head-on | 2012 HSV Maloo listing (sold) |
 | `hsv-maloo-green-front.jpg` | 21 | 0, 0.436, 0.234, 0.670 | Green Gen-F Maloo front | Stock manager demo's example photos |
 | `hsv-maloo-green-side.jpg` | 2 | 0, 0.469, 0.206, 0.675 | Green Gen-F Maloo side | Stock manager demo's example photos |
-| `madi-portrait.jpg` | 28 | 0.337, 0.241, 0.647, 0.447 (320 px square) | Madi in an MM Prestige vest in the showroom | Call Madi card on each listing, home "Talk directly with Madi" tile |
-| `madi-showroom.jpg` | 28 | 0.1, 0.17, 0.9, 0.837 (4:5) | Madi in an MM Prestige vest, red HSVs and the wall sign behind | Home "Meet Madi" section |
+| `madi-portrait.jpg` | 28 | 0.337, 0.241, 0.647, 0.447 (320 px square) | Madi in an MM Prestige vest in the showroom | Call Us card on each listing, home "Talk directly with Madi" tile |
+| `madi-showroom.jpg` | 28 | 0.1, 0.17, 0.9, 0.837 (4:5) | Madi in an MM Prestige vest, red HSVs and the wall sign behind | No longer shown (it was the home page's Meet Madi section) |
+
+## Phone photos
+
+The dealership sent two photos from a phone in October 2026: elevated views over the showroom floor, each 2,000 × 1,500 px in sRGB. They aren't from the shoot, so `export.py` doesn't remake them, and they aren't listed in `photos.txt`. Each was graded with `scripts/photos/grade.py`, cropped where noted, lightly sharpened and saved as JPEG without camera metadata; `npm run images` makes their WebP sizes like any other photo.
+
+| Local file | Look | Crop (pixels of the 2,000 × 1,500 frame) | Content | Used for |
+| --- | --- | --- | --- | --- |
+| `sell-showroom-overhead.jpg` | *hero* | Full frame | The showroom from above: the MM Prestige Motors wall sign top centre, rows of HSVs, and a red Ferrari 360's roof in the foreground | Sell-your-car banner |
+| `performance-ferrari-gts.jpg` | *listing* | 0, 300, 1250, 1270 (1,250 × 970 px) | Red Ferrari 360 Modena head-on beside a red HSV Maloo and a red E3 GTS, with more of the collection behind | "Performance" panel |
 
 ## Video
 
@@ -78,7 +85,7 @@ Each film is 1.3 to 5.8 MB, depending on size and codec: a desktop downloads abo
 
 ## Notes
 
-- Number plates are readable in several photos (the gold Maloo, the E3 GTS and the Ferrari). The dealership asked for them to stay readable, so they are not blurred.
+- Number plates are readable in several photos (the gold Maloo, the E3 GTS and the Ferrari, and both phone photos). The dealership asked for them to stay readable, so they are not blurred.
 - The black Clubsport's bumper reflects the photographer. It is too small to see at the panel's display size.
-- The dealership confirmed the portraits (shots 26 to 29) show Madi. Shot 28 is used for the round portrait and the Meet Madi photo; the others aren't used.
+- The dealership confirmed the portraits (shots 26 to 29) show Madi. Shot 28 is used for the round portrait (and for the Meet Madi photo, which is no longer shown); the others aren't used.
 - The grade is built into the files (see [Processing](#processing)); the site applies no colour filters to photos. Sold cars' card photos are shown desaturated on purpose.

@@ -8,3 +8,4 @@ test-results/
 .vercel/
 __pycache__/
 .stock/
+.claude/worktrees/
