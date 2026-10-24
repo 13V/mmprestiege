@@ -2292,11 +2292,14 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
                 </p>
                 <Finance price={car.price} />
                 <button
-                  className="vehicle-finance-ask"
+                  className="button primary full vehicle-finance-apply"
                   onClick={() => onEnquire({ ...car, purpose: "finance" })}
                 >
-                  Apply for finance <ArrowRight size={15} />
+                  Apply for finance <ArrowRight size={18} />
                 </button>
+                <small className="vehicle-finance-note">
+                  Takes a minute. Trade-ins welcome.
+                </small>
               </>
             )}
           </div>

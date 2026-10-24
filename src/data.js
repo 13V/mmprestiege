@@ -14,7 +14,7 @@ export const business = {
   social: [
     { name: "Instagram", url: "https://www.instagram.com/mmprestigemotors/" },
     { name: "TikTok", url: "https://www.tiktok.com/@mmprestigemotors" },
-    { name: "Facebook", url: "" },
+    { name: "Facebook", url: "https://www.facebook.com/p/MM-Prestige-100087864877571/" },
   ],
   address: "Unit 4/405A Grand Junction Road",
   suburb: "Wingfield SA 5013",

@@ -37,7 +37,7 @@ check("Home page has its title, canonical URL, share image and dealer details", 
   expect(/og:image" content="https:\/\/[^"]+\/og-image\.png"/.test(html), "home share image");
   expect(/"@type":"AutoDealer"/.test(html), "AutoDealer structured data");
   expect(html.includes('"email":"mmprestigemotors@gmail.com"'), "dealer email");
-  expect(html.includes('"sameAs":["https://www.instagram.com/mmprestigemotors/","https://www.tiktok.com/@mmprestigemotors"'), "social profiles");
+  expect(html.includes('"sameAs":["https://www.instagram.com/mmprestigemotors/","https://www.tiktok.com/@mmprestigemotors","https://www.facebook.com/p/MM-Prestige-100087864877571/"]'), "social profiles");
   expect(existsSync(join(root, "dist/og-image.png")), "og-image.png is published");
 });
 check("Every car has a page with its own title, description and photo preview", () => {

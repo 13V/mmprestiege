@@ -103,7 +103,10 @@ try {
     const mapURL = new URL(await maps.getAttribute('href'));
     expect(mapURL.searchParams.get('query')).toMatch(/MM Prestige Motors.*405A Grand Junction Road.*Wingfield.*5013/i);
     await expect(page.locator('body')).not.toContainText(/Impulse|Elizabeth South|0424 566 439|Philip Highway|Barry/);
-    await expect(page.locator('a[href*="facebook.com"]')).toHaveCount(0);
+    // The only Facebook link is the dealership's own page.
+    for (const href of await page.locator('a[href*="facebook.com"]').evaluateAll(links => links.map(link => link.href))) {
+      expect(href).toBe('https://www.facebook.com/p/MM-Prestige-100087864877571/');
+    }
   });
   await check('Black and red theme replaces previous palette preferences', async () => {
     await page.evaluate(() => localStorage.setItem('mm-theme', 'green'));
@@ -293,7 +296,7 @@ try {
     await page.keyboard.press('Escape');
     await expect(dialog).toHaveCount(0);
   });
-  await check('The email sits beside the phone, and the footer links our email, Instagram and TikTok', async () => {
+  await check('The email sits beside the phone, and the footer links our email, Instagram, TikTok and Facebook', async () => {
     const pills = page.locator('.reference-contact .contact-pills');
     await expect(pills.getByRole('link', { name: '0411 710 409' })).toHaveAttribute('href', 'tel:+61411710409');
     await expect(pills.getByRole('link', { name: 'mmprestigemotors@gmail.com' })).toHaveAttribute('href', 'mailto:mmprestigemotors@gmail.com');
@@ -304,6 +307,7 @@ try {
       await expect(tiktok).toHaveAttribute('href', 'https://www.tiktok.com/@mmprestigemotors');
       await expect(tiktok).toHaveAttribute('target', '_blank');
       await expect(social.getByRole('link', { name: 'Instagram' })).toHaveAttribute('href', 'https://www.instagram.com/mmprestigemotors/');
+      await expect(social.getByRole('link', { name: 'Facebook' })).toHaveAttribute('href', 'https://www.facebook.com/p/MM-Prestige-100087864877571/');
       for (const href of await social.locator('a').evaluateAll(links => links.map(link => link.href))) expect(href).toMatch(/^https:\/\//);
     }
   });

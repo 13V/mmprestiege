@@ -894,18 +894,39 @@
   width: 100%;
   accent-color: var(--accent-text);
 }
-.vehicle-finance-ask {
-  display: inline-flex;
+/* Finance is the dealership's main offer, so applying is the price card's
+   big red action. */
+.vehicle-price-card .vehicle-finance-apply {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 14px;
-  padding: 0;
-  font-size: var(--fs-small);
-  font-weight: 600;
-  color: var(--accent-text);
+  justify-content: center;
+  gap: 10px;
+  min-height: 54px;
+  margin-top: 18px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+  border-radius: var(--radius-control);
+  box-shadow: 0 14px 30px -16px #d42536cc;
 }
-.vehicle-finance-ask:hover {
-  color: var(--off-white);
+.vehicle-price-card .vehicle-finance-apply:hover {
+  background: var(--accent-strong-hover);
+  border-color: var(--accent-strong-hover);
+}
+.vehicle-price-card .vehicle-finance-apply svg {
+  transition: transform var(--mm-base) var(--mm-ease);
+}
+.vehicle-price-card .vehicle-finance-apply:hover svg {
+  transform: translateX(4px);
+}
+.vehicle-finance-note {
+  display: block;
+  margin-top: 10px;
+  font-size: var(--fs-caption);
+  text-align: center;
+  color: #9a9a9e;
 }
 
 /* ---------- Vehicle: specifications ---------- */
