@@ -12,7 +12,7 @@ export const business = {
   // Social profiles, linked in the contact section and footer.
   // A profile shows once it has a link.
   social: [
-    { name: "Instagram", url: "" },
+    { name: "Instagram", url: "https://www.instagram.com/mmprestigemotors/" },
     { name: "TikTok", url: "https://www.tiktok.com/@mmprestigemotors" },
     { name: "Facebook", url: "" },
   ],
