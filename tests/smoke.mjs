@@ -7,6 +7,12 @@ const baseURL = process.env.MM_BASE_URL || 'http://localhost:5173';
 const firstVehicleRoute = '/stock/hsv-gts-2016';
 const firstVehicleName = '2016 HSV GTS';
 const soldVehicleRoute = '/stock/hsv-maloo-2012';
+// The dealership's social profiles, as the site links them.
+const SOCIAL_PROFILES = [
+  ['Instagram', 'https://www.instagram.com/mmprestigemotors/'],
+  ['TikTok', 'https://www.tiktok.com/@mmprestigemotors'],
+  ['Facebook', 'https://www.facebook.com/profile.php?id=100087864877571'],
+];
 const screenshotDir = resolve(process.env.MM_SCREENSHOT_DIR || '.screenshots');
 await mkdir(screenshotDir, { recursive: true });
 const browser = await chromium.launch({
@@ -105,7 +111,7 @@ try {
     await expect(page.locator('body')).not.toContainText(/Impulse|Elizabeth South|0424 566 439|Philip Highway|Barry/);
     // The only Facebook link is the dealership's own page.
     for (const href of await page.locator('a[href*="facebook.com"]').evaluateAll(links => links.map(link => link.href))) {
-      expect(href).toBe('https://www.facebook.com/p/MM-Prestige-100087864877571/');
+      expect(href).toBe('https://www.facebook.com/profile.php?id=100087864877571');
     }
   });
   await check('Black and red theme replaces previous palette preferences', async () => {
@@ -303,12 +309,12 @@ try {
     const footer = page.locator('.footer');
     await expect(footer.getByRole('link', { name: 'mmprestigemotors@gmail.com' })).toHaveAttribute('href', 'mailto:mmprestigemotors@gmail.com');
     for (const social of [page.locator('.reference-contact .social-links'), footer.locator('.social-links')]) {
-      const tiktok = social.getByRole('link', { name: 'TikTok' });
-      await expect(tiktok).toHaveAttribute('href', 'https://www.tiktok.com/@mmprestigemotors');
-      await expect(tiktok).toHaveAttribute('target', '_blank');
-      await expect(social.getByRole('link', { name: 'Instagram' })).toHaveAttribute('href', 'https://www.instagram.com/mmprestigemotors/');
-      await expect(social.getByRole('link', { name: 'Facebook' })).toHaveAttribute('href', 'https://www.facebook.com/p/MM-Prestige-100087864877571/');
-      for (const href of await social.locator('a').evaluateAll(links => links.map(link => link.href))) expect(href).toMatch(/^https:\/\//);
+      await expect(social.locator('a')).toHaveCount(3);
+      for (const [name, href] of SOCIAL_PROFILES) {
+        const link = social.getByRole('link', { name, exact: true });
+        await expect(link).toHaveAttribute('href', href);
+        await expect(link).toHaveAttribute('target', '_blank');
+      }
     }
   });
   await check('Meet Madi is gone, and About us leads to the showroom tour', async () => {
@@ -451,12 +457,29 @@ try {
     await page.keyboard.press('Escape');
     await expect(dialog).toHaveCount(0);
   });
-  await check('Header shows our number and every link on desktop', async () => {
+  await check('Header shows our number, our socials and every link on desktop', async () => {
     await expect(page.locator('.header-call')).toHaveAttribute('href', 'tel:+61411710409');
     await expect(page.locator('.header-call')).toContainText('0411 710 409');
     await expect(page.getByRole('button', { name: 'Open navigation' })).toBeHidden();
     await expect(page.locator('.nav').getByRole('link', { name: 'Sold cars', exact: true })).toBeVisible();
     await expect(page.locator('.header-saved')).toHaveCount(0);
+    const socials = page.locator('.header-social');
+    await expect(socials.locator('a')).toHaveCount(3);
+    for (const [name, href] of SOCIAL_PROFILES) {
+      const link = socials.getByRole('link', { name: `MM Prestige Motors on ${name}`, exact: true });
+      await expect(link).toBeVisible();
+      await expect(link).toHaveAttribute('href', href);
+      await expect(link).toHaveAttribute('target', '_blank');
+    }
+    await expect(page.locator('.nav-social')).toBeHidden();
+    // The icons show from 1025px wide, where they must clear the last menu link.
+    await page.setViewportSize({ width: 1025, height: 1000 });
+    const services = await page.locator('.nav').getByRole('link', { name: 'Services', exact: true }).boundingBox();
+    const icons = await socials.boundingBox();
+    expect(services.x + services.width + 16).toBeLessThanOrEqual(icons.x);
+    await page.setViewportSize({ width: 1024, height: 1000 });
+    await expect(socials).toBeHidden();
+    await page.setViewportSize({ width: 1440, height: 1000 });
   });
   await check('Home page carries link-preview tags and dealer details for search', async () => {
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og-image\.png$/);
@@ -794,13 +817,33 @@ try {
     await expect(page).toHaveURL(/\/stock$/);
     await expect(page.getByRole('button', { name: 'Open navigation' })).toHaveAttribute('aria-expanded', 'false');
   });
-  await check('Phone header keeps a call button and lists saved cars in the menu', async () => {
+  await check('Phone header keeps a call button, and the menu lists saved cars and our socials', async () => {
     await expect(page.locator('.header-call')).toBeVisible();
     await expect(page.locator('.header-call')).toHaveAttribute('aria-label', 'Call us on 0411 710 409');
     await expect(page.locator('.header-saved')).toBeHidden();
+    await expect(page.locator('.header-social')).toBeHidden();
     await page.getByRole('button', { name: 'Open navigation' }).click();
     await expect(page.locator('.nav').getByRole('link', { name: /Saved cars/ })).toHaveAttribute('href', '/stock?status=all&saved=1');
+    const socials = page.locator('.nav .nav-social');
+    await expect(socials.locator('a')).toHaveCount(3);
+    for (const [name, href] of SOCIAL_PROFILES) {
+      const link = socials.getByRole('link', { name: `MM Prestige Motors on ${name}`, exact: true });
+      await expect(link).toBeVisible();
+      await expect(link).toHaveAttribute('href', href);
+      // Big enough to tap.
+      const box = await link.boundingBox();
+      expect(Math.min(box.width, box.height)).toBeGreaterThanOrEqual(40);
+    }
     await page.keyboard.press('Escape');
+  });
+  await check('The phone menu closes when the screen widens, like a tablet turned sideways', async () => {
+    await page.getByRole('button', { name: 'Open navigation' }).click();
+    await expect(page.locator('.nav')).toHaveClass(/\bopen\b/);
+    await page.setViewportSize({ width: 1180, height: 820 });
+    await expect(page.locator('.nav')).not.toHaveClass(/\bopen\b/);
+    await expect(page.locator('.nav-social')).toBeHidden();
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(page.getByRole('button', { name: 'Open navigation' })).toHaveAttribute('aria-expanded', 'false');
   });
   await check('Mobile navigation closes on sold query navigation', async () => {
     await page.getByRole('button', { name: 'Open navigation' }).click();

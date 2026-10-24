@@ -320,6 +320,15 @@ function Header({ onEnquire, savedCount = 0 }) {
   useEffect(() => {
     if (open) navigation.current?.querySelector("a")?.focus();
   }, [open]);
+  // The menu is for narrow screens. Close it when the screen widens (a tablet
+  // turned sideways), where it would stay open with no button to close it.
+  useEffect(() => {
+    if (!open) return;
+    const wide = window.matchMedia("(min-width: 851px)");
+    const close = () => wide.matches && setOpen(false);
+    wide.addEventListener("change", close);
+    return () => wide.removeEventListener("change", close);
+  }, [open]);
   // A hash-only change doesn't close the menu, and re-selecting the current
   // section doesn't change the location, so scroll to it directly.
   const goToSection = (id) => () => {
@@ -395,8 +404,10 @@ function Header({ onEnquire, savedCount = 0 }) {
                 Saved cars <span>{savedCount}</span>
               </Link>
             )}
+            <SocialLinks icons className="nav-social" />
           </nav>
           <div className="header-actions">
+            <SocialLinks icons className="header-social" />
             <a
               className="header-call"
               href={`tel:${business.tel}`}
@@ -1468,26 +1479,36 @@ function TikTokIcon({ size = 24, ...props }) {
       strokeLinejoin="round"
       {...props}
     >
-      <path d="M13 3v12.5a3.5 3.5 0 1 1-3.5-3.5" />
-      <path d="M13 3c.5 2.8 2.5 4.7 5.5 5" />
+      <path d="M13.5 2.5V17a4.5 4.5 0 1 1-4.5-4.5" />
+      <path d="M13.5 2.5c.6 3.3 3 5.6 6.5 6" />
     </svg>
   );
 }
 const SOCIAL_ICONS = { Instagram, TikTok: TikTokIcon, Facebook };
 // The dealership's social profiles (business.social in data.js); a profile
-// shows once it has a link.
-function SocialLinks() {
+// shows once it has a link. `icons` shows just the icons (the header and the
+// phone menu), named for screen readers.
+function SocialLinks({ icons = false, className = "" }) {
   const profiles = business.social.filter((profile) => profile.url);
   if (!profiles.length) return null;
   return (
-    <ul className="social-links" aria-label="Follow MM Prestige Motors">
+    <ul
+      className={`social-links${icons ? " social-icons" : ""} ${className}`.trim()}
+      aria-label="Follow MM Prestige Motors"
+    >
       {profiles.map(({ name, url }) => {
         const Icon = SOCIAL_ICONS[name];
         return (
           <li key={name}>
-            <a href={url} target="_blank" rel="noreferrer">
+            <a
+              href={url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={icons ? `MM Prestige Motors on ${name}` : undefined}
+              title={icons ? name : undefined}
+            >
               <Icon size={17} aria-hidden="true" />
-              {name}
+              {!icons && name}
             </a>
           </li>
         );
