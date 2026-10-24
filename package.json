@@ -14,7 +14,8 @@
     "images": "node scripts/optimize-images.mjs",
     "share-image": "node scripts/share-image.mjs",
     "test:pages": "npm run build && node tests/build-pages.mjs",
-    "test:stock": "node tests/stock-lookup.mjs && node tests/stock-admin.mjs"
+    "test:stock": "node tests/stock-lookup.mjs && node tests/stock-admin.mjs",
+    "test:enquiry": "node tests/enquiry.mjs"
   },
   "dependencies": {
     "@fontsource/big-shoulders-display": "^5.3.0",

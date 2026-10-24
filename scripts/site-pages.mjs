@@ -32,6 +32,7 @@ const dealer = {
   url: `${SITE_URL}/`,
   image: `${SITE_URL}/og-image.png`,
   telephone: business.tel,
+  email: business.email,
   address: {
     "@type": "PostalAddress",
     streetAddress: business.address,
@@ -41,6 +42,7 @@ const dealer = {
     addressCountry: "AU",
   },
   areaServed: "Adelaide",
+  sameAs: business.social.filter((profile) => profile.url).map((profile) => profile.url),
 };
 
 const home = {

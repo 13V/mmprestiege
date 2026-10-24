@@ -8,6 +8,7 @@
 //    Publishing reloads the open pages instead of rebuilding.
 import { resolve } from "node:path";
 import { readSnapshot } from "../../scripts/stock-source.mjs";
+import { send, toRequest } from "../node-http.js";
 import { handleStockRequest } from "./handler.js";
 import { mockProvider, regCheckProvider } from "./lookup.js";
 import { publicSnapshot } from "./records.js";
@@ -17,24 +18,6 @@ const VIRTUAL = "virtual:mm-stock";
 const RESOLVED = `\0${VIRTUAL}`;
 const TYPES = { jpg: "image/jpeg", webp: "image/webp" };
 
-async function toRequest(req) {
-  const chunks = [];
-  for await (const chunk of req) chunks.push(chunk);
-  const headers = new Headers();
-  for (const [name, value] of Object.entries(req.headers))
-    if (!name.startsWith(":") && value != null) headers.set(name, Array.isArray(value) ? value.join(", ") : value);
-  const hasBody = !["GET", "HEAD"].includes(req.method) && chunks.length;
-  return new Request(`http://${req.headers.host || "localhost"}${req.url}`, {
-    method: req.method,
-    headers,
-    body: hasBody ? Buffer.concat(chunks) : undefined,
-  });
-}
-async function send(res, response) {
-  res.statusCode = response.status;
-  response.headers.forEach((value, name) => res.setHeader(name, value));
-  res.end(Buffer.from(await response.arrayBuffer()));
-}
 
 export function stockPlugin() {
   let serving = false;

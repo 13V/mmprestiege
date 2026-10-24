@@ -202,7 +202,8 @@ try {
     await expect(sold.locator(".sold-tag")).toHaveCount(1);
     const home = await publicPage("/");
     await expect(home.locator(".stock-empty")).toContainText("New arrivals are on the way.");
-    await expect(home.locator(".carousel-controls")).toBeHidden();
+    // The featured stock's arrows (the showroom tour has its own).
+    await expect(home.locator(".reference-collection .carousel-controls")).toBeHidden();
     await sold.close();
     await home.close();
   });

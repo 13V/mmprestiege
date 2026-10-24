@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { cleanUrls, sitePages } from "./scripts/site-pages.mjs";
+import { enquiryPlugin } from "./server/enquiry/vite-plugin.js";
 import { stockPlugin } from "./server/stock/vite-plugin.js";
 
 function presentationPage() {
@@ -24,5 +25,5 @@ function presentationPage() {
 }
 
 export default defineConfig({
-  plugins: [react(), presentationPage(), stockPlugin(), sitePages()],
+  plugins: [react(), presentationPage(), stockPlugin(), enquiryPlugin(), sitePages()],
 });

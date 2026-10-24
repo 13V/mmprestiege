@@ -42,6 +42,11 @@ page.on('request', request => {
     mutationRequests.push({ method: request.method(), url: request.url() });
   }
 });
+// The tests never email the dealership, even against the live site: on the
+// main page the enquiry API always says email is off, and a send is blocked
+// (and caught by the guard above). The emailed flow has its own page below.
+const enquiryOff = route => (route.request().method() === 'GET' ? route.fulfill({ json: { ok: true, email: false } }) : route.abort());
+await page.route('**/api/enquiry', enquiryOff);
 const results = [];
 async function check(name, work) {
   try { await work(); results.push({ name, passed: true }); console.log(`PASS ${name}`); }
@@ -255,6 +260,44 @@ try {
       return main.textContent.includes('Madi');
     })).toBe(false);
   });
+  await check('Finance and trade-ins are up front, and the Finance link leads to the finance section', async () => {
+    const offer = page.locator('.offer-copy ol');
+    await expect(offer).toContainText('Finance available');
+    await expect(offer).toContainText('Trade-ins welcome');
+    await expect(page.locator('.offer-trade p')).toHaveText('Buy. Sell. Trade. Finance.');
+    await expect(page.locator('.reference-sell p')).toContainText('take trade-ins');
+    // The finance section sits after the featured stock, before the sell banner.
+    expect(await page.evaluate(() =>
+      [...document.querySelectorAll('.reference-collection, #finance, .reference-sell')].map(el => el.id || el.className.split(' ').pop()).join(' '),
+    )).toBe('reference-collection finance reference-sell');
+    await page.locator('.nav').getByRole('link', { name: 'Finance', exact: true }).click();
+    await expect(page).toHaveURL(/\/#finance$/);
+    await expect.poll(async () => {
+      const { y } = await page.locator('#finance').boundingBox();
+      return y >= 0 && y < 200;
+    }).toBe(true);
+    await page.locator('#finance').getByRole('button', { name: /Apply for finance/ }).click();
+    const dialog = page.getByRole('dialog', { name: 'Apply for finance with MM Prestige Motors' });
+    await expect(dialog.getByLabel("Car you'd like to finance")).toHaveValue('');
+    expect(await dialog.locator('#finance-cars option').count()).toBeGreaterThan(0);
+    // Nothing is sent from the form until email is set up: it prepares the message.
+    await expect(dialog.getByRole('button', { name: 'Prepare enquiry' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(dialog).toHaveCount(0);
+  });
+  await check('The email sits beside the phone, and the footer links our email and TikTok', async () => {
+    const pills = page.locator('.reference-contact .contact-pills');
+    await expect(pills.getByRole('link', { name: '0411 710 409' })).toHaveAttribute('href', 'tel:+61411710409');
+    await expect(pills.getByRole('link', { name: 'mmprestigemotors@gmail.com' })).toHaveAttribute('href', 'mailto:mmprestigemotors@gmail.com');
+    const footer = page.locator('.footer');
+    await expect(footer.getByRole('link', { name: 'mmprestigemotors@gmail.com' })).toHaveAttribute('href', 'mailto:mmprestigemotors@gmail.com');
+    for (const social of [page.locator('.reference-contact .social-links'), footer.locator('.social-links')]) {
+      const tiktok = social.getByRole('link', { name: 'TikTok' });
+      await expect(tiktok).toHaveAttribute('href', 'https://www.tiktok.com/@mmprestigemotors');
+      await expect(tiktok).toHaveAttribute('target', '_blank');
+      for (const href of await social.locator('a').evaluateAll(links => links.map(link => link.href))) expect(href).toMatch(/^https:\/\//);
+    }
+  });
   await check('Meet Madi is gone, and About us leads to the showroom tour', async () => {
     await expect(page.locator('.meet-madi')).toHaveCount(0);
     await expect(page.locator('body')).not.toContainText('Meet Madi');
@@ -382,7 +425,7 @@ try {
     await dialog.getByLabel('Model').fill('Commodore SS');
     await dialog.getByLabel('Condition').selectOption('Good');
     await dialog.getByLabel('What would you like to do?').selectOption('Trade it in');
-    await dialog.getByLabel('Your name').fill('Website QA');
+    await dialog.getByLabel('Full name').fill('Website QA');
     await dialog.getByLabel('Phone number').fill('0400000000');
     await dialog.getByRole('button', { name: 'Prepare enquiry' }).click();
     const message = decodeURIComponent((await dialog.getByRole('link', { name: 'Send via SMS' }).getAttribute('href')).split('?body=')[1]);
@@ -501,7 +544,7 @@ try {
     const dialog = page.getByRole('dialog', { name: 'Find a car with MM Prestige Motors' });
     await dialog.getByLabel('Make and model').fill('HSV GTS');
     await dialog.getByLabel(/^Budget/).selectOption('Over $100,000');
-    await dialog.getByLabel('Your name').fill('Website QA');
+    await dialog.getByLabel('Full name').fill('Website QA');
     await dialog.getByLabel('Phone number').fill('0400000000');
     await dialog.getByRole('button', { name: 'Prepare enquiry' }).click();
     await expect(dialog.locator('.message-preview')).toContainText('Looking for: HSV GTS');
@@ -602,10 +645,21 @@ try {
     await expect(page.locator('#specifications')).toContainText('MM101');
     await expect(page.locator('#specifications')).toContainText('Wingfield, SA');
   });
-  await check('Finance link prepares a finance enquiry for the car', async () => {
-    await page.getByRole('button', { name: /Ask us about finance/ }).click();
-    const dialog = page.getByRole('dialog', { name: 'Enquire with MM Prestige Motors' });
-    await expect(dialog.getByLabel('Your message')).toHaveValue(/finance for the 2016 HSV GTS/);
+  await check('Apply for finance opens the finance form with the car filled in', async () => {
+    await page.getByRole('button', { name: /Apply for finance/ }).click();
+    const dialog = page.getByRole('dialog', { name: 'Apply for finance with MM Prestige Motors' });
+    await expect(dialog.getByLabel("Car you'd like to finance")).toHaveValue('2016 HSV GTS');
+    await expect(dialog.getByLabel('Email')).toHaveAttribute('required', '');
+    await dialog.getByLabel('Full name').fill('Website QA');
+    await dialog.getByLabel('Phone number').fill('0400000000');
+    await dialog.getByLabel('Email').fill('qa@example.com');
+    await dialog.getByRole('button', { name: 'Prepare enquiry' }).click();
+    const email = new URL(await dialog.getByRole('link', { name: 'Send by email' }).getAttribute('href'));
+    expect(email.protocol).toBe('mailto:');
+    expect(email.pathname).toBe('mmprestigemotors@gmail.com');
+    expect(email.searchParams.get('subject')).toBe('Finance enquiry: Website QA, 2016 HSV GTS');
+    expect(email.searchParams.get('body')).toContain("Hi, I'd like to apply for finance.\n\nCar: 2016 HSV GTS");
+    expect(email.searchParams.get('body')).toContain('Name: Website QA\nPhone: 0400000000\nEmail: qa@example.com');
     await page.keyboard.press('Escape');
   });
   await check('Repayment calculator updates at zero interest', async () => {
@@ -621,7 +675,7 @@ try {
     await page.getByRole('button', { name: 'Enquire about this car', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Enquire with MM Prestige Motors' });
     await expect(dialog).toBeVisible();
-    await dialog.getByLabel('Your name').fill('Website QA');
+    await dialog.getByLabel('Full name').fill('Website QA');
     await dialog.getByLabel('Phone number').fill('0400000000');
     await expect(dialog.getByLabel('Your message')).toHaveValue(new RegExp(`Hi, I'm interested in the ${firstVehicleName}`));
     await dialog.getByRole('button', { name: 'Prepare enquiry' }).click();
@@ -632,8 +686,11 @@ try {
     expect(message).toContain(firstVehicleName);
     expect(message).toContain('Name: Website QA');
     expect(message).toContain('Phone: 0400000000');
+    expect(message).not.toContain('Email:');
+    const email = await dialog.getByRole('link', { name: 'Send by email' }).getAttribute('href');
+    expect(email.startsWith('mailto:mmprestigemotors@gmail.com?subject=')).toBeTruthy();
     await dialog.getByRole('button', { name: 'Edit your message' }).click();
-    await expect(dialog.getByLabel('Your name')).toHaveValue('Website QA');
+    await expect(dialog.getByLabel('Full name')).toHaveValue('Website QA');
     await page.keyboard.press('Escape');
     await expect(page.getByRole('dialog')).toHaveCount(0);
   });
@@ -920,6 +977,59 @@ try {
       expect(missing).toEqual([]);
       const imageURLs = await page.locator('img').evaluateAll(images => images.map(image => image.src));
       for (const imageURL of imageURLs) expect(new URL(imageURL).origin).toBe(new URL(baseURL).origin);
+    }
+  });
+  await check('The enquiry API reports whether email is set up', async () => {
+    const response = await page.request.get(`${baseURL}/api/enquiry`);
+    expect(response.ok()).toBeTruthy();
+    const status = await response.json();
+    expect(status.ok).toBe(true);
+    expect(typeof status.email).toBe('boolean');
+  });
+  await check('With email set up, the finance form sends the enquiry and confirms it; a failed send falls back to email or SMS', async () => {
+    // Its own page, where the API's answers are stand-ins: nothing reaches a server.
+    const emailed = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    try {
+      const sent = [];
+      let reply = { status: 200, json: { ok: true } };
+      await emailed.route('**/api/enquiry', route => {
+        if (route.request().method() === 'GET') return route.fulfill({ json: { ok: true, email: true } });
+        sent.push({ body: route.request().postDataJSON(), header: route.request().headers()['x-mm-enquiry'] });
+        return route.fulfill(reply);
+      });
+      const tab = await emailed.newPage();
+      await tab.goto(`${baseURL}${firstVehicleRoute}`);
+      await tab.getByRole('button', { name: /Apply for finance/ }).click();
+      const dialog = tab.getByRole('dialog', { name: 'Apply for finance with MM Prestige Motors' });
+      await expect(dialog.getByRole('button', { name: 'Send enquiry' })).toBeVisible();
+      await expect(dialog.locator('.enquiry-footnote')).toContainText('mmprestigemotors@gmail.com');
+      await dialog.getByLabel('Full name').fill('Website QA');
+      await dialog.getByLabel('Phone number').fill('0400 000 000');
+      await dialog.getByLabel('Email').fill('qa@example.com');
+      await dialog.getByLabel(/^Anything else/).fill('$10,000 deposit and a trade-in.');
+      await dialog.getByRole('button', { name: 'Send enquiry' }).click();
+      await expect(dialog.getByText("Thanks, Website. We've got it.")).toBeVisible();
+      expect(sent).toHaveLength(1);
+      const [{ body, header }] = sent;
+      expect(header).toBe('1');
+      expect(body).toMatchObject({ kind: 'finance', name: 'Website QA', phone: '0400 000 000', email: 'qa@example.com', car: '2016 HSV GTS', page: firstVehicleRoute, website: '' });
+      expect(body.message).toContain('Car: 2016 HSV GTS\n\n$10,000 deposit and a trade-in.');
+      await dialog.getByRole('button', { name: 'Done' }).click();
+      await expect(dialog).toHaveCount(0);
+      // When the website can't send it, the visitor can.
+      reply = { status: 502, json: { ok: false, code: 'send_failed', message: "Your enquiry couldn't be sent just now." } };
+      await tab.getByRole('button', { name: /Apply for finance/ }).click();
+      await dialog.getByLabel('Full name').fill('Website QA');
+      await dialog.getByLabel('Phone number').fill('0400 000 000');
+      await dialog.getByLabel('Email').fill('qa@example.com');
+      await dialog.getByRole('button', { name: 'Send enquiry' }).click();
+      await expect(dialog.getByText('Your message is ready.')).toBeVisible();
+      await expect(dialog.locator('.enquiry-ready > p')).toContainText("Your enquiry couldn't be sent just now.");
+      await expect(dialog.getByRole('link', { name: 'Send by email' })).toHaveAttribute('href', /^mailto:mmprestigemotors@gmail\.com\?subject=Finance%20enquiry/);
+      await expect(dialog.getByRole('link', { name: 'Send via SMS' })).toHaveAttribute('href', /^sms:\+61411710409\?body=/);
+      expect(sent).toHaveLength(2);
+    } finally {
+      await emailed.close();
     }
   });
   await check('The customer preview makes no real mutation requests', async () => { expect(mutationRequests).toEqual([]); });

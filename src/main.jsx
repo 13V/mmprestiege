@@ -52,6 +52,9 @@ import {
   Share2,
   Pause,
   Play,
+  Mail,
+  Instagram,
+  Facebook,
 } from "lucide-react";
 import { money, number, business } from "./data";
 import { sampleStock, vehicles } from "./stock";
@@ -126,6 +129,11 @@ function App() {
       // Keep saved cars available for this visit if browser storage is blocked.
     }
   }, [saved]);
+  // Ask once the page is idle whether enquiries can be emailed, so the form
+  // knows how it will send before anyone opens it.
+  useEffect(() => {
+    (window.requestIdleCallback || setTimeout)(() => enquiriesByEmail());
+  }, []);
   function toggleSaved(id) {
     setSaved((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
   }
@@ -165,6 +173,7 @@ const REVEAL_TARGETS = [
   ".offer-copy",
   ".offer-performance",
   ".offer-stack > *",
+  ".finance-band",
   ".card-grid > .car-card",
   ".carousel-controls",
   ".reference-sell > div",
@@ -373,6 +382,9 @@ function Header({ onEnquire, savedCount = 0 }) {
               viewTransition
             >
               Sold cars
+            </Link>
+            <Link to="/#finance" onClick={goToSection("finance")}>
+              Finance
             </Link>
             <Link to="/#services" onClick={goToSection("services")}>
               Services
@@ -1066,7 +1078,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
           <p>
             HSV, Holden and Australian muscle.
             <br />
-            Buy, sell or trade with us.
+            Buy, sell, trade or finance with us.
             <br />
             Wingfield, South Australia.
           </p>
@@ -1119,10 +1131,10 @@ function Home({ saved, toggleSaved, onEnquire }) {
               <span>01</span>HSV, Holden and Australian performance cars
             </li>
             <li>
-              <span>02</span>Talk to us directly
+              <span>02</span>Finance available
             </li>
             <li>
-              <span>03</span>Buy, sell or trade your next car
+              <span>03</span>Trade-ins welcome
             </li>
             <li>
               <span>04</span>Viewings by arrangement in Wingfield
@@ -1147,7 +1159,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
         <div className="offer-stack">
           <button className="offer-trade" onClick={() => onEnquire({})}>
             <h3>Next up.</h3>
-            <p>Buy. Sell. Trade.</p>
+            <p>Buy. Sell. Trade. Finance.</p>
             <img
               {...responsive("/images/tour-lineup.jpg", SIZES.offerPanel)}
               alt=""
@@ -1252,6 +1264,44 @@ function Home({ saved, toggleSaved, onEnquire }) {
           Explore our stock <ArrowRight size={18} />
         </Link>
       </section>
+      <section
+        className="finance-band"
+        id="finance"
+        aria-labelledby="finance-heading"
+      >
+        <div className="finance-copy">
+          <span className="finance-eyebrow">Finance &amp; trade-ins</span>
+          <h2 id="finance-heading" className="reveal-words">
+            <RevealWords text={"Finance\navailable"} />
+          </h2>
+          <p>
+            We arrange finance on our cars, and trade-ins are welcome. Tell us
+            which car you're after and we'll come back to you with options.
+          </p>
+        </div>
+        <ul className="finance-points">
+          <li>
+            <Check size={18} /> Finance on our HSV, Holden and performance cars
+          </li>
+          <li>
+            <Check size={18} /> Trade-ins welcome
+          </li>
+          <li>
+            <Check size={18} /> Start with your name, phone, email and the car
+          </li>
+        </ul>
+        <div className="finance-actions">
+          <button
+            className="button primary"
+            onClick={() => onEnquire({ purpose: "finance" })}
+          >
+            Apply for finance <ArrowRight size={16} />
+          </button>
+          <a className="finance-call" href={`tel:${business.tel}`}>
+            <Phone size={16} /> Or call {business.phone}
+          </a>
+        </div>
+      </section>
       <section className="reference-sell">
         <img
           {...responsive("/images/sell-showroom-overhead.jpg", SIZES.banner)}
@@ -1263,8 +1313,8 @@ function Home({ saved, toggleSaved, onEnquire }) {
             <RevealWords text={"Sell your car to\nour dealership"} />
           </h2>
           <p>
-            Ready for something different? Talk with us
-            <br className="desktop-break" /> about selling or trading your car.
+            Ready for something different? We buy cars and
+            <br className="desktop-break" /> take trade-ins. Talk to us about yours.
           </p>
           <button
             className="button primary"
@@ -1324,7 +1374,7 @@ function Home({ saved, toggleSaved, onEnquire }) {
           </h2>
           <p>
             Visit our Wingfield showroom. Talk to us about a car, arrange a
-            viewing or discuss a trade-in.
+            viewing, or ask about finance and trade-ins.
           </p>
           <button className="button primary" onClick={() => onEnquire({})}>
             Contact us <ArrowRight size={15} />
@@ -1366,6 +1416,48 @@ function Review({ quote, name, detail }) {
 function scrollToSection(element) {
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   element?.scrollIntoView({ behavior: reduce ? "instant" : "smooth", block: "start" });
+}
+// TikTok's note, drawn in the same line style as the other icons.
+function TikTokIcon({ size = 24, ...props }) {
+  return (
+    <svg
+      className="lucide"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M13 3v12.5a3.5 3.5 0 1 1-3.5-3.5" />
+      <path d="M13 3c.5 2.8 2.5 4.7 5.5 5" />
+    </svg>
+  );
+}
+const SOCIAL_ICONS = { Instagram, TikTok: TikTokIcon, Facebook };
+// The dealership's social profiles (business.social in data.js); a profile
+// shows once it has a link.
+function SocialLinks() {
+  const profiles = business.social.filter((profile) => profile.url);
+  if (!profiles.length) return null;
+  return (
+    <ul className="social-links" aria-label="Follow MM Prestige Motors">
+      {profiles.map(({ name, url }) => {
+        const Icon = SOCIAL_ICONS[name];
+        return (
+          <li key={name}>
+            <a href={url} target="_blank" rel="noreferrer">
+              <Icon size={17} aria-hidden="true" />
+              {name}
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  );
 }
 function CallTile() {
   return (
@@ -1410,10 +1502,15 @@ function ShowroomLocation() {
             <Phone size={17} />
             {business.phone}
           </a>
+          <a href={`mailto:${business.email}`}>
+            <Mail size={17} />
+            {business.email}
+          </a>
           <a href={business.maps} target="_blank" rel="noreferrer">
             Get directions <ArrowUpRight size={17} />
           </a>
         </div>
+        <SocialLinks />
       </div>
     </div>
   );
@@ -2162,7 +2259,7 @@ function Vehicle({ saved, toggleSaved, onEnquire }) {
                   className="vehicle-finance-ask"
                   onClick={() => onEnquire({ ...car, purpose: "finance" })}
                 >
-                  Ask us about finance <ArrowRight size={15} />
+                  Apply for finance <ArrowRight size={15} />
                 </button>
               </>
             )}
@@ -2412,7 +2509,8 @@ function Dialog({ title, onClose, className = "", children }) {
     </div>
   );
 }
-// What each kind of enquiry asks for, and how it opens.
+// What each kind of enquiry asks for, and how it opens. The subjects match
+// the emails the dealership receives (server/enquiry/handler.js).
 const ENQUIRY = {
   talk: {
     title: "Enquire with MM Prestige Motors",
@@ -2422,6 +2520,18 @@ const ENQUIRY = {
       </>
     ),
     intro: "Tell us what you have in mind.",
+    subject: "Website enquiry",
+  },
+  finance: {
+    title: "Apply for finance with MM Prestige Motors",
+    heading: (
+      <>
+        Finance <em>your next car.</em>
+      </>
+    ),
+    intro:
+      "We arrange finance on our cars. Tell us which car you're after, and we'll come back to you with options.",
+    subject: "Finance enquiry",
   },
   sell: {
     title: "Sell or trade your car with MM Prestige Motors",
@@ -2431,6 +2541,7 @@ const ENQUIRY = {
       </>
     ),
     intro: "Tell us about your car and what you'd like to do.",
+    subject: "Sell or trade-in enquiry",
   },
   find: {
     title: "Find a car with MM Prestige Motors",
@@ -2440,8 +2551,19 @@ const ENQUIRY = {
       </>
     ),
     intro: "Tell us what you're looking for, and we'll keep an eye out.",
+    subject: "Car finder request",
   },
 };
+// Whether the website can email enquiries itself (see server/enquiry). It is
+// asked once, early, so the form already knows how it will send.
+let emailStatus;
+function enquiriesByEmail() {
+  emailStatus ||= fetch("/api/enquiry", { headers: { accept: "application/json" } })
+    .then((response) => (response.ok ? response.json() : {}))
+    .then((status) => status.email === true)
+    .catch(() => false);
+  return emailStatus;
+}
 function enquiryText(purpose, form) {
   const details = (pairs) =>
     pairs
@@ -2449,7 +2571,15 @@ function enquiryText(purpose, form) {
       .map(([label, value]) => `${label}: ${value.trim()}`)
       .join("\n");
   const notes = form.notes.trim() ? `\n\n${form.notes.trim()}` : "";
-  const contact = `\n\nName: ${form.name}\nPhone: ${form.phone}`;
+  const contact = `\n\n${details([
+    ["Name", form.name],
+    ["Phone", form.phone],
+    ["Email", form.email],
+  ])}`;
+  if (purpose === "finance")
+    return `Hi, I'd like to apply for finance.\n\n${details([
+      ["Car", form.car],
+    ])}${notes}${contact}`;
   if (purpose === "sell") {
     const opening =
       {
@@ -2479,25 +2609,28 @@ function enquiryText(purpose, form) {
   return `${form.message}${contact}`;
 }
 function Enquiry({ vehicle, purpose, onClose }) {
-  const kind = purpose === "sell" || purpose === "find" ? purpose : "talk";
+  const kind = ["sell", "find", "finance"].includes(purpose) ? purpose : "talk";
   const copy = ENQUIRY[kind];
   const carName = vehicle && `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
-  const [ready, setReady] = useState(false),
+  // form → sending → sent; or ready, when the visitor sends it from their
+  // own email or messaging app.
+  const [step, setStep] = useState("form"),
+    [byEmail, setByEmail] = useState(null),
+    [problem, setProblem] = useState(""),
     [copied, setCopied] = useState(false),
     [form, setForm] = useState({
       name: "",
       phone: "",
-      message:
-        purpose === "finance"
-          ? `Hi, I'd like to ask about finance for the ${carName}. ` +
-            "Could you call me to talk through the options?"
-          : vehicle
-            ? `Hi, I'm interested in the ${carName}` +
-              `${vehicle.status === "sold" ? " or something similar" : ""}. ` +
-              "Could we arrange a time to chat?"
-            : purpose === "viewing"
-              ? "Hi, I’d like to come in and see the cars. When would suit for a viewing at the Wingfield showroom?"
-              : "Hi, I’d like to chat about your performance car collection.",
+      email: "",
+      website: "",
+      car: kind === "finance" && carName ? carName : "",
+      message: vehicle
+        ? `Hi, I'm interested in the ${carName}` +
+          `${vehicle.status === "sold" ? " or something similar" : ""}. ` +
+          "Could we arrange a time to chat?"
+        : purpose === "viewing"
+          ? "Hi, I’d like to come in and see the cars. When would suit for a viewing at the Wingfield showroom?"
+          : "Hi, I’d like to chat about your performance car collection.",
       year: "",
       make: "",
       model: "",
@@ -2510,12 +2643,50 @@ function Enquiry({ vehicle, purpose, onClose }) {
       budget: "",
       notes: "",
     });
+  useEffect(() => {
+    let open = true;
+    enquiriesByEmail().then((on) => open && setByEmail(on));
+    return () => {
+      open = false;
+    };
+  }, []);
   const text = enquiryText(kind, form);
+  // The car the enquiry is about: the one to finance, or the listing's.
+  const car = kind === "finance" ? form.car.trim() : carName || "";
+  const subject = `${copy.subject}: ${form.name.trim()}${car ? `, ${car}` : ""}`;
   const field = (key) => ({
     value: form[key],
     onChange: (e) => setForm({ ...form, [key]: e.target.value }),
   });
   const optional = <small> (optional)</small>;
+  async function submit(event) {
+    event.preventDefault();
+    setProblem("");
+    if (!byEmail) return setStep("ready");
+    setStep("sending");
+    try {
+      const response = await fetch("/api/enquiry", {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-mm-enquiry": "1" },
+        body: JSON.stringify({
+          kind,
+          name: form.name,
+          phone: form.phone,
+          email: form.email,
+          car,
+          message: text,
+          page: window.location.pathname,
+          website: form.website,
+        }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (response.ok && result.ok) return setStep("sent");
+      setProblem(result.message || "Your enquiry couldn't be sent just now.");
+    } catch {
+      setProblem("Your enquiry couldn't be sent just now.");
+    }
+    setStep("ready");
+  }
   return (
     <Dialog title={copy.title} onClose={onClose} className="enquiry-dialog">
       <div className="eyebrow">MM PRESTIGE MOTORS</div>
@@ -2534,17 +2705,45 @@ function Enquiry({ vehicle, purpose, onClose }) {
           </span>
         </div>
       )}
-      {!ready ? (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            setReady(true);
-          }}
-        >
+      {step === "form" || step === "sending" ? (
+        <form onSubmit={submit}>
           <p>
-            {copy.intro} Prepare your message, then send it with your messaging
-            app.
+            {copy.intro}
+            {byEmail === false &&
+              " Prepare your message, then send it to us by email or text."}
           </p>
+          {kind === "finance" && (
+            <fieldset className="enquiry-fields">
+              <legend>The car</legend>
+              <label>
+                Car you'd like to finance
+                <input
+                  required
+                  list="finance-cars"
+                  placeholder="e.g. 2016 HSV GTS"
+                  {...field("car")}
+                />
+              </label>
+              <datalist id="finance-cars">
+                {vehicles
+                  .filter((car) => car.status === "available")
+                  .map((car) => (
+                    <option
+                      key={car.id}
+                      value={`${car.year} ${car.make} ${car.model}`}
+                    />
+                  ))}
+              </datalist>
+              <label>
+                <span>Anything else?{optional}</span>
+                <textarea
+                  rows="3"
+                  placeholder="Deposit, trade-in, when you'd like to buy…"
+                  {...field("notes")}
+                />
+              </label>
+            </fieldset>
+          )}
           {kind === "sell" && (
             <fieldset className="enquiry-fields">
               <legend>Your car</legend>
@@ -2651,11 +2850,11 @@ function Enquiry({ vehicle, purpose, onClose }) {
           )}
           <fieldset className="enquiry-fields">
             {kind !== "talk" && <legend>Your details</legend>}
-            <div className={kind === "talk" ? "" : "enquiry-row"}>
-              <label>
-                Your name
-                <input required autoComplete="name" {...field("name")} />
-              </label>
+            <label>
+              Full name
+              <input required autoComplete="name" {...field("name")} />
+            </label>
+            <div className="enquiry-row">
               <label>
                 Phone number
                 <input
@@ -2665,6 +2864,15 @@ function Enquiry({ vehicle, purpose, onClose }) {
                   {...field("phone")}
                 />
               </label>
+              <label>
+                <span>Email{kind !== "finance" && optional}</span>
+                <input
+                  required={kind === "finance"}
+                  type="email"
+                  autoComplete="email"
+                  {...field("email")}
+                />
+              </label>
             </div>
             {kind === "talk" && (
               <label>
@@ -2672,14 +2880,44 @@ function Enquiry({ vehicle, purpose, onClose }) {
                 <textarea required rows="4" {...field("message")} />
               </label>
             )}
+            {/* Left empty by people; bots that fill every field give themselves away. */}
+            <label className="enquiry-trap" aria-hidden="true">
+              Leave this field empty
+              <input tabIndex={-1} autoComplete="off" {...field("website")} />
+            </label>
           </fieldset>
-          <button className="button primary full" type="submit">
-            Prepare enquiry <ArrowRight size={18} />
+          <button
+            className="button primary full"
+            type="submit"
+            disabled={step === "sending"}
+          >
+            {byEmail
+              ? step === "sending"
+                ? "Sending…"
+                : "Send enquiry"
+              : "Prepare enquiry"}
+            <ArrowRight size={18} />
           </button>
           <small className="enquiry-footnote">
-            Nothing is sent until you send the message in your messaging app.
+            {byEmail
+              ? `It goes straight to ${business.email}. We only use your details to reply to you.`
+              : "Nothing is sent until you send the message from your email or messaging app."}
           </small>
         </form>
+      ) : step === "sent" ? (
+        <div className="enquiry-ready" role="status">
+          <span className="ready-icon">
+            <Check size={26} />
+          </span>
+          <h3>Thanks, {form.name.trim().split(" ")[0]}. We've got it.</h3>
+          <p>
+            Your {kind === "finance" ? "finance enquiry" : "enquiry"} is with MM
+            Prestige Motors, and we'll be in touch soon.
+          </p>
+          <button className="button primary full" onClick={onClose}>
+            Done
+          </button>
+        </div>
       ) : (
         <div className="enquiry-ready">
           <span className="ready-icon">
@@ -2687,34 +2925,43 @@ function Enquiry({ vehicle, purpose, onClose }) {
           </span>
           <h3>Your message is ready.</h3>
           <p>
-            Open your messaging app to send it to {business.phone}, or copy the
-            message and send it yourself.
+            {problem && `${problem} `}Send it to us by email or text, or copy it
+            and send it yourself.
           </p>
           <div className="message-preview">{text}</div>
           <a
             className="button primary full"
+            href={`mailto:${business.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`}
+          >
+            <Mail size={18} />
+            Send by email <ArrowUpRight size={18} />
+          </a>
+          <a
+            className="button outline full"
             href={`sms:${business.tel}?body=${encodeURIComponent(text)}`}
           >
             <Send size={18} />
             Send via SMS <ArrowUpRight size={18} />
           </a>
-          <button
-            className="button outline full"
-            onClick={async () => {
-              try {
-                await navigator.clipboard.writeText(text);
-                setCopied(true);
-              } catch {
-                setCopied(false);
-              }
-            }}
-          >
-            <Copy size={18} />
-            {copied ? "Copied" : "Copy message"}
-          </button>
-          <button className="clear-link" onClick={() => setReady(false)}>
-            Edit your message
-          </button>
+          <div className="enquiry-ready-links">
+            <button
+              className="clear-link"
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(text);
+                  setCopied(true);
+                } catch {
+                  setCopied(false);
+                }
+              }}
+            >
+              <Copy size={15} />
+              {copied ? "Copied" : "Copy message"}
+            </button>
+            <button className="clear-link" onClick={() => setStep("form")}>
+              Edit your message
+            </button>
+          </div>
         </div>
       )}
       <a className="enquiry-call" href={`tel:${business.tel}`}>
@@ -2735,6 +2982,7 @@ function Footer() {
             <br />
             Wingfield, South Australia.
           </p>
+          <SocialLinks />
         </div>
         <div>
           <span className="footer-label">Menu</span>
@@ -2747,6 +2995,7 @@ function Footer() {
           <Link to="/stock?status=sold" viewTransition>
             Sold cars
           </Link>
+          <Link to="/#finance">Finance</Link>
           <Link to="/#about">Our story</Link>
         </div>
         <div>
@@ -2758,6 +3007,7 @@ function Footer() {
             <ArrowUpRight size={14} />
           </a>
           <a href={`tel:${business.tel}`}>{business.phone}</a>
+          <a href={`mailto:${business.email}`}>{business.email}</a>
           <span className="footer-appointment">Call to arrange a viewing.</span>
         </div>
         <div className="footer-next-drive">

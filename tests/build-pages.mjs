@@ -36,6 +36,8 @@ check("Home page has its title, canonical URL, share image and dealer details", 
   expect(/<link rel="canonical" href="https:\/\/[^"]+\/"/.test(html), "home canonical");
   expect(/og:image" content="https:\/\/[^"]+\/og-image\.png"/.test(html), "home share image");
   expect(/"@type":"AutoDealer"/.test(html), "AutoDealer structured data");
+  expect(html.includes('"email":"mmprestigemotors@gmail.com"'), "dealer email");
+  expect(html.includes('"sameAs":["https://www.tiktok.com/@mmprestigemotors"'), "social profiles");
   expect(existsSync(join(root, "dist/og-image.png")), "og-image.png is published");
 });
 check("Every car has a page with its own title, description and photo preview", () => {
@@ -69,11 +71,12 @@ check("robots.txt and sitemap.xml list the public pages", () => {
   expect((sitemap.match(/<url>/g) || []).length === vehicles.length + 2, "sitemap URL count");
   expect(!sitemap.includes("/stock/manage"), "stock manager not in the sitemap");
 });
-check("Vercel serves clean URLs with real 404s, and the stock API is a function", () => {
+check("Vercel serves clean URLs with real 404s, and the stock and enquiry APIs are functions", () => {
   const config = JSON.parse(readFileSync(join(root, "vercel.json"), "utf8"));
   expect(config.cleanUrls === true, "cleanUrls");
   expect(!config.rewrites.some((rule) => rule.source === "/(.*)"), "no catch-all rewrite");
   expect(existsSync(join(root, "api/stock.js")), "api/stock.js");
+  expect(existsSync(join(root, "api/enquiry.js")), "api/enquiry.js");
   const manage = config.headers.find((rule) => rule.source === "/stock/manage")?.headers || [];
   expect(manage.some((header) => header.key === "X-Frame-Options" && header.value === "DENY"), "stock manager can't be framed");
 });

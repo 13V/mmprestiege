@@ -1361,3 +1361,188 @@ h4) {
     transition: none;
   }
 }
+
+/* B37 Finance: a band between the featured stock and the sell banner, and
+   the main way into the finance form (the nav's Finance link lands here). */
+.dealer-home .finance-band {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 32px 56px;
+  margin: 0 4% var(--section-gap);
+  padding: clamp(28px, 3.6vw, 52px);
+  color: var(--off-white);
+  background:
+    radial-gradient(120% 150% at 100% 0%, #d4253633, transparent 62%),
+    var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  scroll-margin-top: 96px;
+}
+.finance-eyebrow {
+  display: block;
+  margin-bottom: 14px;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+.finance-copy p {
+  max-width: 46ch;
+  margin-top: 16px;
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: #c9c9cd;
+}
+.finance-points {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.finance-points li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: #dedee0;
+}
+.finance-points svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--accent);
+}
+.finance-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+}
+.finance-actions .button {
+  justify-content: center;
+  min-height: 48px;
+  white-space: nowrap;
+}
+.finance-call {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  font-size: var(--fs-small);
+  color: #c9c9cd;
+}
+.finance-call svg {
+  color: var(--accent);
+}
+.finance-call:hover {
+  color: #fff;
+}
+@media (max-width: 1100px) {
+  .dealer-home .finance-band {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .finance-actions {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 24px;
+  }
+}
+@media (max-width: 700px) {
+  .dealer-home .finance-band {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    margin-inline: 5%;
+  }
+  .finance-actions .button {
+    flex: 1 1 100%;
+  }
+  .finance-call {
+    flex: 1 1 100%;
+  }
+}
+
+/* B38 Social profiles (SocialLinks in main.jsx): in the contact section and
+   the footer. */
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.social-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  border: 1px solid color-mix(in srgb, currentColor 24%, transparent);
+  border-radius: 999px;
+  transition: border-color var(--mm-base) var(--mm-ease), background-color var(--mm-base) var(--mm-ease);
+}
+.social-links a:hover {
+  border-color: currentColor;
+}
+.location-details .social-links {
+  flex-basis: 100%;
+}
+@media (max-width: 600px) {
+  /* Phones: call and directions side by side, the email address below. */
+  .location-details .contact-pills {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+  .location-details .contact-pills > a {
+    justify-content: center;
+  }
+  .location-details .contact-pills > a[href^="mailto:"] {
+    grid-column: 1 / -1;
+    order: 1;
+  }
+}
+.location-details .social-links a {
+  color: #dedee0;
+}
+.footer-main .social-links {
+  margin-top: 20px;
+}
+.footer-main .social-links a {
+  color: #111;
+  font-size: var(--fs-small);
+  line-height: 1;
+}
+
+/* B39 Enquiry dialog: the spam trap, and the links under a prepared message */
+.enquiry-trap {
+  position: absolute !important;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.enquiry-ready-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 22px;
+  margin-top: 4px;
+}
+.enquiry-ready-links .clear-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.enquiry-dialog button[type="submit"]:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
