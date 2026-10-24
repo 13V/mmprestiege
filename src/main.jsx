@@ -78,6 +78,7 @@ const SIZES = {
     "(max-width: 1100px) 31vw, 24vw",
   hero: "100vw",
   offerPanel: "(max-width: 850px) 46vw, 30vw",
+  financeCard: "(max-width: 700px) 38vw, (max-width: 1100px) 26vw, 18vw",
   banner: "100vw",
   stage: "(max-width: 960px) 92vw, 66vw",
   thumb: "(max-width: 700px) 24vw, 11vw",
@@ -173,7 +174,7 @@ const REVEAL_TARGETS = [
   ".offer-copy",
   ".offer-performance",
   ".offer-stack > *",
-  ".finance-band",
+  ".finance-feature",
   ".card-grid > .car-card",
   ".carousel-controls",
   ".reference-sell > div",
@@ -1264,44 +1265,6 @@ function Home({ saved, toggleSaved, onEnquire }) {
           Explore our stock <ArrowRight size={18} />
         </Link>
       </section>
-      <section
-        className="finance-band"
-        id="finance"
-        aria-labelledby="finance-heading"
-      >
-        <div className="finance-copy">
-          <span className="finance-eyebrow">Finance &amp; trade-ins</span>
-          <h2 id="finance-heading" className="reveal-words">
-            <RevealWords text={"Finance\navailable"} />
-          </h2>
-          <p>
-            We arrange finance on our cars, and trade-ins are welcome. Tell us
-            which car you're after and we'll come back to you with options.
-          </p>
-        </div>
-        <ul className="finance-points">
-          <li>
-            <Check size={18} /> Finance on our HSV, Holden and performance cars
-          </li>
-          <li>
-            <Check size={18} /> Trade-ins welcome
-          </li>
-          <li>
-            <Check size={18} /> Start with your name, phone, email and the car
-          </li>
-        </ul>
-        <div className="finance-actions">
-          <button
-            className="button primary"
-            onClick={() => onEnquire({ purpose: "finance" })}
-          >
-            Apply for finance <ArrowRight size={16} />
-          </button>
-          <a className="finance-call" href={`tel:${business.tel}`}>
-            <Phone size={16} /> Or call {business.phone}
-          </a>
-        </div>
-      </section>
       <section className="reference-sell">
         <img
           {...responsive("/images/sell-showroom-overhead.jpg", SIZES.banner)}
@@ -1324,6 +1287,79 @@ function Home({ saved, toggleSaved, onEnquire }) {
           </button>
         </div>
         <small>Pictured: inside our Wingfield showroom</small>
+      </section>
+      <section
+        className="finance-feature"
+        id="finance"
+        aria-labelledby="finance-heading"
+      >
+        <div className="finance-feature-copy">
+          <span className="finance-eyebrow">Finance &amp; trade-ins</span>
+          <h2 id="finance-heading" className="reveal-words">
+            <RevealWords text={"Finance\navailable."} />
+          </h2>
+          <p className="finance-lead">
+            Your next HSV or Holden, sorted. We arrange finance on our cars,
+            and your trade-in is welcome.
+          </p>
+          <ol className="finance-steps">
+            <li>
+              <span>01</span>
+              <b>Choose your car</b>
+              <small>From our stock, or tell us what you're after.</small>
+            </li>
+            <li>
+              <span>02</span>
+              <b>Send your details</b>
+              <small>Name, phone, email and the car. It takes a minute.</small>
+            </li>
+            <li>
+              <span>03</span>
+              <b>We'll be in touch</b>
+              <small>We come back to you with finance options.</small>
+            </li>
+          </ol>
+          <div className="finance-actions">
+            <button
+              className="button finance-apply"
+              onClick={() => onEnquire({ purpose: "finance" })}
+            >
+              Apply for finance <ArrowRight size={18} />
+            </button>
+            <a className="finance-call" href={`tel:${business.tel}`}>
+              <Phone size={17} /> {business.phone}
+            </a>
+          </div>
+        </div>
+        {/* Three cars from the showroom walkthrough, fanned like photos. */}
+        <div className="finance-fan" aria-hidden="true">
+          <img
+            className="fan-card fan-left"
+            {...responsive("/images/finance-black.jpg", SIZES.financeCard)}
+            alt=""
+            loading="lazy"
+          />
+          <img
+            className="fan-card fan-right"
+            {...responsive("/images/finance-red.jpg", SIZES.financeCard)}
+            alt=""
+            loading="lazy"
+          />
+          <img
+            className="fan-card fan-front"
+            {...responsive("/images/finance-silver.jpg", SIZES.financeCard)}
+            alt=""
+            loading="lazy"
+          />
+          <span className="fan-badge">
+            Trade-ins
+            <br />
+            welcome
+          </span>
+        </div>
+        <span className="finance-watermark" aria-hidden="true">
+          Finance
+        </span>
       </section>
       <ShowroomTour onEnquire={onEnquire} />
       <section className="section reviews mm-reviews" id="reviews">

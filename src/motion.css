@@ -295,10 +295,31 @@
   }
 }
 
-/* The showroom map wipes up into view. */
+/* The showroom map wipes up into view; the finance photos fan out from
+   behind the silver GTS, then the trade-in sticker lands. */
 @media (prefers-reduced-motion: no-preference) {
   .contact-location.reveal.is-revealed .contact-map {
     animation: mm-wipe 1300ms var(--mm-ease-out) backwards;
+  }
+  .finance-feature.reveal.is-revealed .fan-left {
+    animation: mm-fan-in 1100ms var(--mm-ease-out) 250ms backwards;
+  }
+  .finance-feature.reveal.is-revealed .fan-right {
+    animation: mm-fan-in 1100ms var(--mm-ease-out) 380ms backwards;
+  }
+  .finance-feature.reveal.is-revealed .fan-badge {
+    animation: mm-sticker 700ms var(--mm-ease-out) 950ms backwards;
+  }
+}
+@keyframes mm-fan-in {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+@keyframes mm-sticker {
+  from {
+    opacity: 0;
+    transform: rotate(-24deg) scale(0.5);
   }
 }
 .contact-map {

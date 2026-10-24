@@ -266,10 +266,18 @@ try {
     await expect(offer).toContainText('Trade-ins welcome');
     await expect(page.locator('.offer-trade p')).toHaveText('Buy. Sell. Trade. Finance.');
     await expect(page.locator('.reference-sell p')).toContainText('take trade-ins');
-    // The finance section sits after the featured stock, before the sell banner.
+    // The finance panel sits under the sell banner, before the showroom tour.
     expect(await page.evaluate(() =>
-      [...document.querySelectorAll('.reference-collection, #finance, .reference-sell')].map(el => el.id || el.className.split(' ').pop()).join(' '),
-    )).toBe('reference-collection finance reference-sell');
+      [...document.querySelectorAll('.reference-sell, #finance, #about')].map(el => el.id || 'sell').join(' '),
+    )).toBe('sell finance about');
+    const finance = page.locator('#finance');
+    await expect(finance.getByRole('heading', { level: 2 })).toHaveText(/Finance\s*available\./i);
+    await expect(finance.locator('.finance-steps li')).toHaveCount(3);
+    await expect(finance.locator('.fan-badge')).toHaveText(/Trade-ins\s*welcome/);
+    expect(await finance.locator('.fan-card').evaluateAll(cards => cards.map(card => new URL(card.getAttribute('src'), location.href).pathname))).toEqual([
+      '/images/finance-black.jpg', '/images/finance-red.jpg', '/images/finance-silver.jpg',
+    ]);
+    await expect(finance.getByRole('link', { name: '0411 710 409' })).toHaveAttribute('href', 'tel:+61411710409');
     await page.locator('.nav').getByRole('link', { name: 'Finance', exact: true }).click();
     await expect(page).toHaveURL(/\/#finance$/);
     await expect.poll(async () => {

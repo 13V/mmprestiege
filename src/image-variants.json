@@ -17,6 +17,24 @@
     "srcset": "/images/opt/ferrari-360-street-480.webp?v=01a4ba41 480w, /images/opt/ferrari-360-street-960.webp?v=3ca67f9c 960w, /images/opt/ferrari-360-street-1600.webp?v=47a48aca 1600w, /images/opt/ferrari-360-street-2174.webp?v=75579011 2174w",
     "share": "/images/opt/ferrari-360-street-share.jpg?v=2deca3cc"
   },
+  "/images/finance-black.jpg": {
+    "width": 1080,
+    "height": 1350,
+    "srcset": "/images/opt/finance-black-480.webp?v=33384b3a 480w, /images/opt/finance-black-960.webp?v=ed31a1c8 960w, /images/opt/finance-black-1080.webp?v=68b0531c 1080w",
+    "share": "/images/opt/finance-black-share.jpg?v=f35f0602"
+  },
+  "/images/finance-red.jpg": {
+    "width": 960,
+    "height": 1200,
+    "srcset": "/images/opt/finance-red-480.webp?v=4cb0925b 480w, /images/opt/finance-red-960.webp?v=fed26ccb 960w",
+    "share": "/images/opt/finance-red-share.jpg?v=ffce6e22"
+  },
+  "/images/finance-silver.jpg": {
+    "width": 800,
+    "height": 1000,
+    "srcset": "/images/opt/finance-silver-480.webp?v=6371c954 480w, /images/opt/finance-silver-800.webp?v=3984b5d9 800w",
+    "share": "/images/opt/finance-silver-share.jpg?v=b46e197c"
+  },
   "/images/hsv-clubsport-r8-front.jpg": {
     "width": 2852,
     "height": 1901,

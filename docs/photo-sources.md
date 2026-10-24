@@ -1,6 +1,6 @@
 # Photo and video sources
 
-Every photo and film on the site comes from MM Prestige Motors. Most of the photos are from the dealership's showroom photoshoot: 29 photos supplied by the dealership in October 2026 (original files `MMMOTOR.CWATSON.jpg` and `MMMOTOR.CWATSON-2.jpg` to `-29.jpg`, about 5,800 × 3,900 px). They show the Wingfield showroom, the shopfront on Grand Junction Road and the cars on site that day. Two more photos came from the dealership's phone, also in October 2026 (see [Phone photos](#phone-photos)), and five more, taken on a phone in June 2026, make up the home page's showroom tour (see [Showroom tour photos](#showroom-tour-photos)).
+Every photo and film on the site comes from MM Prestige Motors. Most of the photos are from the dealership's showroom photoshoot: 29 photos supplied by the dealership in October 2026 (original files `MMMOTOR.CWATSON.jpg` and `MMMOTOR.CWATSON-2.jpg` to `-29.jpg`, about 5,800 × 3,900 px). They show the Wingfield showroom, the shopfront on Grand Junction Road and the cars on site that day. Two more photos came from the dealership's phone, also in October 2026 (see [Phone photos](#phone-photos)), five more, taken on a phone in June 2026, make up the home page's showroom tour (see [Showroom tour photos](#showroom-tour-photos)), and three stills from a phone walkthrough sent in October 2026 are the Finance panel's photo cards (see [Finance section photos](#finance-section-photos)).
 
 The sample listings are mapped to the photographed cars, so each listing shows its own car. Each listing's year, price, kilometres and specifications are still samples (see `sampleStock` in `src/data.js`).
 
@@ -69,6 +69,16 @@ Not used:
 - `20260627_104816.jpg`, a second view of the building from the street, much like `tour-street.jpg`.
 - `IMG_20260628_173421_979.jpg` (904 × 492), a small copy of the line-up photo, and `Screenshot_20260628_215606_Facebook.jpg`, a phone screenshot of a Facebook post.
 - Three clips (`20260627_104453.mp4`, `104555.mp4` and `104653.mp4`, HDR, 17 to 34 s): each opens on the building for a few seconds, then walks along the street, the fence and the bins. There's no showroom footage to make a film from.
+
+## Finance section photos
+
+On 24 October 2026 the dealership sent a phone walkthrough of the showroom (`YouCut_20261024_095659476.mp4`: 1,080 × 1,920, 42 seconds, edited in YouCut). The video itself isn't used. Three stills from it are the photo cards in the home page's Finance panel. For each car, the sharpest frame of a few seconds was chosen by measuring each frame's detail, since the camera keeps moving. Each still was graded with `scripts/photos/grade.py` (*listing* look, white balance and levels measured on the whole frame), cropped to 4:5, lightly sharpened and saved as JPEG without metadata; `npm run images` makes their WebP sizes.
+
+| Local file | Time in the video | Crop (pixels of the 1,080 × 1,920 frame) | Content |
+| --- | --- | --- | --- |
+| `finance-silver.jpg` | 0:14.4 | 0, 380, 800, 1380 (800 × 1,000) | Silver HSV front three-quarter, a red gift bow from the launch day behind it (the front card) |
+| `finance-black.jpg` | 0:23.2 | 0, 260, 1080, 1610 (1,080 × 1,350) | Black Commodore on white-lipped mesh wheels, a white E3 Clubsport behind (the left card) |
+| `finance-red.jpg` | 0:12.5 | 60, 360, 1020, 1560 (960 × 1,200) | Red HSV GTS head-on, plate "BU" (the right card) |
 
 ## Video
 
