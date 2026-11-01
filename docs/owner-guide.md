@@ -71,7 +71,7 @@ It takes about five minutes, with your web developer:
 2. Open **myaccount.google.com/apppasswords**, name it "MM Prestige website" and tap **Create**. Google shows a 16-letter password once.
 3. Give it to your developer in person or over the phone, not by text or email. They add it to the website and send a test enquiry.
 
-The app password can only send email, and it's separate from your Gmail password, which stays private. To stop the website sending email, delete the app password on that same page.
+The app password only works for email: it can't be used to sign in to your Google account, and your Gmail password stays private. It does give access to the mailbox, which is why it's passed on by phone or in person. To stop the website sending email, delete the app password on that same page.
 
 ## Who looks after what
 

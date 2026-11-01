@@ -15,7 +15,7 @@ Texting enquiries to the phone automatically would need a paid SMS service; the 
 
 ## Turning on email (about 5 minutes)
 
-The site sends through the dealership's Gmail account with a Google *app password*: a separate password that can only send mail and can be removed at any time. The Gmail password itself is never shared.
+The site sends through the dealership's Gmail account with a Google *app password*: a separate password for email apps, which can't be used to sign in to the Google account and can be removed at any time. It does give access to the mailbox, so it's passed on by phone or in person, never by text or email. The Gmail password itself is never shared.
 
 1. Sign in to the Google account for **mmprestigemotors@gmail.com** and open [myaccount.google.com/security](https://myaccount.google.com/security).
 2. Turn on **2-Step Verification** if it isn't on already (Google requires it for app passwords).
