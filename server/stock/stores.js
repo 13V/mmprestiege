@@ -1,10 +1,20 @@
 // Where the stock lives. Production uses a public Vercel Blob store (photos
 // must be public); development and tests use a folder on disk.
 //
-// The stock record (cars, drafts, regos and VINs) is a single JSON blob
-// created once with a random suffix, so its URL can't be guessed; only the
-// server can find it by listing the store. Edits overwrite it in place with
-// the ETag it was read with, so two devices can't overwrite each other.
+// In the Blob store, the stock record (cars, drafts, regos and VINs) is
+// never overwritten: each save writes a new blob,
+// stock/records/v0000042-<random>.json, and the newest version is found by
+// listing the store. Vercel's CDN can keep serving an overwritten blob's old
+// content for a minute or more, so a save straight after another (or the
+// website build a save starts) could read stale stock; a new address is
+// always read fresh, and listing goes to the Blob API rather than the CDN.
+// The random suffix keeps the records' addresses unguessable, and the latest
+// 40 versions are kept, in case a change ever needs undoing.
+//
+// A save names the version it was based on (its "etag", the pathname of the
+// version it read). If that's no longer the newest, or another save of the
+// same version got there first, it's refused, so two devices can't
+// overwrite each other.
 import { createHash, randomBytes } from "node:crypto";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, readdir, rename, rm, writeFile } from "node:fs/promises";
@@ -19,76 +29,56 @@ export class ConflictError extends Error {
 
 export const emptyDoc = () => ({ version: 0, updatedAt: null, nextStock: 101, cars: [] });
 
-export function blobStore(blob) {
-  const { put, list, del, get, BlobPreconditionFailedError } = blob;
-  let dataPath = null;
+const RECORD = /^v(\d{7})-[A-Za-z0-9]+\.json$/;
+const KEEP = 40;
 
-  async function findData() {
-    if (dataPath) return dataPath;
-    const { blobs } = await list({ prefix: "stock/data/", limit: 20 });
-    const main = blobs
-      .filter((item) => /^stock\/data\/stock-[^/]+\.json$/.test(item.pathname))
-      .sort((a, b) => new Date(a.uploadedAt) - new Date(b.uploadedAt))[0];
-    dataPath = main?.pathname || null;
-    return dataPath;
+export function blobStore(blob, { prefix = "stock/records/" } = {}) {
+  const { put, list, del, get } = blob;
+
+  // Every saved version, newest first; of two saves of the same version, the
+  // first to arrive comes first.
+  async function versions() {
+    const found = [];
+    let cursor;
+    do {
+      const page = await list({ prefix, cursor, limit: 1000 });
+      for (const item of page.blobs) {
+        const match = RECORD.exec(item.pathname.slice(prefix.length));
+        if (match) found.push({ ...item, version: Number(match[1]) });
+      }
+      cursor = page.hasMore ? page.cursor : undefined;
+    } while (cursor);
+    return found.sort((a, b) => b.version - a.version || new Date(a.uploadedAt) - new Date(b.uploadedAt));
   }
-  async function readJson(pathname) {
-    const result = await get(pathname, { access: "public", useCache: false });
-    if (!result || result.statusCode !== 200) return null;
-    return { json: JSON.parse(await new Response(result.stream).text()), etag: result.blob.etag };
-  }
-  const json = (value) => JSON.stringify(value);
 
   return {
     kind: "blob",
     async read() {
-      const path = await findData();
-      if (!path) return { doc: emptyDoc(), etag: null };
-      const found = await readJson(path);
-      if (!found) {
-        dataPath = null;
-        return { doc: emptyDoc(), etag: null };
-      }
-      return { doc: found.json, etag: found.etag };
+      const [latest] = await versions();
+      if (!latest) return { doc: emptyDoc(), etag: null };
+      const result = await get(latest.url, { access: "public" });
+      // Never fall back to empty stock: a save or a website build would then
+      // wipe the cars. Failing keeps the last good version.
+      if (!result || result.statusCode !== 200) throw new Error(`The stock record ${latest.pathname} couldn't be read.`);
+      return { doc: JSON.parse(await new Response(result.stream).text()), etag: latest.pathname };
     },
     async write(doc, etag) {
-      let result;
-      try {
-        if (!etag) {
-          if (await findData()) throw new ConflictError();
-          result = await put("stock/data/stock.json", json(doc), {
-            access: "public",
-            addRandomSuffix: true,
-            contentType: "application/json",
-            cacheControlMaxAge: 60,
-          });
-          dataPath = result.pathname;
-        } else {
-          result = await put(dataPath, json(doc), {
-            access: "public",
-            allowOverwrite: true,
-            ifMatch: etag,
-            contentType: "application/json",
-            cacheControlMaxAge: 60,
-          });
-        }
-      } catch (error) {
-        if (error instanceof BlobPreconditionFailedError) throw new ConflictError();
-        throw error;
-      }
-      // A dated copy every save, pruned to the latest 40, in case a change
-      // ever needs undoing.
-      await put(`stock/history/${new Date().toISOString().replace(/[:.]/g, "-")}.json`, json(doc), {
+      const [latest] = await versions();
+      if ((latest?.pathname ?? null) !== (etag ?? null)) throw new ConflictError();
+      const saved = await put(`${prefix}v${String(doc.version).padStart(7, "0")}.json`, JSON.stringify(doc), {
         access: "public",
         addRandomSuffix: true,
         contentType: "application/json",
-      }).catch(() => {});
-      if (doc.version % 10 === 0) {
-        const { blobs } = await list({ prefix: "stock/history/", limit: 1000 }).catch(() => ({ blobs: [] }));
-        const old = blobs.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt)).slice(40);
-        if (old.length) await del(old.map((item) => item.url)).catch(() => {});
+      });
+      const after = await versions();
+      const first = after.find((item) => item.version === doc.version);
+      if (first && first.pathname !== saved.pathname) {
+        await del(saved.url).catch(() => {});
+        throw new ConflictError();
       }
-      return { etag: result.etag };
+      const old = after.slice(KEEP);
+      if (old.length) await del(old.map((item) => item.url)).catch(() => {});
+      return { etag: saved.pathname };
     },
     async putPhoto(name, bytes, contentType) {
       const result = await put(`stock/photos/${name}`, bytes, {

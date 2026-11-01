@@ -139,34 +139,38 @@ function fakeBlob() {
           .map(([path, blob]) => ({ url: url(path), pathname: path, uploadedAt: blob.uploadedAt, etag: blob.etag })),
       };
     },
-    async get(pathname, options) {
-      const blob = blobs.get(pathname);
-      if (!blob || options.useCache !== false) return blob ? { statusCode: 200, stream: new Blob([blob.body]).stream(), blob } : null;
-      return { statusCode: 200, stream: new Blob([blob.body]).stream(), blob: { etag: blob.etag } };
+    async get(urlOrPathname) {
+      const blob = blobs.get(urlOrPathname.replace(/^https:\/\/[^/]+\//, ""));
+      return blob ? { statusCode: 200, stream: new Blob([blob.body]).stream(), blob: { etag: blob.etag } } : null;
     },
     async del(urls) {
       for (const item of [].concat(urls)) blobs.delete(item.replace(/^https:\/\/[^/]+\//, ""));
     },
   };
 }
-await check("The Blob store keeps its record at an unguessable address and refuses out-of-date saves", async () => {
+await check("The Blob store writes each save as a new record at an unguessable address, refuses out-of-date saves and keeps 40", async () => {
   const { blobStore } = await import("../server/stock/stores.js");
   const sdk = fakeBlob();
   const store = blobStore(sdk);
+  const records = () => [...sdk.blobs.keys()].filter((path) => path.startsWith("stock/records/"));
   const first = await store.read();
   expect(first.etag === null && first.doc.version === 0, "empty to start");
   const saved = await store.write({ ...first.doc, version: 1 }, first.etag);
-  const [record] = [...sdk.blobs.keys()].filter((path) => path.startsWith("stock/data/"));
-  expect(/^stock\/data\/stock-[a-z0-9]{10}\.json$/.test(record), `random suffix (${record})`);
-  const second = blobStore(sdk); // a fresh function instance finds it again
+  expect(/^stock\/records\/v0000001-[a-z0-9]{10}\.json$/.test(records()[0]), `random suffix (${records()[0]})`);
+  const second = blobStore(sdk); // a fresh function instance finds it by listing
   const read = await second.read();
   expect(read.doc.version === 1 && read.etag === saved.etag, "found by listing");
-  await second.write({ ...read.doc, version: 2 }, read.etag);
+  const next = await second.write({ ...read.doc, version: 2 }, read.etag);
+  expect(records().length === 2, "a new record each save; the old one is kept");
+  expect((await store.read()).doc.version === 2, "the newest version is read");
   const stale = await store.write({ ...read.doc, version: 2 }, saved.etag).catch((error) => error);
   expect(stale instanceof ConflictError, "stale save refused");
   const lost = await blobStore(sdk).write({ ...read.doc, version: 9 }, null).catch((error) => error);
   expect(lost instanceof ConflictError, "a second first-save is refused too");
-  expect([...sdk.blobs.keys()].filter((path) => path.startsWith("stock/history/")).length === 2, "history copies");
+  let etag = next.etag;
+  for (let version = 3; version <= 45; version++) ({ etag } = await store.write({ ...read.doc, version }, etag));
+  expect(records().length === 40, `the latest 40 versions are kept (${records().length})`);
+  expect((await store.read()).doc.version === 45, "newest after pruning");
   const photo = await store.putPhoto("p-abc123-480.webp", new Uint8Array([1]), "image/webp");
   expect(photo === "https://abc123.public.blob.vercel-storage.com/stock/photos/p-abc123-480.webp", "photo URL");
   await store.deleteFiles([photo, "https://example.com/stock/photos/x.jpg", "/images/hsv-gts-genf-front.jpg"]);
