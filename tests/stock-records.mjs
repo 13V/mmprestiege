@@ -1,12 +1,11 @@
-// Unit checks for the stock manager's server code: rego lookups and their
-// per-state normalising, car records, the website snapshot, sign-in and the
-// file store. No browser or server needed: `node tests/stock-lookup.mjs`.
+// Unit checks for the stock manager's server code: car records, the website
+// snapshot, sign-in, the stores and the API's guards. No browser or server
+// needed: `node tests/stock-records.mjs`.
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { hasSession, loginThrottle, sessionCookie } from "../server/stock/auth.js";
 import { handleStockRequest } from "../server/stock/handler.js";
-import { lookupVehicle, mockProvider, parseRegCheckXml, regCheckProvider } from "../server/stock/lookup.js";
 import { prepareCar, publicSnapshot } from "../server/stock/records.js";
 import { ConflictError, emptyDoc, fileStore } from "../server/stock/stores.js";
 
@@ -26,103 +25,6 @@ function expect(condition, message) {
 }
 const same = (actual, expected, message) =>
   expect(JSON.stringify(actual) === JSON.stringify(expected), `${message}: got ${JSON.stringify(actual)}`);
-const provider = mockProvider({ delay: 0 });
-const look = (query, extra = {}) => lookupVehicle({ provider, query, ...extra });
-
-await check("SA lookups give the make, model, year, body, colour, VIN and expiry, and list what's missing", async () => {
-  const result = await look({ rego: "s123 abc", state: "SA" });
-  same(result.query, { rego: "S123ABC", state: "SA" }, "cleaned query");
-  same(
-    result.fields,
-    { year: 2016, make: "HSV", model: "GTS", body: "Sedan", colour: "Red", vin: "6G1FK5EP0GL303518", regoExpiry: "2027-03-14" },
-    "fields",
-  );
-  same(result.missing, ["variant", "transmission", "engine"], "missing");
-  expect(result.extra.insurer === "AAMI", "insurer");
-});
-await check("NSW, TAS and WA lookups give the full specification, but their vehicle code isn't taken as a VIN", async () => {
-  const nsw = await look({ rego: "BEW76P", state: "NSW" });
-  same(
-    nsw.fields,
-    { year: 1994, make: "Ford", model: "Fairmont", variant: "EF", body: "Sedan", transmission: "Automatic", engine: "4.0L 6-cylinder" },
-    "NSW fields",
-  );
-  expect(!("vin" in nsw.fields) && nsw.extra.vehicleCode === "FORFMT---7402E01994A", "vehicle code kept apart");
-  const tas = await look({ rego: "E09FK", state: "TAS" });
-  expect(tas.fields.model === "CX-5" && tas.fields.variant === "Maxx (4x2)" && tas.fields.transmission === "Manual", "TAS");
-  const wa = await look({ rego: "ZM06WA", state: "WA" });
-  expect(wa.fields.model === "Mazda6" && wa.fields.variant === "GH · Classic" && wa.fields.engine === "2.5L 4-cylinder", "WA");
-});
-await check("VIC, QLD, ACT and NT records are read without guessing", async () => {
-  const vic = await look({ rego: "ZZA271", state: "VIC" });
-  expect(vic.fields.vin === "KMHJU81CSCU459552" && !vic.fields.engine, "VIC engine number isn't an engine size");
-  expect(vic.extra.engineNumber === "G4KECU661333", "VIC engine number kept");
-  const qld = await look({ rego: "949RWP", state: "QLD" });
-  expect(qld.fields.model === "Accent" && qld.fields.body === "Hatch", "QLD model without the body word");
-  const act = await look({ rego: "YYF447", state: "ACT" });
-  expect(act.fields.make === "Mercedes-Benz" && !act.fields.model, "ACT make, and no model when it only repeats the make");
-  const nt = await look({ rego: "CB78MH", state: "NT" });
-  expect(nt.fields.regoExpiry === "2017-03-23" && nt.extra.registration === "Registered", "NT expiry from milliseconds");
-});
-await check("A stolen record carries a warning", async () => {
-  const result = await look({ rego: "STOLEN1", state: "VIC" });
-  expect(result.warnings.length === 1 && /stolen/.test(result.warnings[0]), "warning");
-});
-await check("VIN lookups work, and bad input is refused before any lookup is paid for", async () => {
-  const result = await look({ vin: "6g1-fk5ep0gl303518" });
-  expect(result.fields.make === "Holden" && result.fields.engine === "6.2L" && result.fields.vin === "6G1FK5EP0GL303518", "VIN");
-  for (const [query, pattern] of [
-    [{ rego: "", state: "SA" }, /Enter the rego/],
-    [{ rego: "ABC123", state: "XX" }, /state or territory/],
-    [{ vin: "WBA123" }, /too short/],
-  ]) {
-    const error = await look(query).catch((failure) => failure);
-    expect(error.code === "invalid" && pattern.test(error.message), `refused ${JSON.stringify(query)}`);
-  }
-});
-await check("Provider failures become clear messages", async () => {
-  for (const [rego, code] of [
-    ["NOPE1", "not_found"],
-    ["NOCREDIT", "credits"],
-    ["BADUSER", "config"],
-  ]) {
-    const error = await look({ rego, state: "SA" }).catch((failure) => failure);
-    expect(error.code === code, `${rego} gives ${code}, got ${error.code}`);
-  }
-  const offline = await lookupVehicle({ provider: null, query: { rego: "ABC123", state: "SA" } }).catch((e) => e);
-  expect(offline.code === "config", "no provider");
-});
-await check("The live provider posts the rego, state and username, and reads the XML reply", async () => {
-  const calls = [];
-  const record = { Description: "WHITE MITSUBISHI STATION WAGON", CarMake: { CurrentTextValue: "MITSUBISHI" } };
-  const xml = `<?xml version="1.0"?><Vehicle xmlns="http://regcheck.org.uk"><vehicleJson>${JSON.stringify(record)
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")}</vehicleJson></Vehicle>`;
-  const fake = async (url, init) => {
-    calls.push({ url, init });
-    if (String(init.body).includes("RegistrationNumber=NONE")) return new Response("No vehicles found", { status: 500 });
-    return new Response(xml, { status: 200 });
-  };
-  const live = regCheckProvider({ username: "madi", fetchImpl: fake });
-  same(await live.byRego("YY819H", "SA"), record, "parsed record");
-  const body = new URLSearchParams(calls[0].init.body);
-  expect(calls[0].url === "https://www.regcheck.org.uk/api/reg.asmx/CheckAustralia", "endpoint");
-  expect(calls[0].init.method === "POST" && body.get("State") === "SA" && body.get("username") === "madi", "form");
-  const error = await live.byRego("NONE", "SA").catch((failure) => failure);
-  expect(error.code === "not_found", "500 means not found");
-  expect(parseRegCheckXml("<Vehicle><vehicleJson></vehicleJson></Vehicle>") === null, "empty reply");
-});
-await check("A repeat lookup within 30 days comes from the cache instead of costing a credit", async () => {
-  const saved = new Map();
-  const cache = { get: async (key) => saved.get(key) || null, set: async (key, value) => saved.set(key, value) };
-  let calls = 0;
-  const counting = { ...provider, byRego: (...args) => (calls++, provider.byRego(...args)) };
-  const first = await lookupVehicle({ provider: counting, cache, query: { rego: "S123ABC", state: "SA" } });
-  const second = await lookupVehicle({ provider: counting, cache, query: { rego: "s123abc", state: "SA" } });
-  expect(!first.cached && second.cached && calls === 1, `cached (calls ${calls})`);
-  await lookupVehicle({ provider: counting, cache, query: { rego: "S123ABC", state: "SA" }, fresh: true });
-  expect(calls === 2, "fresh lookups skip the cache");
-});
 
 const photo = (id = "p-abc123") => ({
   id,
@@ -177,7 +79,7 @@ await check("The website snapshot leaves out drafts and private details", () => 
   const snapshot = publicSnapshot({ ...emptyDoc(), cars: [sold, draft, live] });
   same(snapshot.vehicles.map((car) => car.id), ["hsv-gts-2016", "hsv-maloo-2016"], "for sale first, no drafts");
   const text = JSON.stringify(snapshot);
-  for (const secret of ["S123ABC", "6G1FK5EP0GL303518", "rego", "vin", "lookup"]) expect(!text.includes(secret), `no ${secret}`);
+  for (const secret of ["S123ABC", "6G1FK5EP0GL303518", "rego", "vin"]) expect(!text.includes(secret), `no ${secret}`);
   expect(snapshot.photos[live.photos[0].src].srcset.includes("480w"), "photo sizes");
   same(publicSnapshot({ ...emptyDoc(), cars: [draft] }), { managed: false }, "drafts only keep the samples");
 });
@@ -269,22 +171,22 @@ await check("The Blob store keeps its record at an unguessable address and refus
   expect(photo === "https://abc123.public.blob.vercel-storage.com/stock/photos/p-abc123-480.webp", "photo URL");
   await store.deleteFiles([photo, "https://example.com/stock/photos/x.jpg", "/images/hsv-gts-genf-front.jpg"]);
   expect(!sdk.blobs.has("stock/photos/p-abc123-480.webp"), "own photos deleted, nothing else");
-  await store.cache.set("rego-SA-S123ABC", { Description: "RED HSV SEDAN" });
-  same(await store.cache.get("rego-SA-S123ABC"), { Description: "RED HSV SEDAN" }, "lookup cache");
 });
 await check("The API refuses requests without its header, unknown calls and fake photos", async () => {
   const dir = mkdtempSync(join(tmpdir(), "mm-api-"));
   try {
     const password = "a long test password";
-    const ctx = { mode: "test", password, store: fileStore(dir), provider, publish: async () => null, secureCookies: false };
+    const ctx = { mode: "test", password, store: fileStore(dir), publish: async () => null, secureCookies: false };
     const call = (op, init = {}) => handleStockRequest(new Request(`http://x/api/stock?op=${op}`, init), ctx);
     const status = await (await call("status")).json();
     expect(status.ok && !status.signedIn && status.setup.storage === "file", "status");
+    expect(!("lookup" in status.setup), "no rego lookup in the setup");
     expect((await call("login", { method: "POST", body: "{}" })).status === 403, "no header");
     const cookie = sessionCookie(password, { secure: false }).split(";")[0];
     const headers = { "x-mm-stock": "1", cookie };
     expect((await call("stock", { headers: { cookie: "mm_stock=1.x" } })).status === 401, "bad cookie");
     expect((await call("nope", { method: "POST", headers })).status === 404, "unknown op");
+    expect((await call("lookup", { method: "POST", headers, body: "{}" })).status === 404, "the rego lookup is gone");
     const form = new FormData();
     form.append("id", "p-fake01");
     form.append("w480", new Blob(["<svg onload=alert(1)>"], { type: "image/jpeg" }), "w480.jpg");

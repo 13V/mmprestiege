@@ -84,8 +84,6 @@ const SIZES = {
   thumb: "(max-width: 700px) 24vw, 11vw",
 };
 
-const StockManagerDemo = lazy(() => import("./StockManagerDemo"));
-const CrmDemo = lazy(() => import("./CrmDemo"));
 const StockAdmin = lazy(() => import("./admin/StockAdmin.jsx"));
 
 function Logo() {
@@ -243,8 +241,8 @@ function useReveal(pathname) {
 function SiteLayout({ children, onEnquire, savedCount }) {
   const { pathname } = useLocation();
   useReveal(pathname);
-  if (["/stock-manager", "/crm", "/stock/manage"].includes(pathname.replace(/\/$/, "")))
-    return children;
+  // The stock manager has its own screen, without the website around it.
+  if (pathname.replace(/\/$/, "") === "/stock/manage") return children;
   return (
     <div
       className="site-shell home-shell"
@@ -263,19 +261,15 @@ function DocumentTitle() {
     const vehicle = vehicles.find((car) => pathname === `/stock/${car.id}`);
     const route = pathname.replace(/\/$/, "");
     document.title =
-      route === "/crm"
-        ? "Sales CRM mockup | MM Prestige Motors"
-        : route === "/stock-manager"
-          ? "Stock management demo | MM Prestige Motors"
-          : route === "/stock/manage"
-            ? "Stock manager | MM Prestige Motors"
-            : vehicle
-              ? `${vehicle.year} ${vehicle.make} ${vehicle.model} | MM Prestige Motors`
-              : route === "/stock"
-                ? "Our collection | MM Prestige Motors"
-                : route === ""
-                  ? "MM Prestige Motors | HSV & Holden Specialists, Adelaide"
-                  : "Page not found | MM Prestige Motors";
+      route === "/stock/manage"
+        ? "Stock manager | MM Prestige Motors"
+        : vehicle
+          ? `${vehicle.year} ${vehicle.make} ${vehicle.model} | MM Prestige Motors`
+          : route === "/stock"
+            ? "Our collection | MM Prestige Motors"
+            : route === ""
+              ? "MM Prestige Motors | HSV & Holden Specialists, Adelaide"
+              : "Page not found | MM Prestige Motors";
   }, [pathname]);
   return null;
 }
@@ -3100,8 +3094,6 @@ const router = createBrowserRouter([
   {
     element: <App />,
     children: [
-      { path: "/stock-manager", element: <StockManagerDemo /> },
-      { path: "/crm", element: <CrmDemo /> },
       { path: "/", element: <HomePage /> },
       { path: "/stock", element: <StockPage /> },
       { path: "/stock/manage", element: <StockAdmin /> },

@@ -8,13 +8,10 @@
     "build": "node scripts/stock-snapshot.mjs && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "node tests/smoke.mjs",
-    "test:stock-manager": "node tests/stock-manager.mjs",
-    "test:crm": "node tests/crm-demo.mjs",
-    "presentation:build": "node scripts/build-presentation.mjs",
     "images": "node scripts/optimize-images.mjs",
     "share-image": "node scripts/share-image.mjs",
     "test:pages": "npm run build && node tests/build-pages.mjs",
-    "test:stock": "node tests/stock-lookup.mjs && node tests/stock-admin.mjs",
+    "test:stock": "node tests/stock-records.mjs && node tests/stock-admin.mjs",
     "test:enquiry": "node tests/enquiry.mjs"
   },
   "dependencies": {

@@ -26,7 +26,7 @@ page.setDefaultTimeout(5000);
 const runtimeErrors = [];
 page.on('pageerror', error => runtimeErrors.push(error.message));
 // The unknown-page check expects a real 404 where the host serves one (Vercel).
-const expected404 = new Set(['/nope']);
+const expected404 = new Set(['/nope', '/crm', '/stock-manager', '/presentation']);
 page.on('console', message => {
   if (message.type() !== 'error') return;
   const { url } = message.location();
@@ -141,16 +141,11 @@ try {
     await expect(page.locator('.finance p')).toContainText('not a finance offer');
     await page.goto(baseURL);
   });
-  await check('CRM and stock-manager concepts stay on their own routes', async () => {
-    await expect(page.locator('a[href^="/crm"], a[href^="/stock-manager"]')).toHaveCount(0);
-    await page.goto(`${baseURL}/crm`);
-    await expect(page.locator('.crm-demo')).toBeVisible();
-    await expect(page.locator('.header')).toHaveCount(0);
-    await expect(page).toHaveTitle(/Sales CRM mockup/);
-    await page.goto(`${baseURL}/stock-manager`);
-    await expect(page.locator('.stock-manager')).toBeVisible();
-    await expect(page.locator('.header')).toHaveCount(0);
-    await expect(page).toHaveTitle(/Stock management demo/);
+  await check('The pitch demos are gone: their old addresses show the not-found page', async () => {
+    for (const path of ['/crm', '/stock-manager', '/presentation']) {
+      await page.goto(`${baseURL}${path}`);
+      await expect(page).toHaveTitle('Page not found | MM Prestige Motors');
+    }
     await page.goto(baseURL);
   });
   await check('Themed hero dropdowns support keyboard selection, dependent models and dismissal', async () => {

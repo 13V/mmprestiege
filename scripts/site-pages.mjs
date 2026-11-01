@@ -123,24 +123,10 @@ const pages = [
     noindex: true,
   },
   {
-    file: "crm.html",
-    path: "/crm",
-    title: `Sales CRM mockup | ${NAME}`,
-    description: "A concept customer and sales pipeline for MM Prestige Motors.",
-    noindex: true,
-  },
-  {
     file: "stock/manage.html",
     path: "/stock/manage",
     title: `Stock manager | ${NAME}`,
     description: "Add and update the cars on the MM Prestige Motors website.",
-    noindex: true,
-  },
-  {
-    file: "stock-manager.html",
-    path: "/stock-manager",
-    title: `Stock management demo | ${NAME}`,
-    description: "A concept stock assistant for MM Prestige Motors.",
     noindex: true,
   },
 ];
@@ -181,11 +167,8 @@ function head({ path, title, description, image = "/og-image.png", noindex, sche
 
 const robots = `User-agent: *
 Allow: /
-Disallow: /crm
-Disallow: /stock-manager
 Disallow: /stock/manage
 Disallow: /api/
-Disallow: /presentation
 Disallow: /downloads/
 
 Sitemap: ${SITE_URL}/sitemap.xml

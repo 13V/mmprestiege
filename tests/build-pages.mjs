@@ -52,11 +52,12 @@ check("Every car has a page with its own title, description and photo preview", 
     expect(/"@type":"Car"/.test(html) === !sampleStock, `${car.id} car data only for real stock`);
   }
 });
-check("Stock page and admin pages have their own titles, and admin pages are noindex", () => {
+check("Stock page and the stock manager have their own titles, the stock manager is noindex, and the pitch demos are gone", () => {
   expect(tag(read("stock.html"), /<title>([^<]+)/) === "Our collection | MM Prestige Motors", "stock title");
   expect(tag(read("stock/manage.html"), /<title>([^<]+)/) === "Stock manager | MM Prestige Motors", "stock manager title");
-  for (const page of ["crm.html", "stock-manager.html", "stock/manage.html"])
-    expect(read(page).includes('<meta name="robots" content="noindex" />'), `${page} is noindex`);
+  expect(read("stock/manage.html").includes('<meta name="robots" content="noindex" />'), "stock manager is noindex");
+  for (const gone of ["crm.html", "stock-manager.html", "presentation/index.html"])
+    expect(!existsSync(join(root, "dist", gone)), `${gone} isn't built: the pitch demos are gone`);
 });
 check("Unknown pages get a noindex 404 page", () => {
   const html = read("404.html");
@@ -66,7 +67,8 @@ check("Unknown pages get a noindex 404 page", () => {
 check("robots.txt and sitemap.xml list the public pages", () => {
   const robots = read("robots.txt");
   expect(/Sitemap: https:\/\/\S+\/sitemap\.xml/.test(robots), "sitemap line");
-  for (const path of ["/crm", "/stock/manage", "/api/"]) expect(robots.includes(`Disallow: ${path}`), `${path} disallowed`);
+  for (const path of ["/stock/manage", "/api/"]) expect(robots.includes(`Disallow: ${path}`), `${path} disallowed`);
+  expect(!/crm|stock-manager|presentation/.test(robots), "no rules for the removed demos");
   const sitemap = read("sitemap.xml");
   expect((sitemap.match(/<url>/g) || []).length === vehicles.length + 2, "sitemap URL count");
   expect(!sitemap.includes("/stock/manage"), "stock manager not in the sitemap");
@@ -74,7 +76,7 @@ check("robots.txt and sitemap.xml list the public pages", () => {
 check("Vercel serves clean URLs with real 404s, and the stock and enquiry APIs are functions", () => {
   const config = JSON.parse(readFileSync(join(root, "vercel.json"), "utf8"));
   expect(config.cleanUrls === true, "cleanUrls");
-  expect(!config.rewrites.some((rule) => rule.source === "/(.*)"), "no catch-all rewrite");
+  expect(!(config.rewrites || []).some((rule) => rule.source === "/(.*)"), "no catch-all rewrite");
   expect(existsSync(join(root, "api/stock.js")), "api/stock.js");
   expect(existsSync(join(root, "api/enquiry.js")), "api/enquiry.js");
   const manage = config.headers.find((rule) => rule.source === "/stock/manage")?.headers || [];

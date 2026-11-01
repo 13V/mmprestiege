@@ -4,7 +4,6 @@
 import { randomBytes } from "node:crypto";
 import { sampleVehicles } from "../../src/sample-stock.js";
 import { clearCookie, hasSession, loginThrottle, passwordMatches, sessionCookie } from "./auth.js";
-import { LookupError, lookupVehicle } from "./lookup.js";
 import { isLive, photoFiles, prepareCar } from "./records.js";
 import { ConflictError } from "./stores.js";
 
@@ -46,7 +45,6 @@ export async function handleStockRequest(request, ctx) {
     if (method === "POST" && op === "logout")
       return json({ ok: true }, 200, { "set-cookie": clearCookie(ctx.secureCookies) });
     if (!hasSession(request, ctx.password)) return fail(401, "signed_out", "Please sign in.");
-    if (method === "POST" && op === "lookup") return await lookup(request, ctx);
     if (!ctx.store) return fail(503, "no_storage", "Storage isn't connected yet, so cars can't be saved.");
     switch (`${method} ${op}`) {
       case "GET stock":
@@ -67,10 +65,6 @@ export async function handleStockRequest(request, ctx) {
   } catch (error) {
     if (error instanceof ConflictError) return fail(409, "conflict", error.message);
     if (error instanceof ValidationError) return fail(422, "invalid", error.message);
-    if (error instanceof LookupError) {
-      const code = { invalid: 400, not_found: 404, config: 503, credits: 402 }[error.code] || 502;
-      return fail(code, error.code, error.message, { detail: error.detail });
-    }
     ctx.log?.(error);
     return fail(500, "error", "Something went wrong. Try again in a moment.");
   }
@@ -85,7 +79,6 @@ function status(ctx, signedIn) {
       login: Boolean(ctx.password),
       passwordTooShort: Boolean(ctx.passwordTooShort),
       storage: ctx.store?.kind || null,
-      lookup: ctx.provider?.name || null,
       publish: ctx.publishMode || null,
     },
   };
@@ -107,23 +100,9 @@ async function login(request, ctx) {
   return json({ ok: true }, 200, { "set-cookie": sessionCookie(ctx.password, { secure: ctx.secureCookies }) });
 }
 
-async function lookup(request, ctx) {
-  const body = await readBody(request);
-  const result = await lookupVehicle({
-    provider: ctx.provider,
-    cache: ctx.store?.cache,
-    query: body,
-    fresh: Boolean(body.fresh),
-  });
-  return json({ ok: true, result });
-}
-
 async function getStock(ctx) {
-  const [{ doc }, credits] = await Promise.all([
-    ctx.store.read(),
-    ctx.provider?.credits ? ctx.provider.credits().catch(() => null) : null,
-  ]);
-  return json({ ok: true, version: doc.version, cars: doc.cars, credits });
+  const { doc } = await ctx.store.read();
+  return json({ ok: true, version: doc.version, cars: doc.cars });
 }
 
 // Reads the stock, applies one change, and saves it. The website rebuilds
@@ -229,7 +208,7 @@ async function uploadPhoto(request, ctx) {
 }
 
 // Copies the website's current (sample) listings in as drafts, with their
-// photos, so Madi can correct the details and publish them.
+// photos, so their details can be corrected before they're published.
 async function importListings(request, ctx) {
   const body = await readBody(request);
   return mutate(ctx, body.expectedVersion, (doc) => {
@@ -267,7 +246,6 @@ async function importListings(request, ctx) {
           height: null,
           share: "",
         })),
-        lookup: null,
         importedFrom: car.id,
         createdAt: now,
         updatedAt: now,

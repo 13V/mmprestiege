@@ -156,19 +156,6 @@
   }
 }
 
-/* The standalone CRM and stock-manager concepts keep their own typography
-   rather than the showroom's global serif heading rule. */
-.crm-demo :is(h1,
-h2,
-h3,
-h4),
-.stock-manager :is(h1,
-h2,
-h3,
-h4) {
-  font-family: Manrope, Arial, sans-serif;
-}
-
 /* ===== Review fixes ===== */
 /* Saved state: a white icon on the red chip. The legacy `.is-saved` rule in
    styles.css paints it red with !important, so this needs !important too. */

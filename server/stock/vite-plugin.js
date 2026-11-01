@@ -3,14 +3,12 @@
 //    published cars in the local store (or the samples); in a build, the
 //    snapshot written by scripts/stock-snapshot.mjs (or the samples).
 //  - In the dev server, /api/stock runs the same handler as the Vercel
-//    function, against a folder (STOCK_DEV_DIR, default .stock/dev) and the
-//    sample lookups (or the live provider if REGCHECK_USERNAME is set).
+//    function, against a folder (STOCK_DEV_DIR, default .stock/dev).
 //    Publishing reloads the open pages instead of rebuilding.
 import { resolve } from "node:path";
 import { readSnapshot } from "../../scripts/stock-source.mjs";
 import { send, toRequest } from "../node-http.js";
 import { handleStockRequest } from "./handler.js";
-import { mockProvider, regCheckProvider } from "./lookup.js";
 import { publicSnapshot } from "./records.js";
 import { fileStore } from "./stores.js";
 
@@ -48,9 +46,6 @@ export function stockPlugin() {
         password,
         secureCookies: false,
         store,
-        provider: process.env.REGCHECK_USERNAME
-          ? regCheckProvider({ username: process.env.REGCHECK_USERNAME })
-          : mockProvider(),
         publishMode: "dev",
         publish: async () => {
           reload();

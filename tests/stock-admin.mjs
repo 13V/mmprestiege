@@ -1,6 +1,6 @@
 // End-to-end checks for the stock manager (/stock/manage) and the website it
 // feeds. Starts its own Vite dev server with an empty, temporary stock
-// folder and the sample rego lookups, so it never touches real data.
+// folder, so it never touches real data.
 // Run `npm run test:stock` (or `node tests/stock-admin.mjs`).
 import { chromium, expect } from "@playwright/test";
 import { existsSync } from "node:fs";
@@ -16,7 +16,6 @@ const storeDir = await mkdtemp(join(tmpdir(), "mm-stock-"));
 const PASSWORD = "test-password-123";
 process.env.STOCK_DEV_DIR = storeDir;
 process.env.STOCK_ADMIN_PASSWORD = PASSWORD;
-delete process.env.REGCHECK_USERNAME;
 const server = await createServer({
   root,
   configFile: join(root, "vite.config.js"),
@@ -101,34 +100,25 @@ try {
     expect(noHeader.status()).toBe(403);
     await anonymous.close();
   });
-  await check("A rego lookup finds the car and says what the rego record doesn't include", async () => {
+  await check("Add a car opens an empty form to type the details in, with no rego lookup", async () => {
     await button("Add a car").first().click();
-    await expect(page.getByRole("heading", { name: "Add a car" })).toBeVisible();
-    await page.getByLabel("Rego").fill("s123 abc");
-    await expect(page.getByLabel("Rego")).toHaveValue("S123 ABC");
-    await page.getByText("SA", { exact: true }).click();
-    await button("Find the car").click();
-    const result = page.locator(".sa-result");
-    await expect(result.getByRole("heading", { name: "2016 HSV GTS" })).toBeVisible();
-    await expect(result).toContainText("6G1FK5EP0GL303518");
-    await expect(result).toContainText("14 Mar 2027");
-    await expect(result).toContainText("Not in the rego record: variant, gearbox, engine.");
-    await noOverflow();
-    await screenshot("found");
-  });
-  await check("Using the lookup fills in the form and marks what came from the rego", async () => {
-    await button("Use these details").click();
-    await expect(page.getByRole("heading", { name: "2016 HSV GTS" })).toBeVisible();
-    await expect(page.getByLabel(/^Year/)).toHaveValue("2016");
-    await expect(page.getByLabel(/^Make/)).toHaveValue("HSV");
-    await expect(page.getByLabel(/^Model/)).toHaveValue("GTS");
-    await expect(page.getByLabel(/^Body/)).toHaveValue("Sedan");
-    await expect(page.getByLabel(/^Colour/)).toHaveValue("Red");
+    await expect(page.getByRole("heading", { name: "New car" })).toBeVisible();
+    await expect(page.locator(".sa-status")).toHaveText("New");
+    await expect(page.getByRole("button", { name: /Find the car/ })).toHaveCount(0);
+    await page.getByLabel(/^Year/).fill("2016");
+    await page.getByLabel(/^Make/).fill("HSV");
+    await page.getByLabel(/^Model/).fill("GTS");
+    await page.getByLabel(/^Body/).selectOption("Sedan");
+    await page.getByLabel(/^Colour/).fill("Red");
+    // Private notes for the dealership: the website never shows them.
+    await page.getByLabel("Rego", { exact: true }).fill("s123abc");
     await expect(page.getByLabel("Rego", { exact: true })).toHaveValue("S123ABC");
-    await expect(page.getByLabel(/^VIN/)).toHaveValue("6G1FK5EP0GL303518");
-    await expect(page.getByLabel(/^Rego expires/)).toHaveValue("2027-03-14");
-    expect(await page.locator(".sa-from").count()).toBeGreaterThanOrEqual(7);
-    await expect(page.locator(".sa-banner")).toContainText("S123ABC (SA)");
+    await page.getByLabel(/^State/).selectOption("SA");
+    await page.getByLabel(/^Rego expires/).fill("2027-03-14");
+    await page.getByLabel(/^VIN/).fill("6G1FK5EP0GL303518");
+    await expect(page.getByRole("heading", { name: "2016 HSV GTS" })).toBeVisible();
+    await noOverflow();
+    await screenshot("new");
   });
   await check("A car can't go on the website without a photo", async () => {
     await page.getByLabel(/^Kilometres/).fill("58,420");
@@ -206,24 +196,6 @@ try {
     await expect(home.locator(".reference-collection .carousel-controls")).toBeHidden();
     await sold.close();
     await home.close();
-  });
-  await check("Lookups that fail, find a stolen car or find stock you already have say so", async () => {
-    await button("Add a car").first().click();
-    await page.getByLabel("Rego").fill("ZZZ999");
-    await button("Find the car").click();
-    await expect(page.locator(".sa-result.is-error h2")).toHaveText("No match for ZZZ999 in SA");
-    await page.getByLabel("Rego").fill("S123ABC");
-    await expect(page.locator(".sa-already")).toContainText("Already in your stock: 2016 HSV GTS (sold).");
-    await page.getByLabel("Rego").fill("STOLEN1");
-    await page.getByText("VIC", { exact: true }).click();
-    await button("Find the car").click();
-    await expect(page.locator(".sa-warning")).toContainText("recorded as stolen");
-    await page.getByRole("radio", { name: "VIN" }).click();
-    await page.getByLabel(/^VIN/).fill("6G1FK5EP0GL303518");
-    await expect(page.locator(".sa-already")).toBeVisible();
-    await button("Find the car").click();
-    await expect(page.locator(".sa-result h2")).toHaveText("2016 Holden Commodore");
-    await button("Stock").click();
   });
   await check("A save from out-of-date stock on another device is refused", async () => {
     const other = await context.newPage();
@@ -309,12 +281,18 @@ try {
     });
     expect((await again.json()).imported).toBe(0);
   });
-  await check("The stock manager fits a phone screen", async () => {
-    for (const path of ["/stock/manage", "/stock/manage?add=1", "/stock/manage?car=hsv-gts-2016"]) {
+  await check("The stock manager fits a phone screen, and an untouched new car leaves without asking", async () => {
+    for (const path of ["/stock/manage", "/stock/manage?car=hsv-gts-2016"]) {
       await page.goto(`${baseURL}${path}`);
       await page.locator(".sa-main h1").waitFor();
       await noOverflow();
     }
+    await page.goto(`${baseURL}/stock/manage`);
+    await button("Add a car").first().click();
+    await expect(page.getByRole("heading", { name: "New car" })).toBeVisible();
+    await noOverflow();
+    await button("Stock").click();
+    await expect(page.getByRole("heading", { name: "Your stock" })).toBeVisible();
   });
   await check("Signing out ends the session", async () => {
     await page.goto(`${baseURL}/stock/manage`);

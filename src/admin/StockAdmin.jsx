@@ -1,12 +1,11 @@
-// The stock manager at /stock/manage: Madi signs in, adds a car from its rego
-// (or VIN) and state, checks the details, adds photos and puts it on the
-// website. The API is /api/stock (server/stock/handler.js).
+// The stock manager at /stock/manage: the dealer signs in, adds a car by
+// typing in its details, adds photos and puts it on the website. The API is
+// /api/stock (server/stock/handler.js).
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useBlocker, useSearchParams } from "react-router-dom";
 import {
   AlertTriangle,
   ArrowLeft,
-  ArrowRight,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -17,7 +16,6 @@ import {
   LogOut,
   Plus,
   RefreshCw,
-  Search,
   Trash2,
   X,
 } from "lucide-react";
@@ -36,26 +34,6 @@ const MAKES = [
   "Subaru", "Mazda", "Honda", "Lexus", "BMW", "Mercedes-Benz", "Audi", "Porsche", "Ferrari",
   "Lamborghini", "Volkswagen", "Jeep", "Land Rover",
 ];
-const LABELS = {
-  year: "Year",
-  make: "Make",
-  model: "Model",
-  variant: "Variant",
-  body: "Body",
-  colour: "Colour",
-  transmission: "Gearbox",
-  engine: "Engine",
-  fuel: "Fuel",
-  vin: "VIN",
-  regoExpiry: "Rego expires",
-  insurer: "CTP insurer",
-  nvic: "NVIC",
-  engineNumber: "Engine number",
-  vehicleCode: "Vehicle code",
-  compliance: "Compliance",
-  registration: "Registration",
-  chassis: "Chassis number",
-};
 const SETUP_GUIDE = "https://github.com/13V/mmprestiege/blob/main/docs/stock-manager.md";
 
 // --- API -------------------------------------------------------------------
@@ -113,7 +91,6 @@ const blankCar = () => ({
   vin: "",
   regoExpiry: "",
   photos: [],
-  lookup: null,
 });
 // Form state uses strings; the server turns them back into numbers.
 const toForm = (car) => ({
@@ -130,8 +107,6 @@ const fromForm = (draft) => ({
     .filter((photo) => photo.state === "ready")
     .map(({ id, src, srcset, width, height, share }) => ({ id, src, srcset, width, height, share })),
 });
-const formatDate = (iso) =>
-  iso ? new Date(`${iso}T00:00:00`).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" }) : "";
 const STATUS_TEXT = { draft: "Draft", available: "On the website", sold: "Sold" };
 
 function useFocusOnChange(key) {
@@ -195,10 +170,15 @@ export default function StockAdmin() {
   }, []);
 
   const go = (next) => setParams(next, { replace: false });
+  // A new car opens straight into the form: its details are typed in.
+  const addCar = () => {
+    setDraft(blankCar());
+    go({ car: "new" });
+  };
   // Signed out while working (the session ran out): sign in over the
   // current screen, so nothing typed is lost.
   const sessionLost = Boolean(status?.setup.login && !status.signedIn && stock);
-  const view = params.get("car") ? "edit" : params.get("add") ? "add" : "list";
+  const view = params.get("car") ? "edit" : "list";
 
   let body;
   if (failure && !status)
@@ -216,21 +196,6 @@ export default function StockAdmin() {
     );
   else if (!status.setup.storage) body = <Setup setup={status.setup} signedIn />;
   else if (!stock) body = failure ? <Message title="The stock didn't load" text={failure} action={["Try again", loadStock]} /> : <Loading />;
-  else if (view === "add")
-    body = (
-      <FindCar
-        cars={stock.cars}
-        credits={stock.credits}
-        lookupReady={Boolean(status.setup.lookup)}
-        onOpen={(id) => go({ car: id })}
-        onUse={(car) => {
-          setDraft(car);
-          go({ car: "new" });
-        }}
-        onCancel={() => go({})}
-        onError={handleError}
-      />
-    );
   else if (view === "edit") {
     const id = params.get("car");
     const existing = stock.cars.find((car) => car.id === id);
@@ -239,11 +204,11 @@ export default function StockAdmin() {
       <Message
         title="Start again"
         text="The car you were adding wasn't saved before the page reloaded."
-        action={["Add a car", () => go({ add: "1" })]}
+        action={["Add a car", addCar]}
       />
     ) : start ? (
       <EditCar
-        key={id === "new" ? `new-${start.lookup?.at || "manual"}` : id}
+        key={id}
         initial={start}
         isNew={id === "new"}
         version={stock.version}
@@ -269,11 +234,7 @@ export default function StockAdmin() {
       <StockList
         stock={stock}
         setup={status.setup}
-        onAdd={() => go({ add: "1" })}
-        onManual={() => {
-          setDraft(blankCar());
-          go({ car: "new" });
-        }}
+        onAdd={addCar}
         onOpen={(id) => go({ car: id })}
         onImported={(data) => {
           setStock((current) => ({ ...current, version: data.version, cars: data.cars }));
@@ -317,9 +278,7 @@ export default function StockAdmin() {
         )}
       </header>
       {status?.mode === "development" && (
-        <p className="sa-dev-banner">
-          Development server: cars are saved in a local folder and lookups use sample records (try SA S123ABC).
-        </p>
+        <p className="sa-dev-banner">Development server: cars are saved in a local folder.</p>
       )}
       <main className="sa-main" inert={sessionLost || undefined}>
         {body}
@@ -402,16 +361,9 @@ function Setup({ setup, signedIn = false }) {
       text: "In Vercel, create a public Blob store and connect it to this project.",
     },
     {
-      done: Boolean(setup.lookup),
-      title: "Rego lookup",
-      text: "Add REGCHECK_USERNAME from a CarRegistrationAPI account. Without it, details are typed in by hand.",
-      optional: true,
-    },
-    {
       done: Boolean(setup.publish),
       title: "Automatic website updates",
       text: "Add STOCK_DEPLOY_HOOK_URL (a Vercel deploy hook) so saved changes go live by themselves.",
-      optional: true,
     },
   ];
   return (
@@ -501,7 +453,7 @@ function SignIn({ onDone, again = false }) {
 
 // --- Stock list ------------------------------------------------------------
 
-function StockList({ stock, setup, onAdd, onManual, onOpen, onImported, onPublished, onError }) {
+function StockList({ stock, setup, onAdd, onOpen, onImported, onPublished, onError }) {
   const [tab, setTab] = useState("available");
   const [busy, setBusy] = useState("");
   const ref = useFocusOnChange("list");
@@ -549,8 +501,8 @@ function StockList({ stock, setup, onAdd, onManual, onOpen, onImported, onPublis
         <div className="sa-panel sa-empty">
           <h2>No cars yet</h2>
           <p>
-            Tap <b>Add a car</b> and enter the rego and state: the details fill themselves in. Add photos,
-            the price and kilometres, and put it on the website.
+            Tap <b>Add a car</b>, fill in its details, add photos, the price and kilometres, and put it on
+            the website.
           </p>
           <p>
             The website shows sample listings until the first car goes on it. You can copy those six in as drafts
@@ -625,264 +577,14 @@ function StockList({ stock, setup, onAdd, onManual, onOpen, onImported, onPublis
           )}
         </>
       )}
-      <footer className="sa-list-foot">
-        {setup.lookup ? (
-          <span>
-            Rego lookup: {setup.lookup}
-            {stock.credits != null && ` · ${stock.credits} lookups left`}
-          </span>
-        ) : (
-          <span>Rego lookup isn't connected, so details are typed in by hand.</span>
-        )}
-        <button type="button" className="sa-link" onClick={onManual}>
-          Add a car without a rego
-        </button>
-        {setup.publish && stock.cars.some((car) => car.status !== "draft") && (
+      {setup.publish && stock.cars.some((car) => car.status !== "draft") && (
+        <footer className="sa-list-foot">
           <button type="button" className="sa-link" onClick={publish} disabled={busy === "publish"}>
             <RefreshCw size={13} aria-hidden="true" /> Update website now
           </button>
-        )}
-      </footer>
+        </footer>
+      )}
     </section>
-  );
-}
-
-// --- Find a car ------------------------------------------------------------
-
-function FindCar({ cars, credits, lookupReady, onOpen, onUse, onCancel, onError }) {
-  const [mode, setMode] = useState("rego");
-  const [rego, setRego] = useState("");
-  const [state, setState] = useState("SA");
-  const [vin, setVin] = useState("");
-  const [phase, setPhase] = useState({ name: "idle" });
-  const ref = useFocusOnChange("find");
-  const resultRef = useRef(null);
-  const query = mode === "rego" ? rego.toUpperCase().replace(/[^A-Z0-9]/g, "") : vin.toUpperCase().replace(/[^A-Z0-9]/g, "");
-  const already = cars.find((car) =>
-    mode === "rego" ? query && car.rego === query && car.state === state : query && car.vin === query,
-  );
-  useEffect(() => {
-    if (phase.name === "found" || phase.name === "error") resultRef.current?.focus();
-  }, [phase]);
-
-  async function find(event) {
-    event.preventDefault();
-    if (!lookupReady) return;
-    setPhase({ name: "loading" });
-    try {
-      const { result } = await api("lookup", { body: mode === "rego" ? { rego, state } : { vin } });
-      setPhase({ name: "found", result });
-    } catch (error) {
-      if (error.code === "signed_out") onError(error);
-      setPhase({ name: "error", error });
-    }
-  }
-  function use(result) {
-    const car = blankCar();
-    const fields = result?.fields || {};
-    Object.assign(car, fields, { year: fields.year ?? "" });
-    if (mode === "rego") {
-      car.rego = query;
-      car.state = state;
-    } else car.vin = fields.vin || query;
-    if (!car.fuel) car.fuel = "Petrol";
-    if (result)
-      car.lookup = {
-        provider: result.provider,
-        at: result.at,
-        description: result.description,
-        query: mode === "rego" ? `${query} (${state})` : `VIN ${query}`,
-        filled: Object.keys(fields),
-        missing: result.missing,
-      };
-    onUse(car);
-  }
-
-  return (
-    <section className="sa-find">
-      <button type="button" className="sa-back" onClick={onCancel}>
-        <ArrowLeft size={16} aria-hidden="true" /> Stock
-      </button>
-      <h1 tabIndex={-1} ref={ref}>
-        Add a car
-      </h1>
-      <p className="sa-lead">
-        {lookupReady
-          ? "Enter the rego and the state it's registered in. The details fill themselves in."
-          : "Rego lookup isn't connected yet, so you'll type the details in."}
-      </p>
-      <form className="sa-panel sa-find-form" onSubmit={find}>
-        <div className="sa-segmented" role="radiogroup" aria-label="Find by">
-          {[
-            ["rego", "Rego"],
-            ["vin", "VIN"],
-          ].map(([key, label]) => (
-            <button
-              key={key}
-              type="button"
-              role="radio"
-              aria-checked={mode === key}
-              className={mode === key ? "is-selected" : ""}
-              onClick={() => {
-                setMode(key);
-                setPhase({ name: "idle" });
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-        {mode === "rego" ? (
-          <>
-            <label className="sa-field sa-plate-field">
-              <span>Rego</span>
-              <input
-                className="sa-plate"
-                value={rego}
-                onChange={(event) => setRego(event.target.value.toUpperCase())}
-                placeholder="S123ABC"
-                autoComplete="off"
-                autoCapitalize="characters"
-                spellCheck={false}
-                maxLength={10}
-                required
-              />
-            </label>
-            <fieldset className="sa-states">
-              <legend>Registered in</legend>
-              <div>
-                {STATES.map((code) => (
-                  <label key={code} className={state === code ? "is-selected" : ""}>
-                    <input
-                      type="radio"
-                      name="state"
-                      value={code}
-                      checked={state === code}
-                      onChange={() => setState(code)}
-                    />
-                    {code}
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-          </>
-        ) : (
-          <label className="sa-field">
-            <span>VIN (17 characters, usually on the windscreen or door pillar)</span>
-            <input
-              className="sa-vin"
-              value={vin}
-              onChange={(event) => setVin(event.target.value.toUpperCase())}
-              placeholder="6G1FK5EP0GL303518"
-              autoComplete="off"
-              autoCapitalize="characters"
-              spellCheck={false}
-              maxLength={24}
-              required
-            />
-          </label>
-        )}
-        {already && (
-          <p className="sa-already">
-            Already in your stock: <b>{title(already)}</b> ({STATUS_TEXT[already.status].toLowerCase()}).{" "}
-            <button type="button" className="sa-link" onClick={() => onOpen(already.id)}>
-              Open it
-            </button>
-          </p>
-        )}
-        {lookupReady ? (
-          <button className="sa-button is-primary is-wide" disabled={phase.name === "loading" || !query}>
-            {phase.name === "loading" ? (
-              <Loader2 className="sa-spin" size={16} aria-hidden="true" />
-            ) : (
-              <Search size={16} aria-hidden="true" />
-            )}
-            {phase.name === "loading" ? "Looking it up…" : "Find the car"}
-          </button>
-        ) : (
-          <button type="button" className="sa-button is-primary is-wide" onClick={() => use(null)}>
-            Enter the details <ArrowRight size={16} aria-hidden="true" />
-          </button>
-        )}
-        {lookupReady && (
-          <p className="sa-hint">
-            {credits != null ? `${credits} lookups left. ` : ""}Each new rego costs one lookup; looking up the same car
-            again within 30 days is free.
-          </p>
-        )}
-      </form>
-
-      {phase.name === "found" && (
-        <LookupResult result={phase.result} refFocus={resultRef} onUse={() => use(phase.result)} />
-      )}
-      {phase.name === "error" && (
-        <div className="sa-panel sa-result is-error" tabIndex={-1} ref={resultRef}>
-          <h2>
-            {phase.error.code === "not_found"
-              ? `No match for ${mode === "rego" ? `${query} in ${state}` : "that VIN"}`
-              : phase.error.code === "credits"
-                ? "Out of lookups"
-                : "The lookup didn't work"}
-          </h2>
-          <p>
-            {phase.error.code === "not_found"
-              ? "Check the rego and the state. New plates can take a few days to appear. You can also enter the details yourself."
-              : phase.error.code === "credits"
-                ? "The rego lookup account has run out of credits. Top it up at carregistrationapi.com.au, or enter the details yourself for now."
-                : phase.error.message}
-          </p>
-          <div className="sa-row">
-            <button type="button" className="sa-button is-secondary" onClick={() => use(null)}>
-              Enter the details yourself
-            </button>
-          </div>
-        </div>
-      )}
-      <button type="button" className="sa-link sa-skip" onClick={() => use(null)}>
-        No rego or VIN? Enter the details yourself
-      </button>
-    </section>
-  );
-}
-
-function LookupResult({ result, refFocus, onUse }) {
-  const rows = [
-    ...Object.entries(result.fields).filter(([key]) => !["year", "make", "model"].includes(key)),
-    ...Object.entries(result.extra || {}),
-  ].map(([key, value]) => [LABELS[key] || key, key === "regoExpiry" ? formatDate(value) : value]);
-  const heading = [result.fields.year, result.fields.make, result.fields.model].filter(Boolean).join(" ");
-  return (
-    <div className="sa-panel sa-result" tabIndex={-1} ref={refFocus}>
-      <p className="sa-kicker">
-        <Check size={14} aria-hidden="true" /> Found{result.cached ? " (saved lookup, no charge)" : ""}
-      </p>
-      <h2>{heading || result.description || "Vehicle found"}</h2>
-      {result.description && heading && <p className="sa-record">Rego record: {result.description}</p>}
-      {result.warnings.map((warning) => (
-        <p key={warning} className="sa-warning" role="alert">
-          <AlertTriangle size={16} aria-hidden="true" /> {warning}
-        </p>
-      ))}
-      {rows.length > 0 && (
-        <dl className="sa-facts">
-          {rows.map(([label, value]) => (
-            <div key={label}>
-              <dt>{label}</dt>
-              <dd>{value}</dd>
-            </div>
-          ))}
-        </dl>
-      )}
-      {result.missing.length > 0 && (
-        <p className="sa-missing">
-          Not in the rego record: {result.missing.map((key) => (LABELS[key] || key).toLowerCase()).join(", ")}. You'll
-          add {result.missing.length === 1 ? "it" : "these"} next.
-        </p>
-      )}
-      <button type="button" className="sa-button is-primary is-wide" onClick={onUse}>
-        Use these details <ArrowRight size={16} aria-hidden="true" />
-      </button>
-    </div>
   );
 }
 
@@ -898,9 +600,9 @@ function EditCar({ initial, isNew, version, onSaved, onDeleted, onCancel, onErro
   const allowLeave = useRef(false);
   const ref = useFocusOnChange(initial.id || "new");
   const live = initial.status !== "draft";
-  const filled = new Set(car.lookup?.filled || []);
   const uploading = car.photos.some((photo) => photo.state === "processing" || photo.state === "uploading");
-  const dirty = JSON.stringify(fromForm(car)) !== baseline || isNew;
+  // A new car counts as changed once anything is typed or added.
+  const dirty = JSON.stringify(fromForm(car)) !== baseline;
 
   // Keep unsaved changes from being lost to a stray tap, swipe or the back
   // button.
@@ -923,23 +625,20 @@ function EditCar({ initial, isNew, version, onSaved, onDeleted, onCancel, onErro
     return () => window.removeEventListener("beforeunload", warn);
   }, [dirty]);
 
-  const set = (key) => (event) => setCar((current) => ({ ...current, [key]: event.target.value }));
+  const set = (key, upper = false) => (event) =>
+    setCar((current) => ({ ...current, [key]: upper ? event.target.value.toUpperCase() : event.target.value }));
   const field = (key, label, props = {}) => (
     <label className={`sa-field${props.wide ? " is-wide" : ""}`}>
       <span>
         {label}
-        {filled.has(key) && <em className="sa-from"> from rego</em>}
         {props.required && <i aria-hidden="true"> *</i>}
       </span>
-      <input value={car[key] ?? ""} onChange={set(key)} {...{ ...props, wide: undefined }} />
+      <input value={car[key] ?? ""} onChange={set(key, props.upper)} {...{ ...props, wide: undefined, upper: undefined }} />
     </label>
   );
   const select = (key, label, options, props = {}) => (
     <label className="sa-field">
-      <span>
-        {label}
-        {filled.has(key) && <em className="sa-from"> from rego</em>}
-      </span>
+      <span>{label}</span>
       <select value={car[key] ?? ""} onChange={set(key)} {...props}>
         <option value="">Choose…</option>
         {car[key] && !options.includes(car[key]) && <option value={car[key]}>{car[key]}</option>}
@@ -1030,12 +729,6 @@ function EditCar({ initial, isNew, version, onSaved, onDeleted, onCancel, onErro
         </h1>
         <span className={`sa-status is-${initial.status}`}>{isNew ? "New" : STATUS_TEXT[initial.status]}</span>
       </div>
-      {car.lookup && (
-        <p className="sa-banner">
-          Filled in from the rego record for {car.lookup.query}. Check everything before it goes on the website
-          {car.lookup.missing?.length ? `, and add the ${car.lookup.missing.map((key) => (LABELS[key] || key).toLowerCase()).join(", ")}` : ""}.
-        </p>
-      )}
       {initial.importedFrom && initial.status === "draft" && (
         <p className="sa-banner is-warn">
           Copied from the old sample listing. The photos are real, but check the price, kilometres and specifications.
@@ -1122,8 +815,7 @@ function EditCar({ initial, isNew, version, onSaved, onDeleted, onCancel, onErro
           {field("year", "Year", { inputMode: "numeric", pattern: "[0-9]*", maxLength: 4, required: true })}
           <label className="sa-field">
             <span>
-              Make{filled.has("make") && <em className="sa-from"> from rego</em>}
-              <i aria-hidden="true"> *</i>
+              Make<i aria-hidden="true"> *</i>
             </span>
             <input value={car.make} onChange={set("make")} list="sa-makes" required maxLength={40} />
             <datalist id="sa-makes">
@@ -1175,7 +867,7 @@ function EditCar({ initial, isNew, version, onSaved, onDeleted, onCancel, onErro
         <fieldset className="sa-panel sa-grid">
           <legend>Registration</legend>
           <p className="sa-hint is-wide">Kept private: none of this shows on the website.</p>
-          {field("rego", "Rego", { maxLength: 9, autoCapitalize: "characters", spellCheck: false })}
+          {field("rego", "Rego", { maxLength: 9, autoCapitalize: "characters", spellCheck: false, upper: true })}
           <label className="sa-field">
             <span>State</span>
             <select value={car.state} onChange={set("state")}>
@@ -1188,7 +880,7 @@ function EditCar({ initial, isNew, version, onSaved, onDeleted, onCancel, onErro
             </select>
           </label>
           {field("regoExpiry", "Rego expires", { type: "date" })}
-          {field("vin", "VIN", { maxLength: 20, autoCapitalize: "characters", spellCheck: false })}
+          {field("vin", "VIN", { maxLength: 20, autoCapitalize: "characters", spellCheck: false, upper: true })}
           {field("stock", "Stock number", { maxLength: 12, placeholder: "Automatic" })}
         </fieldset>
 

@@ -1,10 +1,13 @@
 // What a car record may contain, what it needs before it can go on the
 // website, and which of its fields the website may see.
 import { randomBytes } from "node:crypto";
-import { AUSTRALIAN_STATES } from "./normalize.js";
-import { cleanRego, cleanVin } from "./lookup.js";
 
 export const STATUSES = ["draft", "available", "sold"];
+export const AUSTRALIAN_STATES = ["SA", "NSW", "VIC", "QLD", "WA", "TAS", "NT", "ACT"];
+// The rego and VIN are private notes for the dealership; the website never
+// shows them.
+const cleanRego = (value) => String(value || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 9);
+const cleanVin = (value) => String(value || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 20);
 export const isLive = (car) => car?.status === "available" || car?.status === "sold";
 
 const PHOTO_URL = [
@@ -88,14 +91,6 @@ export function prepareCar(input, doc, now = new Date()) {
     vin: cleanVin(input?.vin),
     regoExpiry: /^\d{4}-\d{2}-\d{2}$/.test(input?.regoExpiry || "") ? input.regoExpiry : "",
     photos: (Array.isArray(input?.photos) ? input.photos : []).slice(0, 40).map(photo).filter(Boolean),
-    lookup: input?.lookup
-      ? {
-          provider: str(input.lookup.provider, 40),
-          at: str(input.lookup.at, 30),
-          description: str(input.lookup.description, 120),
-          query: str(input.lookup.query, 40),
-        }
-      : existing?.lookup || null,
     importedFrom: existing?.importedFrom || null,
     createdAt: existing?.createdAt || now.toISOString(),
     updatedAt: now.toISOString(),

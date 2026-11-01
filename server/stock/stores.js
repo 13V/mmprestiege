@@ -19,9 +19,6 @@ export class ConflictError extends Error {
 
 export const emptyDoc = () => ({ version: 0, updatedAt: null, nextStock: 101, cars: [] });
 
-const LOOKUP_DAYS = 30;
-const fresh = (date) => Date.now() - new Date(date).getTime() < LOOKUP_DAYS * 864e5;
-
 export function blobStore(blob) {
   const { put, list, del, get, BlobPreconditionFailedError } = blob;
   let dataPath = null;
@@ -105,21 +102,6 @@ export function blobStore(blob) {
       const own = urls.filter((url) => /\.public\.blob\.vercel-storage\.com\/stock\/photos\//.test(url));
       if (own.length) await del(own);
     },
-    cache: {
-      async get(key) {
-        const { blobs } = await list({ prefix: `stock/lookups/${key}/`, limit: 10 });
-        const latest = blobs.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt))[0];
-        if (!latest || !fresh(latest.uploadedAt)) return null;
-        return (await readJson(latest.pathname))?.json || null;
-      },
-      async set(key, value) {
-        await put(`stock/lookups/${key}/lookup.json`, json(value), {
-          access: "public",
-          addRandomSuffix: true,
-          contentType: "application/json",
-        });
-      },
-    },
   };
 }
 
@@ -127,7 +109,6 @@ export function blobStore(blob) {
 export function fileStore(dir) {
   const dataFile = join(dir, "stock.json");
   const photos = join(dir, "photos");
-  const lookups = join(dir, "lookups");
   const tag = (body) => createHash("sha256").update(body).digest("hex").slice(0, 16);
   async function writeAtomic(file, body) {
     await mkdir(join(file, ".."), { recursive: true });
@@ -160,17 +141,6 @@ export function fileStore(dir) {
         const match = url.match(/^\/api\/stock\/dev-photo\/([A-Za-z0-9._-]+)$/);
         if (match) await rm(join(photos, match[1]), { force: true });
       }
-    },
-    cache: {
-      async get(key) {
-        const file = join(lookups, `${key}.json`);
-        if (!existsSync(file)) return null;
-        const saved = JSON.parse(await readFile(file, "utf8"));
-        return fresh(saved.at) ? saved.record : null;
-      },
-      async set(key, record) {
-        await writeAtomic(join(lookups, `${key}.json`), JSON.stringify({ at: new Date().toISOString(), record }));
-      },
     },
     async photoFile(name) {
       if (!/^[A-Za-z0-9._-]+$/.test(name)) return null;
