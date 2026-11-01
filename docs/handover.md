@@ -19,17 +19,17 @@ Where things stand (1 November 2026): the website is live at **https://mmprestig
 
 ## 3. Enquiry email (to do)
 
-Enquiries are emailed to mmprestigemotors@gmail.com once the dealership's Gmail has an app password. Until then, visitors send them from their own email or as a text, so nothing is lost. [Enquiries](enquiries.md) has the steps.
+Enquiries are emailed to mmprestigemotors@gmail.com by [FormSubmit](https://formsubmit.co): free, with no account, password or Vercel setting. It needs one click from the owner, once. Until then, visitors who send an enquiry are offered their own email or a text instead, so nothing is lost. [Enquiries](enquiries.md) has the details.
 
-- [ ] With the owner, create the app password in his Google account (it needs 2-Step Verification).
-- [ ] Add it as `ENQUIRY_EMAIL_APP_PASSWORD` (production) and redeploy.
-- [ ] `https://mmprestigemotors.vercel.app/api/enquiry` shows `"email":true`.
-- [ ] Send a test enquiry from the website and check it arrives.
+- [ ] Send a test enquiry from https://mmprestigemotors.vercel.app (not a preview link). Before activation, the website offers to send it by email or SMS instead; close that.
+- [ ] The owner opens FormSubmit's email in mmprestigemotors@gmail.com (check Spam) and taps **Activate Form**.
+- [ ] The test enquiry arrives. Send a second one: the website says "We've got it", and it arrives within a minute or two.
 
 ## 4. Web address (optional)
 
 - [ ] To use the dealership's own domain, add it in Vercel (**Settings → Domains**) and follow Vercel's DNS instructions.
-- [ ] Redeploy. Canonical links, the sitemap, link previews and the link in enquiry emails use the project's production domain by themselves; to pin a different address, set `SITE_URL` (for example `https://www.example.com.au`).
+- [ ] Redeploy. Canonical links, the sitemap and link previews use the project's production domain by themselves; to pin a different address, set `SITE_URL` (for example `https://www.example.com.au`).
+- [ ] Send a test enquiry from the new address. FormSubmit treats a new address as a new form, so the owner gets one more activation email to click.
 - [ ] Update the web address at the top of the [owner's guide](owner-guide.md).
 
 ## 5. Run-through with the owner
@@ -45,6 +45,7 @@ Enquiries are emailed to mmprestigemotors@gmail.com once the dealership's Gmail 
 - **Rego lookup removed.** Cars are typed in by hand. The paid CarRegistrationAPI lookup, its setting, caching and sample records are gone; the rego, state, expiry and VIN stay as optional private notes.
 - **Stock records never go stale.** Each save writes a new record rather than overwriting one, because Vercel's CDN could serve the old stock for a minute or two after a save, which made a quick second save fail and could have left a new car off the rebuilt site.
 - **Pitch demos removed.** `/crm`, `/stock-manager`, `/presentation` and the pitch email draft are no longer part of the site; they now show the not-found page. They remain in Git history.
+- **Enquiries through FormSubmit.** The forms send through FormSubmit rather than the dealership's Gmail, so no Google app password is needed: the owner activates it with one click. The `/api/enquiry` function and its Gmail code are gone.
 - **Stock manager tidied.** Add a car opens the form straight away; the rego and VIN show in capitals as they're typed; leaving an untouched new car doesn't ask first; automatic website updates is now a normal setup step rather than optional.
 - **Kept as it was:** the password-protected PDF at `/downloads/private-document-97d48df5a3a04ce3bf6c7311b987a1d6.pdf` (added 9 Oct, not linked from the site, hidden from search engines). Delete it if it's no longer needed.
 

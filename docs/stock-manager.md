@@ -26,7 +26,7 @@ Changing it later signs out every device.
 
 - Name it, e.g. `mm-stock`, and pick the **Sydney** region.
 - Choose **Public** access. Photos are shown on the website, so the store must be public; the stock record itself is kept at an address nobody can guess, and the private details (rego, VIN, rego expiry) never appear on the website.
-- **Connect** the store to the mmprestiege project, for all environments. Vercel adds the store's settings (`BLOB_STORE_ID` and a token) by itself.
+- **Connect** the store to the mmprestigemotors project, for all environments. Vercel adds the store's settings (`BLOB_STORE_ID` and a token) by itself.
 
 ### 3. Automatic website updates
 

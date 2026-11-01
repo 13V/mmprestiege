@@ -73,14 +73,14 @@ check("robots.txt and sitemap.xml list the public pages", () => {
   expect((sitemap.match(/<url>/g) || []).length === vehicles.length + 2, "sitemap URL count");
   expect(!sitemap.includes("/stock/manage"), "stock manager not in the sitemap");
 });
-check("Vercel serves clean URLs with real 404s, and the stock and enquiry APIs are functions", () => {
+check("Vercel serves clean URLs with real 404s, and the stock API is a function", () => {
   const config = JSON.parse(readFileSync(join(root, "vercel.json"), "utf8"));
   expect(config.cleanUrls === true, "cleanUrls");
   expect(!(config.rewrites || []).some((rule) => rule.source === "/(.*)"), "no catch-all rewrite");
   const moved = (config.redirects || []).find((rule) => rule.has?.some((item) => item.type === "host" && item.value === "mmprestiege.vercel.app"));
   expect(moved?.destination === "https://mmprestigemotors.vercel.app/:path*" && moved.permanent, "the old address redirects to the new one");
   expect(existsSync(join(root, "api/stock.js")), "api/stock.js");
-  expect(existsSync(join(root, "api/enquiry.js")), "api/enquiry.js");
+  expect(!existsSync(join(root, "api/enquiry.js")), "no enquiry API: FormSubmit emails enquiries");
   const manage = config.headers.find((rule) => rule.source === "/stock/manage")?.headers || [];
   expect(manage.some((header) => header.key === "X-Frame-Options" && header.value === "DENY"), "stock manager can't be framed");
 });

@@ -128,11 +128,6 @@ function App() {
       // Keep saved cars available for this visit if browser storage is blocked.
     }
   }, [saved]);
-  // Ask once the page is idle whether enquiries can be emailed, so the form
-  // knows how it will send before anyone opens it.
-  useEffect(() => {
-    (window.requestIdleCallback || setTimeout)(() => enquiriesByEmail());
-  }, []);
   function toggleSaved(id) {
     setSaved((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
   }
@@ -2563,8 +2558,8 @@ function Dialog({ title, onClose, className = "", children }) {
     </div>
   );
 }
-// What each kind of enquiry asks for, and how it opens. The subjects match
-// the emails the dealership receives (server/enquiry/handler.js).
+// What each kind of enquiry asks for, and how it opens. The subject starts
+// the subject line of the email the dealership receives.
 const ENQUIRY = {
   talk: {
     title: "Enquire with MM Prestige Motors",
@@ -2608,28 +2603,40 @@ const ENQUIRY = {
     subject: "Car finder request",
   },
 };
-// Whether the website can email enquiries itself (see server/enquiry). It is
-// asked once, early, so the form already knows how it will send.
-let emailStatus;
-function enquiriesByEmail() {
-  emailStatus ||= fetch("/api/enquiry", { headers: { accept: "application/json" } })
-    .then((response) => (response.ok ? response.json() : {}))
-    .then((status) => status.email === true)
-    .catch(() => false);
-  return emailStatus;
+// Enquiries are emailed to the dealership by FormSubmit (formsubmit.co; see
+// docs/enquiries.md). Its first submission sends an "Activate Form" email to
+// the address; until that's clicked, or whenever a send fails, the form hands
+// the visitor the message to send from their own email or messaging app.
+const ENQUIRY_ENDPOINT = `https://formsubmit.co/ajax/${business.email}`;
+async function sendEnquiry(fields) {
+  const response = await fetch(ENQUIRY_ENDPOINT, {
+    method: "POST",
+    headers: { "content-type": "application/json", accept: "application/json" },
+    body: JSON.stringify(fields),
+    // FormSubmit knows a form by the page that sends it. Sending only the
+    // site's address makes every page one form, activated once.
+    referrerPolicy: "origin",
+    signal: AbortSignal.timeout?.(20000),
+  });
+  const result = await response.json().catch(() => ({}));
+  return response.ok && String(result.success) === "true";
 }
-function enquiryText(purpose, form) {
+// The message, with the visitor's contact details at the foot (for sending
+// from their own apps); the emailed version lists those as fields instead.
+function enquiryText(purpose, form, { contact: withContact = true } = {}) {
   const details = (pairs) =>
     pairs
       .filter(([, value]) => value.trim())
       .map(([label, value]) => `${label}: ${value.trim()}`)
       .join("\n");
   const notes = form.notes.trim() ? `\n\n${form.notes.trim()}` : "";
-  const contact = `\n\n${details([
-    ["Name", form.name],
-    ["Phone", form.phone],
-    ["Email", form.email],
-  ])}`;
+  const contact = withContact
+    ? `\n\n${details([
+        ["Name", form.name],
+        ["Phone", form.phone],
+        ["Email", form.email],
+      ])}`
+    : "";
   if (purpose === "finance")
     return `Hi, I'd like to apply for finance.\n\n${details([
       ["Car", form.car],
@@ -2669,7 +2676,6 @@ function Enquiry({ vehicle, purpose, onClose }) {
   // form → sending → sent; or ready, when the visitor sends it from their
   // own email or messaging app.
   const [step, setStep] = useState("form"),
-    [byEmail, setByEmail] = useState(null),
     [problem, setProblem] = useState(""),
     [copied, setCopied] = useState(false),
     [form, setForm] = useState({
@@ -2697,13 +2703,6 @@ function Enquiry({ vehicle, purpose, onClose }) {
       budget: "",
       notes: "",
     });
-  useEffect(() => {
-    let open = true;
-    enquiriesByEmail().then((on) => open && setByEmail(on));
-    return () => {
-      open = false;
-    };
-  }, []);
   const text = enquiryText(kind, form);
   // The car the enquiry is about: the one to finance, or the listing's.
   const car = kind === "finance" ? form.car.trim() : carName || "";
@@ -2716,29 +2715,28 @@ function Enquiry({ vehicle, purpose, onClose }) {
   async function submit(event) {
     event.preventDefault();
     setProblem("");
-    if (!byEmail) return setStep("ready");
+    // A bot that fills every field is told it worked; nothing is sent.
+    if (form.website.trim()) return setStep("sent");
     setStep("sending");
+    // The email lists these in this order. A field named "email" becomes the
+    // email's Reply-To, so the dealer can simply reply.
+    const fields = {
+      name: form.name.trim(),
+      phone: form.phone.trim(),
+      ...(form.email.trim() ? { email: form.email.trim() } : {}),
+      ...(car ? { car } : {}),
+      message: enquiryText(kind, form, { contact: false }),
+      page: window.location.href,
+      _subject: subject,
+      _template: "table",
+      _captcha: "false",
+    };
     try {
-      const response = await fetch("/api/enquiry", {
-        method: "POST",
-        headers: { "content-type": "application/json", "x-mm-enquiry": "1" },
-        body: JSON.stringify({
-          kind,
-          name: form.name,
-          phone: form.phone,
-          email: form.email,
-          car,
-          message: text,
-          page: window.location.pathname,
-          website: form.website,
-        }),
-      });
-      const result = await response.json().catch(() => ({}));
-      if (response.ok && result.ok) return setStep("sent");
-      setProblem(result.message || "Your enquiry couldn't be sent just now.");
+      if (await sendEnquiry(fields)) return setStep("sent");
     } catch {
-      setProblem("Your enquiry couldn't be sent just now.");
+      // No connection, or FormSubmit is down: the visitor can still send it.
     }
+    setProblem("Your enquiry couldn't be sent from the website just now.");
     setStep("ready");
   }
   return (
@@ -2761,11 +2759,7 @@ function Enquiry({ vehicle, purpose, onClose }) {
       )}
       {step === "form" || step === "sending" ? (
         <form onSubmit={submit}>
-          <p>
-            {copy.intro}
-            {byEmail === false &&
-              " Prepare your message, then send it to us by email or text."}
-          </p>
+          <p>{copy.intro}</p>
           {kind === "finance" && (
             <fieldset className="enquiry-fields">
               <legend>The car</legend>
@@ -2945,17 +2939,11 @@ function Enquiry({ vehicle, purpose, onClose }) {
             type="submit"
             disabled={step === "sending"}
           >
-            {byEmail
-              ? step === "sending"
-                ? "Sending…"
-                : "Send enquiry"
-              : "Prepare enquiry"}
+            {step === "sending" ? "Sending…" : "Send enquiry"}
             <ArrowRight size={18} />
           </button>
           <small className="enquiry-footnote">
-            {byEmail
-              ? `It goes straight to ${business.email}. We only use your details to reply to you.`
-              : "Nothing is sent until you send the message from your email or messaging app."}
+            It's emailed to {business.email}. We only use your details to reply to you.
           </small>
         </form>
       ) : step === "sent" ? (
@@ -2975,7 +2963,7 @@ function Enquiry({ vehicle, purpose, onClose }) {
       ) : (
         <div className="enquiry-ready">
           <span className="ready-icon">
-            <Check size={26} />
+            <Send size={24} />
           </span>
           <h3>Your message is ready.</h3>
           <p>

@@ -59,21 +59,21 @@ You can reuse them: on the empty Your stock screen, tap **Copy in the current li
 
 Every form on the website asks for the customer's full name, phone number and email. That covers general enquiries and viewings, finance applications, selling or trading in a car, and asking you to find a car.
 
-Once email is switched on, enquiries arrive at **mmprestigemotors@gmail.com** from "MM Prestige Motors website". The subject says what it is, for example "Finance enquiry: Jane Smith, 2016 HSV GTS". Reply to the email to answer the customer. Turn on Gmail notifications on your phone so you see them straight away.
+Enquiries arrive at **mmprestigemotors@gmail.com**, sent by FormSubmit, a free service that emails website forms. The subject says what it is, for example "Finance enquiry: Jane Smith, 2016 HSV GTS", and the email lists the customer's details, their message and the page they sent it from. Reply to the email to answer the customer. Turn on Gmail notifications on your phone so you see them straight away.
 
-Until email is switched on, or if sending ever fails, the website lets customers send their enquiry from their own email app, or as a text to 0411 710 409.
+If the website ever can't send an enquiry, it lets the customer send it from their own email app, or as a text to 0411 710 409, so nothing is lost.
 
-### Switching email on
+### Switching enquiries on
 
-It takes about five minutes, with your web developer:
+It takes one click, once:
 
-1. Sign in to the Google account for mmprestigemotors@gmail.com and turn on **2-Step Verification** (Google Account, then Security).
-2. Open **myaccount.google.com/apppasswords**, name it "MM Prestige website" and tap **Create**. Google shows a 16-letter password once.
-3. Give it to your developer in person or over the phone, not by text or email. They add it to the website and send a test enquiry.
+1. Your web developer sends a test enquiry from the website.
+2. FormSubmit emails mmprestigemotors@gmail.com asking you to activate the form. If it isn't in your inbox, check Spam.
+3. Open it and tap **Activate Form**. From then on, every enquiry from the website arrives in your inbox, starting with the test.
 
-The app password only works for email: it can't be used to sign in to your Google account, and your Gmail password stays private. It does give access to the mailbox, which is why it's passed on by phone or in person. To stop the website sending email, delete the app password on that same page.
+There's no password to set up or share. If FormSubmit's emails ever land in Spam, mark them **Not spam**. If an activation email arrives that you weren't expecting, ignore it: you'll only get another one if your website's address changes, for example to your own domain.
 
 ## Who looks after what
 
 - **You:** the cars, photos and prices in the stock manager, and replying to enquiries.
-- **Your web developer:** the website's design and wording, your phone number, email and address on the site, the stock manager's password, email sending, hosting and your web address.
+- **Your web developer:** the website's design and wording, your phone number, email and address on the site, the stock manager's password, the enquiry forms, hosting and your web address.
