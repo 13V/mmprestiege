@@ -25,7 +25,7 @@ The site sends through the dealership's Gmail account with a Google *app passwor
    - Value: the 16 letters (spaces don't matter)
    - Environment: Production (add Preview too to test on preview links)
 5. Redeploy: **Deployments**, then the latest deployment's **⋯** menu, then **Redeploy**.
-6. Send a test enquiry from the website. It arrives in the inbox from "MM Prestige Motors website" within a few seconds. `https://mmprestiege.vercel.app/api/enquiry` shows `"email":true` once email is on.
+6. Send a test enquiry from the website. It arrives in the inbox from "MM Prestige Motors website" within a few seconds. `https://mmprestigemotors.vercel.app/api/enquiry` shows `"email":true` once email is on.
 
 To stop emails, delete the app password in Google (step 3's page) or remove the variable in Vercel and redeploy; the form goes back to offering the visitor's own apps.
 

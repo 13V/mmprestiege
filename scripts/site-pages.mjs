@@ -17,7 +17,7 @@ const variants = {
 const production = process.env.VERCEL_PROJECT_PRODUCTION_URL;
 export const SITE_URL = (
   process.env.SITE_URL ||
-  (production ? `https://${production}` : "https://mmprestiege.vercel.app")
+  (production ? `https://${production}` : "https://mmprestigemotors.vercel.app")
 ).replace(/\/$/, "");
 const NAME = "MM Prestige Motors";
 // Uploaded photos already have full URLs; site photos are paths.

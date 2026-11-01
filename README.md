@@ -1,6 +1,6 @@
 # MM Prestige Motors website
 
-The website of MM Prestige Motors, an HSV and Holden specialist in Wingfield, Adelaide: a home page, searchable available/sold stock and individual vehicle pages, enquiry and finance forms that email the dealership, and a stock manager for keeping the cars up to date. Built with React, Vite and React Router. The public pages use the showroom design from the Impulse Automotive concept, adapted for MM Prestige Motors in black and red. Fonts and images are local, so the preview does not depend on external image or font services; the only outside content is the Google map in the contact section.
+The website of MM Prestige Motors, an HSV and Holden specialist in Wingfield, Adelaide: a home page, searchable available/sold stock and individual vehicle pages, enquiry and finance forms that email the dealership, and a stock manager for keeping the cars up to date. Live at **https://mmprestigemotors.vercel.app** (Vercel project `mmprestigemotors` in Troy's projects). Built with React, Vite and React Router. The public pages use the showroom design from the Impulse Automotive concept, adapted for MM Prestige Motors in black and red. Fonts and images are local, so the preview does not depend on external image or font services; the only outside content is the Google map in the contact section.
 
 ## Run
 
@@ -18,7 +18,7 @@ npm run build
 npm run preview
 ```
 
-The build writes a page for every route with its own title, description, canonical URL and link-preview image: `stock.html`, `stock/<id>.html` for each car, `404.html` and the stock manager's page. It also writes `robots.txt` and `sitemap.xml` (see `scripts/site-pages.mjs`). Absolute URLs use `SITE_URL`, or Vercel's production domain, or `https://mmprestiege.vercel.app`. `npm run preview` serves the build the way Vercel does. On other static hosting, serve `<path>.html` for clean URLs and `404.html` for unknown paths.
+The build writes a page for every route with its own title, description, canonical URL and link-preview image: `stock.html`, `stock/<id>.html` for each car, `404.html` and the stock manager's page. It also writes `robots.txt` and `sitemap.xml` (see `scripts/site-pages.mjs`). Absolute URLs use `SITE_URL`, or Vercel's production domain, or `https://mmprestigemotors.vercel.app`. The site's earlier address, `mmprestiege.vercel.app`, redirects to it (a host rule in `vercel.json`). `npm run preview` serves the build the way Vercel does. On other static hosting, serve `<path>.html` for clean URLs and `404.html` for unknown paths.
 
 ## Vercel deployment
 

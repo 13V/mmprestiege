@@ -56,7 +56,7 @@ function context({ fails = false } = {}) {
     },
     from: "mmprestigemotors@gmail.com",
     to: "mmprestigemotors@gmail.com",
-    site: "https://mmprestiege.vercel.app",
+    site: "https://mmprestigemotors.vercel.app",
     limit: createLimiter(),
     log: (error) => logged.push(String(error?.message || error)),
   };
@@ -91,7 +91,7 @@ await check("The dealership's email has a clear subject, the visitor as reply-to
   same(mail.to, { address: "mmprestigemotors@gmail.com" }, "to");
   expect(mail.text.startsWith(finance.message), "message first");
   expect(mail.text.includes("Reply to this email to answer Jane Smith, or call 0400 000 000."), "reply line");
-  expect(mail.text.endsWith("https://mmprestiege.vercel.app/stock/hsv-gts-2016"), "page");
+  expect(mail.text.endsWith("https://mmprestigemotors.vercel.app/stock/hsv-gts-2016"), "page");
   const noEmail = enquiryMail(readEnquiry({ kind: "talk", name: "Sam Lee", phone: "0400000000", message: "Hi" }).enquiry, context());
   expect(!noEmail.replyTo && noEmail.text.includes("Sam Lee didn't leave an email address. Call 0400000000."), "no email");
   expect(noEmail.subject === "Website enquiry: Sam Lee", noEmail.subject);

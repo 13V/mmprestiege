@@ -14,7 +14,13 @@ import { business } from "../../src/data.js";
 import { createLimiter } from "./handler.js";
 import { buildMessage, sendMail } from "./smtp.js";
 
-export const SITE = "https://mmprestiege.vercel.app";
+// The website's address, for the link at the foot of each email: SITE_URL,
+// else the project's production domain on Vercel.
+const production = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+export const SITE = (
+  process.env.SITE_URL ||
+  (production ? `https://${production}` : "https://mmprestigemotors.vercel.app")
+).replace(/\/$/, "");
 
 export function smtpMailer({ host, port, user, password }) {
   return { send: (mail) => sendMail({ host, port, secure: true, user, password, ...mail }) };
