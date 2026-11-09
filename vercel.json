@@ -11,10 +11,21 @@
       "has": [
         {
           "type": "host",
+          "value": "mmprestigemotors.vercel.app"
+        }
+      ],
+      "destination": "https://www.mmprestigemotors.com.au/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
           "value": "mmprestiege.vercel.app"
         }
       ],
-      "destination": "https://mmprestigemotors.vercel.app/:path*",
+      "destination": "https://www.mmprestigemotors.com.au/:path*",
       "permanent": true
     }
   ],

@@ -14,11 +14,11 @@ const variants = {
   ...JSON.parse(readFileSync(new URL("../src/image-variants.json", import.meta.url), "utf8")),
   ...photos,
 };
-const production = process.env.VERCEL_PROJECT_PRODUCTION_URL;
-export const SITE_URL = (
-  process.env.SITE_URL ||
-  (production ? `https://${production}` : "https://mmprestigemotors.vercel.app")
-).replace(/\/$/, "");
+// The site's one public address. Canonical links, the sitemap, robots.txt
+// and link previews all use it, so search engines index this address and
+// not the vercel.app ones (which redirect here; see vercel.json). Set
+// SITE_URL to change it.
+export const SITE_URL = (process.env.SITE_URL || "https://www.mmprestigemotors.com.au").replace(/\/$/, "");
 const NAME = "MM Prestige Motors";
 // Uploaded photos already have full URLs; site photos are paths.
 const absolute = (src) => (/^https?:\/\//.test(src) ? src : `${SITE_URL}${src}`);

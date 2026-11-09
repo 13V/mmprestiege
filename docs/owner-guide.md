@@ -1,6 +1,6 @@
 # Your website: owner's guide
 
-**MM Prestige Motors** · mmprestigemotors.vercel.app
+**MM Prestige Motors** · www.mmprestigemotors.com.au
 
 Your website shows the cars you have for sale and the ones you've sold, takes enquiries and finance applications, and links to your Instagram, TikTok and Facebook. You keep the cars up to date yourself, from your phone, with the stock manager.
 
@@ -8,7 +8,7 @@ Your website shows the cars you have for sale and the ones you've sold, takes en
 
 ### Signing in
 
-1. On your phone, open **mmprestigemotors.vercel.app/stock/manage** (or your own web address followed by /stock/manage, once it's connected).
+1. On your phone, open **www.mmprestigemotors.com.au/stock/manage**.
 2. Enter your password. You stay signed in on that phone for 30 days.
 3. Add it to your home screen so it opens like an app. On an iPhone, in Safari: **Share**, then **Add to Home Screen**. On Android, in Chrome: the **⋮** menu, then **Add to Home screen**.
 

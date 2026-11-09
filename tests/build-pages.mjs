@@ -33,8 +33,10 @@ const tag = (html, pattern) => html.match(pattern)?.[1];
 check("Home page has its title, canonical URL, share image and dealer details", () => {
   const html = read("index.html");
   expect(tag(html, /<title>([^<]+)/) === "MM Prestige Motors | HSV &amp; Holden Specialists, Adelaide", "home title");
-  expect(/<link rel="canonical" href="https:\/\/[^"]+\/"/.test(html), "home canonical");
-  expect(/og:image" content="https:\/\/[^"]+\/og-image\.png"/.test(html), "home share image");
+  // Without SITE_URL, the build names the dealership's own domain, so search
+  // engines index it rather than a vercel.app address.
+  expect(html.includes('<link rel="canonical" href="https://www.mmprestigemotors.com.au/" />'), "home canonical is the dealership's domain");
+  expect(html.includes('og:image" content="https://www.mmprestigemotors.com.au/og-image.png"'), "home share image");
   expect(/"@type":"AutoDealer"/.test(html), "AutoDealer structured data");
   expect(html.includes('"email":"mmprestigemotors@gmail.com"'), "dealer email");
   expect(html.includes('"sameAs":["https://www.instagram.com/mmprestigemotors/","https://www.tiktok.com/@mmprestigemotors","https://www.facebook.com/profile.php?id=100087864877571"]'), "social profiles");
@@ -45,7 +47,7 @@ check("Every car has a page with its own title, description and photo preview", 
     const html = read(`stock/${car.id}.html`);
     const name = `${car.year} ${car.make} ${car.model}`;
     expect(tag(html, /<title>([^<]+)/) === `${name} | MM Prestige Motors`, `${car.id} title`);
-    expect(html.includes(`/stock/${car.id}" />`), `${car.id} canonical`);
+    expect(html.includes(`<link rel="canonical" href="https://www.mmprestigemotors.com.au/stock/${car.id}" />`), `${car.id} canonical`);
     expect(/og:image" content="https:\/\/[^"]+\/images\/opt\/[^"]+-share\.jpg\?v=[0-9a-f]{8}"/.test(html), `${car.id} share photo`);
     expect(html.includes(car.status === "sold" ? "· Sold" : "$"), `${car.id} price or sold in description`);
     expect(html.includes("(sample listing)") === sampleStock, `${car.id} sample label follows sampleStock`);
@@ -66,19 +68,22 @@ check("Unknown pages get a noindex 404 page", () => {
 });
 check("robots.txt and sitemap.xml list the public pages", () => {
   const robots = read("robots.txt");
-  expect(/Sitemap: https:\/\/\S+\/sitemap\.xml/.test(robots), "sitemap line");
+  expect(robots.includes("Sitemap: https://www.mmprestigemotors.com.au/sitemap.xml"), "sitemap line");
   for (const path of ["/stock/manage", "/api/"]) expect(robots.includes(`Disallow: ${path}`), `${path} disallowed`);
   expect(!/crm|stock-manager|presentation/.test(robots), "no rules for the removed demos");
   const sitemap = read("sitemap.xml");
   expect((sitemap.match(/<url>/g) || []).length === vehicles.length + 2, "sitemap URL count");
   expect(!sitemap.includes("/stock/manage"), "stock manager not in the sitemap");
+  expect((sitemap.match(/<loc>https:\/\/www\.mmprestigemotors\.com\.au\//g) || []).length === vehicles.length + 2, "every sitemap URL is on the dealership's domain");
 });
 check("Vercel serves clean URLs with real 404s, and the stock API is a function", () => {
   const config = JSON.parse(readFileSync(join(root, "vercel.json"), "utf8"));
   expect(config.cleanUrls === true, "cleanUrls");
   expect(!(config.rewrites || []).some((rule) => rule.source === "/(.*)"), "no catch-all rewrite");
-  const moved = (config.redirects || []).find((rule) => rule.has?.some((item) => item.type === "host" && item.value === "mmprestiege.vercel.app"));
-  expect(moved?.destination === "https://mmprestigemotors.vercel.app/:path*" && moved.permanent, "the old address redirects to the new one");
+  for (const host of ["mmprestigemotors.vercel.app", "mmprestiege.vercel.app"]) {
+    const moved = (config.redirects || []).find((rule) => rule.has?.some((item) => item.type === "host" && item.value === host));
+    expect(moved?.destination === "https://www.mmprestigemotors.com.au/:path*" && moved.permanent, `${host} redirects to the dealership's domain`);
+  }
   expect(existsSync(join(root, "api/stock.js")), "api/stock.js");
   expect(!existsSync(join(root, "api/enquiry.js")), "no enquiry API: FormSubmit emails enquiries");
   const manage = config.headers.find((rule) => rule.source === "/stock/manage")?.headers || [];

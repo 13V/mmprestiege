@@ -8,7 +8,7 @@ For the owner, [the owner's guide](owner-guide.md) covers day-to-day use in plai
 
 ## Switching it on
 
-It needs three settings in Vercel. Each takes a minute. In the Vercel dashboard, open the **mmprestigemotors** project (in Troy's projects). These are already set up for the live site; the steps are here for reference, or for setting up another copy.
+It needs three settings in Vercel. Each takes a minute. In the Vercel dashboard, open the **mmprestigemotors** project (in the Lumen team). These are already set up for the live site; the steps are here for reference, or for setting up another copy.
 
 ### 1. A sign-in password
 
