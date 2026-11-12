@@ -61,6 +61,17 @@ check("Stock page and the stock manager have their own titles, the stock manager
   for (const gone of ["crm.html", "stock-manager.html", "presentation/index.html"])
     expect(!existsSync(join(root, "dist", gone)), `${gone} isn't built: the pitch demos are gone`);
 });
+check("The email signatures page is published, kept out of search engines and has its five banners", () => {
+  const html = read("signatures.html");
+  expect(html.includes('<meta name="robots" content="noindex">'), "signatures page is noindex");
+  const banners = [...html.matchAll(/src="\/email\/(signature-[\w-]+\.gif)"/g)].map((match) => match[1]);
+  expect(banners.length === 5, "five banners");
+  for (const banner of banners) expect(existsSync(join(root, "dist/email", banner)), `${banner} is published`);
+  expect(!read("sitemap.xml").includes("/signatures"), "not in the sitemap");
+  const config = JSON.parse(readFileSync(join(root, "vercel.json"), "utf8"));
+  const headers = config.headers.find((rule) => rule.source === "/signatures")?.headers || [];
+  expect(headers.some((header) => header.key === "X-Robots-Tag" && header.value === "noindex"), "noindex header");
+});
 check("Unknown pages get a noindex 404 page", () => {
   const html = read("404.html");
   expect(tag(html, /<title>([^<]+)/) === "Page not found | MM Prestige Motors", "404 title");

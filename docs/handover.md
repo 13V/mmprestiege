@@ -53,4 +53,5 @@ Enquiries are emailed to mmprestigemotors@gmail.com by [FormSubmit](https://form
 
 - Until the first real car is published, the website shows six sample listings, labelled as samples. When real stock goes on, the sample labels and "sample listing" link previews go, and the cars' details are given to search engines, by themselves.
 - Every save that changes a car on the website starts a Vercel build, about a minute each.
+- The five animated email signature banners are at **www.mmprestigemotors.com.au/signatures**, to show the owner (the page isn't linked from the site and is kept out of search engines). The GIFs are in `public/email/`, 600 × 200. The one-page handover sheet given to the owner (kept out of this repository, as it has the stock manager password) has the Gmail steps for adding one.
 - The repayment calculator is illustrative and says so. Confirm the dealership's actual finance arrangements and any required disclosures before relying on it.
